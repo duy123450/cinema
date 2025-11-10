@@ -1,15 +1,25 @@
-# Use an official PHP image with Apache preinstalled
+# Stage 1 — Build frontend
+FROM node:18 AS build
+WORKDIR /app/client
+COPY client/package*.json ./
+RUN npm install
+COPY client/ .
+RUN npm run build
+
+# Stage 2 — Run PHP backend and serve built frontend
 FROM php:8.2-apache
+WORKDIR /var/www/html
 
-# Refresh and upgrade system packages to pull in security fixes, then clean apt caches
-RUN set -eux; \
-	apt-get update; \
-	apt-get upgrade -y; \
-	apt-get clean; \
-	rm -rf /var/lib/apt/lists/*
+# Copy backend files
+COPY server/ .
 
-# Copy all files from your project into the web directory
-COPY . /var/www/html/
+# Copy built frontend files into public web root
+COPY --from=build /app/client/dist ./client
 
-# Expose port 80 (used for web traffic)
+# Enable Apache rewrite module (useful for React routing)
+RUN a2enmod rewrite
+
+# Expose port
 EXPOSE 80
+
+CMD ["apache2-foreground"]

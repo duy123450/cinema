@@ -1,6 +1,9 @@
 services:
   - type: web
-    name: my-php-app
+    name: cinema-app
     env: docker
     plan: free
-    dockerfilePath: ./Dockerfile
+    region: singapore   # or closest to Vietnam
+    branch: main
+    buildCommand: ""
+    startCommand: ""
