@@ -14,7 +14,7 @@ WORKDIR /var/www/html
 COPY --from=build /app/client/dist ./client/
 
 # Optional: Copy backend files if you have them
-# COPY . .
+COPY . /var/www/html/
 
 # Enable mod_rewrite for SPA routing
 RUN a2enmod rewrite
