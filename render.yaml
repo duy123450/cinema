@@ -9,10 +9,10 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: dist
 
-  # Backend: PHP API served via Docker
-  - type: web
-    name: cinema-backend
-    env: docker
-    branch: main
-    rootDirectory: server
-    dockerfilePath: Dockerfile
+  # # Backend: PHP API served via Docker
+  # - type: web
+  #   name: cinema-backend
+  #   env: docker
+  #   branch: main
+  #   rootDirectory: server
+  #   dockerfilePath: Dockerfile
