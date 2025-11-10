@@ -1,9 +1,18 @@
+# render.yaml
 services:
+  # Frontend: Static site built with Vite/React
   - type: web
-    name: cinema-app
-    env: docker
-    plan: free
-    region: singapore   # or closest to Vietnam
+    name: cinema-frontend
+    env: static
     branch: main
-    buildCommand: ""
-    startCommand: ""
+    rootDirectory: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+
+  # # Backend: PHP API served via Docker
+  # - type: web
+  #   name: cinema-backend
+  #   env: docker
+  #   branch: main
+  #   rootDirectory: server
+  #   dockerfilePath: Dockerfile
