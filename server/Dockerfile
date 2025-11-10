@@ -11,7 +11,7 @@ FROM php:8.2-apache
 WORKDIR /var/www/html
 
 # Copy built frontend into web root
-COPY --from=build /app/client/dist ./client/
+COPY --from=build /app/client/ ./client/
 
 # Optional: Copy backend files if you have them
 COPY . /var/www/html/
