@@ -1,0 +1,80 @@
+@import "variables";
+
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: $color-gray-7;
+    padding: $spacing-xl;
+}
+
+.auth-container {
+    background: $color-gray-10;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px hsla(0, 0%, 0%, 0.3);
+
+    h2 {
+        text-align: center;
+        margin-bottom: $spacing-lg;
+        color: $color-yellow-70;
+    }
+}
+
+.form-group {
+    margin-bottom: $spacing-md;
+
+    label {
+        display: block;
+        margin-bottom: $spacing-sm;
+        color: $color-gray-85;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid hsla(0, 0%, 100%, 0.1);
+        border-radius: $radius-sm;
+        background: $color-gray-13;
+        color: white;
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color $transition;
+
+        &:focus {
+            outline: none;
+            border-color: $color-yellow-70;
+        }
+
+        &.error {
+            border-color: $color-red;
+            background: hsla(0, 100%, 50%, 0.1);
+
+            &:focus {
+                border-color: $color-red;
+            }
+        }
+    }
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: $spacing-md;
+    color: $color-gray-60;
+}
+
+.auth-container .switch-link {
+    background: none;
+    border: none;
+    color: $color-yellow-70;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-left: $spacing-xs;
+
+    &:hover {
+        color: $color-yellow-50;
+    }
+}

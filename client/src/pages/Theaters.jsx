@@ -1,22 +1,42 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { api } from "../services/api";
 
 function Theaters() {
+  const [theaters, setTheaters] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTheaters = async () => {
+      try {
+        const data = await api.getCinemas(); // Uses the same endpoint as cinemas
+        setTheaters(data);
+      } catch (error) {
+        console.error("Error fetching theaters:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTheaters();
+  }, []);
+
+  if (loading) return <div className="page">Loading theaters...</div>;
+
   return (
     <div className="page">
-      <h1>Cinemas Near You</h1>
+      <h1>Cinemas</h1>
       <div className="theater-grid">
-        <div className="theater-card">
-          <h3>Downtown Cinema</h3>
-          <p>123 Main St, City Center</p>
-          <p>5 screens • Premium sound</p>
-          <button className="btn-primary">View Shows</button>
-        </div>
-        <div className="theater-card">
-          <h3>Plaza Theater</h3>
-          <p>456 Oak Ave, Shopping Mall</p>
-          <p>8 screens • IMAX available</p>
-          <button className="btn-primary">View Shows</button>
-        </div>
+        {theaters.map((theater) => (
+          <div key={theater.cinema_id} className="theater-card">
+            <h3>{theater.name}</h3>
+            <p>{theater.address}</p>
+            <p>
+              {theater.city}, {theater.country}
+            </p>
+            <p>Screens: {theater.total_screens}</p>
+            <p>Seats: {theater.total_seats}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

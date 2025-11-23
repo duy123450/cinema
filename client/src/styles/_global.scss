@@ -1,0 +1,18 @@
+@import "variables";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: $font-primary;
+}
+
+body {
+    background-color: $color-gray-7;
+    color: $color-gray-95;
+}
+
+main {
+    min-height: calc(100vh - 60px);
+    padding: $spacing-xl 0;
+}

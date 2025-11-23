@@ -1,0 +1,36 @@
+@import "variables";
+
+.theater-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $spacing-lg;
+    margin-top: $spacing-lg;
+}
+
+.theater-card,
+.booking-card,
+.admin-card {
+    background: $color-gray-13;
+    padding: $spacing-lg;
+    border-radius: $radius-md;
+    border: 1px solid hsla(0, 0%, 100%, 0.1);
+}
+
+.booking-list {
+    margin-top: $spacing-lg;
+}
+
+.booking-card {
+    margin-bottom: $spacing-md;
+}
+
+.admin-card {
+    text-decoration: none;
+    color: $color-gray-85;
+    transition: transform $transition;
+
+    &:hover {
+        transform: translateY(-5px);
+        background: hsl(0, 0%, 15%);
+    }
+}

@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-/node_modules
-/dist
+node_modules/
+dist/
+build/

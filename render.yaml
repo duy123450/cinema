@@ -1,18 +1,31 @@
-# render.yaml
 services:
-  # Frontend: Static site built with Vite/React
   - type: web
-    name: cinema-frontend
-    env: static
-    branch: main
-    rootDirectory: client
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    name: cinema-management
+    env: docker
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: cinema-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: cinema-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cinema-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cinema-db
+          property: database
+      - key: DB_PORT
+        fromDatabase:
+          name: cinema-db
+          property: port
 
-  # # Backend: PHP API served via Docker
-  # - type: web
-  #   name: cinema-backend
-  #   env: docker
-  #   branch: main
-  #   rootDirectory: server
-  #   dockerfilePath: Dockerfile
+databases:
+  - name: cinema-db
+    region: singapore
+    plan: free

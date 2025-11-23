@@ -1,4 +1,4 @@
-// src/App.jsx
+// frontend/src/App.jsx
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index.jsx";
@@ -9,19 +9,81 @@ import Bookings from "./pages/Bookings.jsx";
 import Admin from "./pages/Admin.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import Layout from "./components/Layout.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/showtimes" element={<Showtimes />} />
-        <Route path="/theaters" element={<Theaters />} />
-        <Route path="/bookings" element={<Bookings />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* All user pages with header/footer */}
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Index />
+            </Layout>
+          }
+        />
+        <Route
+          path="/movies"
+          element={
+            <Layout>
+              <Movies />
+            </Layout>
+          }
+        />
+        <Route
+          path="/showtimes"
+          element={
+            <Layout>
+              <Showtimes />
+            </Layout>
+          }
+        />
+        <Route
+          path="/theaters"
+          element={
+            <Layout>
+              <Theaters />
+            </Layout>
+          }
+        />
+        <Route
+          path="/bookings"
+          element={
+            <Layout>
+              <Bookings />
+            </Layout>
+          }
+        />
+
+        {/* Admin page (also needs header/footer) */}
+        <Route
+          path="/admin"
+          element={
+            <Layout>
+              <Admin />
+            </Layout>
+          }
+        />
+
+        {/* Auth pages — you can include header/footer or not */}
+        <Route
+          path="/login"
+          element={
+            <Layout>
+              <Login />
+            </Layout>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <Layout>
+              <Register />
+            </Layout>
+          }
+        />
       </Routes>
     </Router>
   );

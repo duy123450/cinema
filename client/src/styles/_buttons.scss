@@ -1,0 +1,121 @@
+@import "variables";
+
+.btn-primary {
+    background: $color-yellow;
+    color: hsl(0, 0%, 10%);
+    padding: 0.6rem 1.3rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: $transition;
+
+    &:hover {
+        background: $color-yellow-light;
+    }
+}
+
+.btn-secondary {
+    background: $color-red;
+    color: white;
+    padding: 0.6rem 0;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: $transition;
+    width: 80px;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    text-decoration: none;
+
+    &.login-btn {
+        background: $color-blue;
+
+        &:hover {
+            background: $color-blue-light;
+        }
+    }
+
+    &.logout-btn {
+        background: $color-red;
+
+        &:hover {
+            background: $color-red-light;
+        }
+    }
+}
+
+.btn-hero {
+    background-color: $color-red;
+    color: hsl(0, 0%, 0%);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color $transition;
+    font-size: 1rem;
+
+    &:hover {
+        background-color: $color-red-light;
+    }
+}
+
+.btn-banner {
+    background-color: $color-blue;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color $transition;
+    font-size: 1rem;
+    white-space: nowrap;
+
+    &:hover {
+        background-color: $color-blue-light;
+    }
+}
+
+.btn-submit {
+    background: $color-yellow;
+    color: hsl(0, 0%, 10%);
+    padding: 0.75rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: $transition;
+    width: 100%;
+    margin-top: $spacing-md;
+    font-size: 1rem;
+    box-sizing: border-box;
+
+    &:hover {
+        background: $color-yellow-light;
+    }
+}
+
+// Admin button
+.btn-admin {
+    background: $color-blue;
+    color: white;
+    padding: 0.6rem 1.3rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: $transition;
+    text-decoration: none;
+    margin-right: $spacing-sm;
+
+    &:hover {
+        background: $color-blue-light;
+    }
+}

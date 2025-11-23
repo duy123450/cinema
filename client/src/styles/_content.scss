@@ -1,0 +1,49 @@
+@import "variables";
+
+.now-playing {
+    padding: $spacing-xxl $spacing-xl;
+    background-color: hsla(0, 0%, 7%, 1);
+    color: white;
+
+    h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: $spacing-xl;
+        color: $color-yellow-70;
+    }
+}
+
+.content {
+    padding: $spacing-xxl $spacing-xl;
+    text-align: center;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-xl;
+    margin-top: $spacing-xl;
+}
+
+.card {
+    background: $color-gray-13;
+    border: 1px solid hsla(0, 0%, 100%, 0.08);
+    padding: $spacing-lg;
+    border-radius: $radius-lg;
+    transition:
+        transform $transition,
+        box-shadow $transition;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px hsla(0, 0%, 0%, 0.4);
+    }
+}
+
+.card-img {
+    width: 100%;
+    height: 180px;
+    background: $color-gray-10;
+    border-radius: 10px;
+    margin-bottom: $spacing-md;
+}

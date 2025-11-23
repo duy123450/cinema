@@ -1,0 +1,62 @@
+@import "variables";
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md $spacing-xl;
+    background-color: $color-gray-7;
+    color: white;
+    box-shadow: 0 2px 5px hsla(0, 0%, 0%, 0.3);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+
+    a {
+        text-decoration: none;
+        color: $color-gray-85;
+        transition: color $transition;
+
+        &:hover {
+            color: $color-yellow-70;
+        }
+    }
+}
+
+// Navigation Links
+.nav-link {
+    text-decoration: none;
+    color: $color-gray-85;
+    transition: color $transition;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-sm;
+    font-weight: 500;
+
+    &:hover {
+        color: $color-yellow-70;
+        background: hsla(0, 0%, 100%, 0.1);
+    }
+
+    &.active {
+        color: $color-yellow-70;
+        background: hsla(51, 100%, 70%, 0.1);
+    }
+}
+
+// Header Buttons
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+}

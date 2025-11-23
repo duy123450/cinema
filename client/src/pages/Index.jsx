@@ -5,7 +5,6 @@ import Footer from "../components/Footer.jsx";
 function Index() {
   return (
     <>
-      <Header />
       <Banner />
       <section className="now-playing">
         <h2>Now Playing</h2>
@@ -13,7 +12,6 @@ function Index() {
           
         </div>
       </section>
-      <Footer />
     </>
   );
 }

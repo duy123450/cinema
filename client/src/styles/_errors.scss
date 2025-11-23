@@ -1,0 +1,25 @@
+@import "variables";
+
+.error-message {
+    background: hsl(0, 70%, 40%);
+    color: white;
+    padding: 0.75rem;
+    border-radius: $radius-sm;
+    margin-bottom: $spacing-md;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.error-text {
+    color: $color-red;
+    font-size: 0.85rem;
+    margin-top: $spacing-xs;
+    display: block;
+}
+
+.disabled-text {
+    color: $color-gray-60;
+    font-size: 0.85rem;
+    margin-top: $spacing-xs;
+    display: block;
+}

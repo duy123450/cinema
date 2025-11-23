@@ -1,0 +1,144 @@
+@import "variables";
+
+.banner-slider {
+    position: relative;
+    height: 60vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    filter: brightness(0.7);
+    transition: opacity 0.5s ease;
+}
+
+.banner-card {
+    width: 80%;
+    max-width: 1000px;
+    background: hsla(0, 0%, 0%, 0.7);
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    color: white;
+    text-align: center;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+    z-index: 1;
+
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: $spacing-sm;
+        text-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.7);
+        letter-spacing: 1px;
+        font-weight: bold;
+    }
+}
+
+.tagline {
+    font-size: 1.5rem;
+    margin-bottom: $spacing-md;
+    font-weight: bold;
+    color: $color-blue-70;
+}
+
+.cast-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    justify-content: center;
+    margin-bottom: $spacing-md;
+}
+
+.cast-tag {
+    background: $color-blue;
+    color: white;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-sm;
+    font-size: 0.9rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.showtimes {
+    margin: $spacing-md 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: $color-yellow-70;
+}
+
+.rating-and-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    flex-wrap: wrap;
+}
+
+.rating {
+    background: $color-blue;
+    color: white;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-sm;
+    font-weight: bold;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+// Slider Navigation
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: hsla(0, 0%, 0%, 0.5);
+    color: white;
+    border: none;
+    padding: $spacing-md $spacing-lg;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.3s;
+
+    &:hover {
+        background: hsla(0, 0%, 0%, 0.7);
+    }
+
+    &.left {
+        left: 20px;
+    }
+
+    &.right {
+        right: 20px;
+    }
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: $spacing-sm;
+    z-index: 2;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: hsla(0, 0%, 100%, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &.active {
+        background: white;
+    }
+}
