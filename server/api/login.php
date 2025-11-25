@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($identifier) || empty($password)) {
         http_response_code(400);
         echo json_encode([
-            "success" => false, // 👈 Add this
+            "success" => false, 
             "message" => "Username/Email and password are required"
         ]);
         exit();

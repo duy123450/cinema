@@ -1,22 +1,31 @@
 // src/components/Header.jsx
 
 import React, { useContext, useState, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
 import useClickOutside from "../hooks/useClickOutside";
+import { apiService } from "../services/api";
 
 function Header() {
   const location = useLocation();
   const { user, logout } = useContext(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   // Close dropdown when clicking outside
   useClickOutside(dropdownRef, () => setIsDropdownOpen(false));
 
-  const handleLogout = () => {
-    logout();
-    setIsDropdownOpen(false);
+  const handleLogout = async () => {
+    try {
+      await apiService.logout();
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      logout();
+      navigate("/login");
+    }
   };
 
   const toggleDropdown = () => {

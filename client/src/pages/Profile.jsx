@@ -13,6 +13,7 @@ function Profile() {
     first_name: "",
     last_name: "",
     phone: "",
+    avatar: "",
   });
 
   const [avatarFile, setAvatarFile] = useState(null);
@@ -23,10 +24,13 @@ function Profile() {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
+    console.log("User ID:", user?.user_id);
     if (!user) {
       navigate("/login");
       return;
     }
+
+    console.log("User inside component:", user);
 
     setFormData({
       username: user.username || "",
@@ -34,6 +38,7 @@ function Profile() {
       first_name: user.first_name || "",
       last_name: user.last_name || "",
       phone: user.phone || "",
+      avatar: avatarFile || "",
     });
 
     // Set avatar preview
@@ -93,7 +98,9 @@ function Profile() {
     if (file) {
       // Validate file type
       if (!file.type.match("image.*")) {
-        setErrors({ avatar: "Please upload an image file (jpg, png, gif, jpg, jfif)" });
+        setErrors({
+          avatar: "Please upload an image file (jpg, png, gif, jpg, jfif)",
+        });
         return;
       }
 
@@ -104,6 +111,7 @@ function Profile() {
       }
 
       setAvatarFile(file);
+      formData.avatar = file;
       setAvatarPreview(URL.createObjectURL(file));
       setErrors((prev) => ({ ...prev, avatar: "" }));
     }
@@ -123,17 +131,16 @@ function Profile() {
     setSuccessMessage("");
 
     try {
-      let finalData = { ...formData };
+      const finalData = { ...formData };
 
       // Handle avatar upload
       if (avatarFile) {
-        const formDataWithAvatar = new FormData();
-        formDataWithAvatar.append("user_id", user.user_id);
-        formDataWithAvatar.append("profile_data", JSON.stringify(finalData));
-        formDataWithAvatar.append("avatar", avatarFile);
-
         // 👇 Use updateProfile for everything
-        const updatedUser = await apiService.updateProfile(formDataWithAvatar);
+        const updatedUser = await apiService.updateProfile({
+          user_id: user.user_id,
+          profileData: finalData,
+          avatar: avatarFile, 
+        });
 
         if (updatedUser) {
           // 👇 Update context with full user data including avatar
@@ -176,9 +183,16 @@ function Profile() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await apiService.logout();
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      logout();
+      navigate("/login");
+    }
   };
 
   if (isLoading) {

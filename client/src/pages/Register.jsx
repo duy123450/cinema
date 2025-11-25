@@ -66,7 +66,9 @@ function Register() {
     if (file) {
       // Validate file type
       if (!file.type.match("image.*")) {
-        setErrors({ avatar: "Please upload an image file (jpg, png, gif)" });
+        setErrors({
+          avatar: "Please upload an image file (jpg, png, gif, jpg, jfif)",
+        });
         return;
       }
 

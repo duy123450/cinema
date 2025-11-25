@@ -5,8 +5,13 @@ require_once '../config/dbconnect.php';
 $conn = connectDB();
 $auth_user = checkAuth();
 
+
+$user_id = $_POST['user_id'];
+
+error_log("Session user ID: " . $auth_user['user_id']);
+error_log("Request user ID: " . $user_id);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user_id = $_POST['user_id'] ?? null;
 
     if ($auth_user['user_id'] != $user_id) {
         http_response_code(403);
@@ -39,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
         $file = $_FILES['avatar'];
         $allowedTypes = [
-            'image/jpeg', 
-            'image/png', 
+            'image/jpeg',
+            'image/png',
             'image/gif',
             'image/jpg',
             'image/jfif'

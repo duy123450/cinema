@@ -11,6 +11,10 @@ function checkAuth()
         exit();
     }
 
+    // Log session data for debugging
+    error_log("Session User ID: " . ($_SESSION['user']['user_id'] ?? 'none'));
+    error_log("Session Username: " . ($_SESSION['user']['username'] ?? 'none'));
+
     // Optional: Check if user still exists in database
     $conn = connectDB();
     $user_id = $_SESSION['user']['user_id'];
