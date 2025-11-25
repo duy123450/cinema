@@ -1,7 +1,7 @@
-@import "variables";
+@use 'variables' as *;
 
 .error-message {
-    background: hsl(0, 70%, 40%);
+    background: $color-error;
     color: white;
     padding: 0.75rem;
     border-radius: $radius-sm;

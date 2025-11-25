@@ -20,6 +20,15 @@ if (isset($path_parts[1]) && $path_parts[1] === 'api') {
     $endpoint = $path_parts[2] ?? '';
 
     switch ($endpoint) {
+        case 'users':
+            require_once 'api/users.php';
+            break;
+        case 'auth':
+            require_once 'api/auth.php';
+            break;
+        case 'update-profile':
+            require_once 'api/update-profile.php';
+            break;
         case 'movies':
             require_once 'api/movies.php';
             break;
@@ -29,11 +38,8 @@ if (isset($path_parts[1]) && $path_parts[1] === 'api') {
         case 'cinemas':
             require_once 'api/cinemas.php';
             break;
-        case 'users':
-            require_once 'api/users.php';
-            break;
-        case 'auth':
-            require_once 'api/auth.php';
+        case 'bookings':
+            require_once 'api/bookings.php';
             break;
         default:
             http_response_code(404);

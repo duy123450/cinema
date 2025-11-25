@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../services/api";
+import { apiService } from "../services/api";
 
 function Theaters() {
   const [theaters, setTheaters] = useState([]);
@@ -8,7 +8,7 @@ function Theaters() {
   useEffect(() => {
     const fetchTheaters = async () => {
       try {
-        const data = await api.getCinemas(); // Uses the same endpoint as cinemas
+        const data = await apiService.getCinemas(); // Uses the same endpoint as cinemas
         setTheaters(data);
       } catch (error) {
         console.error("Error fetching theaters:", error);

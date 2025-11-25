@@ -1,8 +1,27 @@
 <?php
-// server/cors.php
+// Start session on every request
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 // Allow only your frontend origin (no trailing spaces!)
-header("Access-Control-Allow-Origin: https://cinema-ipx0.onrender.com");
+# List of allowed origins
+$allowed_origins = [
+    'http://localhost:5173',      
+    'http://localhost:3000',      
+    'http://localhost:8000',
+    'https://cinema-ipx0.onrender.com',
+    'http://localhost/server'     
+];
+
+# Get the origin from the request
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+# Check if the origin is in our allowed list
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Credentials: true");
+}
 
 // Allowed methods
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");

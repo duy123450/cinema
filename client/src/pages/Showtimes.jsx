@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../services/api";
+import { apiService } from "../services/api";
 
 function Showtimes() {
   const [showtimes, setShowtimes] = useState([]);
@@ -8,7 +8,7 @@ function Showtimes() {
   useEffect(() => {
     const fetchShowtimes = async () => {
       try {
-        const data = await api.getShowtimes();
+        const data = await apiService.getShowtimes();
         setShowtimes(data);
       } catch (error) {
         console.error("Error fetching showtimes:", error);

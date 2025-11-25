@@ -1,5 +1,3 @@
-// frontend/src/App.jsx
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index.jsx";
 import Movies from "./pages/Movies.jsx";
@@ -10,12 +8,12 @@ import Admin from "./pages/Admin.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Layout from "./components/Layout.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* All user pages with header/footer */}
         <Route
           path="/"
           element={
@@ -66,8 +64,6 @@ function App() {
             </Layout>
           }
         />
-
-        {/* Auth pages — you can include header/footer or not */}
         <Route
           path="/login"
           element={
@@ -81,6 +77,14 @@ function App() {
           element={
             <Layout>
               <Register />
+            </Layout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Layout>
+              <Profile />
             </Layout>
           }
         />

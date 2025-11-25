@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../services/api";
+import { apiService } from "../services/api";
 
 function Bookings() {
   const [bookings, setBookings] = useState([]);
@@ -9,7 +9,7 @@ function Bookings() {
     const fetchBookings = async () => {
       try {
         // For now, assume user ID 1 (replace with real auth later)
-        const data = await api.getBookings(1); // 👈 Now using the API service
+        const data = await apiService .getBookings(1); // 👈 Now using the API service
         setBookings(data);
       } catch (error) {
         console.error("Error fetching bookings:", error);

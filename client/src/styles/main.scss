@@ -1,12 +1,14 @@
-// Import all partials
-@import 'variables';
-@import 'global';
-@import 'header';
-@import 'banner';
-@import 'content';
-@import 'cards';
-@import 'buttons';
-@import 'auth';
-@import 'animations';
-@import 'errors';
-@import 'footer';
+@use 'variables' as *;
+@use 'global';
+@use 'header';
+@use 'banner';
+@use 'content';
+@use 'cards';
+@use 'buttons';
+@use 'auth';
+@use 'user-menu';
+@use 'profile';
+@use 'avatar-upload';
+@use 'animations';
+@use 'errors';
+@use 'footer';

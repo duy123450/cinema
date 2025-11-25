@@ -7,9 +7,16 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000', // your local PHP server
+        target: 'http://localhost:3000',
         changeOrigin: true,
       }
     }
-  }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        quietDeps: true,
+      },
+    },
+  },
 })

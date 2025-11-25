@@ -1,9 +1,3 @@
--- ========================================
--- CINEMA MANAGEMENT SYSTEM DATABASE
--- ========================================
-
--- Create database
-CREATE DATABASE cinema_management;
 USE cinema_management;
 
 -- ========================================
@@ -235,9 +229,9 @@ CREATE INDEX idx_payments_status ON payments(payment_status);
 
 -- Insert sample users
 INSERT INTO users (username, email, password_hash, first_name, last_name, role, status) VALUES
-('admin', 'admin@cinema.com', '$2y$10$sample_hash', 'Admin', 'User', 'admin', 'active'),
-('john_doe', 'john@example.com', '$2y$10$sample_hash', 'John', 'Doe', 'customer', 'active'),
-('jane_smith', 'jane@example.com', '$2y$10$sample_hash', 'Jane', 'Smith', 'customer', 'active');
+('admin', 'admin@cinema.com', '$2a$10$DSQC8DjGzvjqFms2db2js.9SM9LaEf1CCfI7OGWswIMpRaILIa6c.', 'Admin', 'User', 'admin', 'active'),
+('john_doe', 'john@example.com', '$2a$10$L.MQc1NMoQym8LEYZrTGG.GFBIV0mgtFiROr7lx7eVaj0WB7wqwbO', 'John', 'Doe', 'customer', 'active'),
+('jane_smith', 'jane@example.com', '$2a$10$L.MQc1NMoQym8LEYZrTGG.GFBIV0mgtFiROr7lx7eVaj0WB7wqwbO', 'Jane', 'Smith', 'customer', 'active');
 
 -- Insert sample cinemas
 INSERT INTO cinemas (name, address, city, country, total_screens, total_seats) VALUES

@@ -1,0 +1,99 @@
+@use 'variables' as *;
+
+.user-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: $user-avatar-size;
+  height: $user-avatar-size;
+  background: $user-avatar-bg;
+  color: $user-avatar-color;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: $user-menu-bg;
+  border: 1px solid $user-menu-border;
+  border-radius: $radius-md;
+  box-shadow: 0 8px 20px $user-menu-shadow;
+  min-width: 200px;
+  z-index: 1000;
+  // Remove hover dependency - controlled by React state
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+.user-info {
+  padding: $spacing-md;
+  border-bottom: 1px solid $user-menu-border;
+
+  .username {
+    display: block;
+    font-weight: bold;
+    color: $username-color;
+  }
+
+  .role {
+    display: block;
+    font-size: 0.85rem;
+    color: $role-color;
+  }
+}
+
+.menu-items {
+  padding: $spacing-sm 0;
+
+  .menu-item,
+  .logout-btn {
+    display: block;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    text-decoration: none;
+    color: $username-color;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+      background: $user-menu-hover;
+    }
+  }
+
+  .logout-btn {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    text-align: left;
+    color: $logout-btn-color;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+      background: $user-menu-hover;
+      color: $logout-btn-hover-color;
+    }
+  }
+}

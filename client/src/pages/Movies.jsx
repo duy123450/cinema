@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../services/api";
+import { apiService } from "../services/api";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -8,7 +8,7 @@ function Movies() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const data = await api.getMovies();
+        const data = await apiService.getMovies();
         setMovies(data);
       } catch (error) {
         console.error("Error fetching movies:", error);

@@ -1,25 +1,90 @@
-// src/components/header.jsx
+// src/components/Header.jsx
 
-import React, { useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
+import AuthContext from "../contexts/AuthContext";
+import useClickOutside from "../hooks/useClickOutside";
 
 function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const { user, logout } = useContext(AuthContext);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  // 👇 Replace this with real auth state from your system
-  const userRole = "user"; // Change to 'admin' to test admin panel visibility
+  // Close dropdown when clicking outside
+  useClickOutside(dropdownRef, () => setIsDropdownOpen(false));
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    logout();
+    setIsDropdownOpen(false);
   };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const userMenu = user ? (
+    <div className="user-menu" ref={dropdownRef}>
+      <div
+        className="user-avatar"
+        onClick={toggleDropdown}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && toggleDropdown()}
+      >
+        {user.username?.charAt(0).toUpperCase() || "U"}
+      </div>
+
+      {/* Dropdown */}
+      {isDropdownOpen && (
+        <div className="user-dropdown">
+          <div className="user-info">
+            <span className="username">{user.username}</span>
+            <span className="role">{user.role}</span>
+          </div>
+          <div className="menu-items">
+            <Link
+              to="/profile"
+              className="menu-item"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              User info
+            </Link>
+
+            <Link
+              to="/bookings"
+              className="menu-item"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              Movies
+            </Link>
+
+            <Link
+              to="/history"
+              className="menu-item"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              History
+            </Link>
+
+            <button onClick={handleLogout} className="logout-btn">
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  ) : (
+    <Link to="/login" className="btn-secondary login-btn">
+      Login
+    </Link>
+  );
 
   return (
     <header className="header">
       <div className="logo">🎬 CINEMA</div>
 
       <nav className="navbar">
-        {/* 👇 User Navigation */}
         <Link
           to="/"
           className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
@@ -46,12 +111,12 @@ function Header() {
         </Link>
 
         <Link
-          to="/cinemas"
+          to="/theaters"
           className={`nav-link ${
             location.pathname === "/cinemas" ? "active" : ""
           }`}
         >
-          Cinemas
+          Theaters
         </Link>
 
         <Link
@@ -65,24 +130,8 @@ function Header() {
       </nav>
 
       <div className="header-buttons">
-        {/* 👇 Show Admin Panel only if user is admin */}
-        {userRole === "admin" && (
-          <Link to="/admin" className="btn-admin">
-            Admin Panel
-          </Link>
-        )}
-
         <button className="btn-primary">Buy Tickets</button>
-
-        {isLoggedIn ? (
-          <button className="btn-secondary logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
-        ) : (
-          <Link to="/login" className="btn-secondary login-btn">
-            Login
-          </Link>
-        )}
+        {userMenu}
       </div>
     </header>
   );

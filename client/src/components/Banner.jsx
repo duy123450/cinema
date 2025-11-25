@@ -69,7 +69,7 @@ function BannerSlider() {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % movies.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [movies.length]);
 
   const currentMovie = movies[currentIndex];
 

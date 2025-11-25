@@ -1,6 +1,4 @@
-import Header from "../components/Header.jsx";
 import Banner from "../components/Banner.jsx";
-import Footer from "../components/Footer.jsx";
 
 function Index() {
   return (

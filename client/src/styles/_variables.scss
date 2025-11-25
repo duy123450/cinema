@@ -21,6 +21,33 @@ $color-blue: hsl(200, 100%, 50%);
 $color-blue-light: hsl(200, 100%, 60%);
 $color-blue-70: hsl(200, 100%, 70%);
 
+// User Menu Colors
+$user-avatar-bg: hsl(200, 100%, 50%);
+$user-avatar-color: white;
+$user-menu-bg: hsl(0, 0%, 10%);
+$user-menu-border: hsla(0, 0%, 100%, 0.1);
+$user-menu-shadow: hsla(0, 0%, 0%, 0.4);
+$user-menu-hover: hsla(0, 0%, 100%, 0.1);
+$logout-btn-color: hsl(0, 100%, 50%);
+$logout-btn-hover-color: hsl(0, 100%, 60%);
+$username-color: white;
+$role-color: hsl(51, 100%, 70%);
+
+// Success Colors
+$color-success: hsl(120, 100%, 25%);        // Base success green
+$color-success-light: hsl(120, 100%, 35%);   // Hover/lighter version
+$color-success-dark: hsl(120, 100%, 15%);    // Darker version
+
+// Error Colors  
+$color-error: hsl(0, 70%, 40%);             // Your existing red
+$color-error-light: hsl(0, 70%, 50%);
+$color-error-dark: hsl(0, 70%, 30%);
+
+// Warning Colors
+$color-warning: hsl(51, 100%, 50%);         // Your existing yellow
+$color-warning-light: hsl(51, 100%, 60%);
+$color-warning-dark: hsl(51, 100%, 40%);
+
 // Spacing
 $spacing-xs: 0.25rem;
 $spacing-sm: 0.5rem;
@@ -28,6 +55,7 @@ $spacing-md: 1rem;
 $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
 $spacing-xxl: 3rem;
+$user-avatar-size: 40px;
 
 // Border Radius
 $radius-sm: 4px;

@@ -1,27 +1,35 @@
-// src/pages/Login.jsx
-
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useContext } from "react";
+import AuthContext from "../contexts/AuthContext";
 
 function Login() {
   const [formData, setFormData] = useState({
-    email: "",
+    identifier: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const api = axios.create({
+    baseURL: import.meta.env.DEV ? "http://localhost/server/api" : "/api",
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   const validate = () => {
     const newErrors = {};
 
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+    if (!formData.identifier) {
+      newErrors.identifier = "Username or Email is required";
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
@@ -38,7 +46,6 @@ function Login() {
       [name]: value,
     });
 
-    // Clear error when user types
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -56,17 +63,35 @@ function Login() {
       return;
     }
 
-    setErrors({}); // Clear any existing errors
+    setErrors({});
+    setSuccessMessage(""); 
     setIsLoading(true);
 
-    // Simulate API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Login submitted:", formData);
-      // Add your actual login logic here
+      const response = await api.post("/login.php", formData);
+
+      if (response.data.success) {
+        login(response.data.user);
+        setSuccessMessage("Login successful!");
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        setErrors({ general: response.data.message || "Login failed" });
+      }
     } catch (error) {
-      console.error("Login failed:", error);
-      setErrors({ general: "Invalid email or password" });
+      console.error("Login error:", error);
+      let errorMessage = "Network error. Please try again.";
+
+      if (error.response) {
+        errorMessage = error.response.data.message || "Login failed";
+      } else if (error.request) {
+        errorMessage = "Network error. Check if server is running.";
+      } else {
+        errorMessage = "An unexpected error occurred.";
+      }
+
+      setErrors({ general: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -77,25 +102,32 @@ function Login() {
       <div className="auth-container">
         <h2>Login to Your Account</h2>
 
-        {/* 👇 General error message */}
+        {/* 👇 Show success message */}
+        {successMessage && (
+          <div className="success-message">{successMessage}</div>
+        )}
+
+        {/* 👇 Show error message */}
         {errors.general && (
           <div className="error-message">{errors.general}</div>
         )}
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="identifier">Username or Email</label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              id="identifier"
+              name="identifier"
+              value={formData.identifier}
               onChange={handleInputChange}
-              className={errors.email ? "error" : ""}
+              className={errors.identifier ? "error" : ""}
               disabled={isLoading}
+              placeholder="Enter username or email"
             />
-            {/* 👇 Email error message */}
-            {errors.email && <span className="error-text">{errors.email}</span>}
+            {errors.identifier && (
+              <span className="error-text">{errors.identifier}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -109,7 +141,6 @@ function Login() {
               className={errors.password ? "error" : ""}
               disabled={isLoading}
             />
-            {/* 👇 Password error message */}
             {errors.password && (
               <span className="error-text">{errors.password}</span>
             )}

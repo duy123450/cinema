@@ -1,49 +1,45 @@
-// src/pages/Register.jsx
-
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { apiService } from "../services/api";
 
 function Register() {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
+    first_name: "",
+    last_name: "",
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const validate = () => {
     const newErrors = {};
 
-    // Name validation
-    if (!formData.name) {
-      newErrors.name = "Name is required";
-    } else if (formData.name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
+    if (!formData.username) {
+      newErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
     }
 
-    // Email validation
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
 
-    // Confirm password validation (only if password is filled)
-    if (formData.password && !formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (
-      formData.password &&
-      formData.password !== formData.confirmPassword
-    ) {
+    if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
@@ -52,52 +48,37 @@ function Register() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
 
-    // If user is typing in password field
-    if (name === "password") {
-      // If password is being cleared (empty), also clear confirm password
-      if (!value) {
-        setFormData({
-          ...formData,
-          [name]: value,
-          confirmPassword: "", // 👈 Clear confirm password when password is cleared
-        });
-        // Clear confirm password error too
-        if (errors.confirmPassword) {
-          setErrors({
-            ...errors,
-            confirmPassword: "",
-          });
-        }
-      } else {
-        // Otherwise just update password
-        setFormData({
-          ...formData,
-          [name]: value,
-        });
-      }
-    } else {
-      // For other fields (name, email, confirmPassword), update normally
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
-
-    // Clear error when user types in the field
     if (errors[name]) {
       setErrors({
         ...errors,
         [name]: "",
       });
     }
+  };
 
-    // Clear confirm password error when password changes (but not when clearing)
-    if (name === "password" && value && errors.confirmPassword) {
-      setErrors({
-        ...errors,
-        confirmPassword: "",
-      });
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.match("image.*")) {
+        setErrors({ avatar: "Please upload an image file (jpg, png, gif)" });
+        return;
+      }
+
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        setErrors({ avatar: "File size must be less than 2MB" });
+        return;
+      }
+
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+      setErrors((prev) => ({ ...prev, avatar: "" }));
     }
   };
 
@@ -110,17 +91,31 @@ function Register() {
       return;
     }
 
-    setErrors({}); // Clear any existing errors
+    setErrors({});
     setIsLoading(true);
 
-    // Simulate API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Register submitted:", formData);
-      // Add your actual registration logic here
+      // Prepare form data for API
+      const formDataWithAvatar = new FormData();
+      formDataWithAvatar.append("user_data", JSON.stringify(formData));
+
+      // Only add avatar if provided
+      if (avatarFile) {
+        formDataWithAvatar.append("avatar", avatarFile);
+      }
+
+      const response = await apiService.registerUser(formDataWithAvatar);
+
+      if (response.success) {
+        navigate("/login", {
+          state: { message: "Registration successful! Please login." },
+        });
+      } else {
+        setErrors({ general: response.message || "Registration failed" });
+      }
     } catch (error) {
-      console.error("Registration failed:", error);
-      setErrors({ general: "Registration failed. Please try again." });
+      console.error("Registration error:", error);
+      setErrors({ general: "Network error. Please try again." });
     } finally {
       setIsLoading(false);
     }
@@ -131,25 +126,75 @@ function Register() {
       <div className="auth-container">
         <h2>Create New Account</h2>
 
-        {/* 👇 General error message */}
         {errors.general && (
           <div className="error-message">{errors.general}</div>
         )}
 
         <form onSubmit={handleRegister}>
+          {/* Avatar Upload (Optional) */}
+          <div className="avatar-upload-section">
+            <div className="avatar-preview">
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Preview" />
+              ) : (
+                <div className="avatar-placeholder">Avatar</div>
+              )}
+            </div>
+            <label className="avatar-upload-label">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={isLoading}
+                style={{ display: "none" }}
+              />
+              Upload Avatar (Optional)
+            </label>
+            {errors.avatar && (
+              <span className="error-text">{errors.avatar}</span>
+            )}
+          </div>
+
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="first_name">First Name</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="first_name"
+              name="first_name"
+              value={formData.first_name}
               onChange={handleInputChange}
-              className={errors.name ? "error" : ""}
+              required
               disabled={isLoading}
             />
-            {/* 👇 Name error message */}
-            {errors.name && <span className="error-text">{errors.name}</span>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="last_name">Last Name</label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleInputChange}
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              required
+              disabled={isLoading}
+            />
+            {errors.username && (
+              <span className="error-text">{errors.username}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -160,10 +205,9 @@ function Register() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={errors.email ? "error" : ""}
+              required
               disabled={isLoading}
             />
-            {/* 👇 Email error message */}
             {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
 
@@ -175,10 +219,9 @@ function Register() {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              className={errors.password ? "error" : ""}
+              required
               disabled={isLoading}
             />
-            {/* 👇 Password error message */}
             {errors.password && (
               <span className="error-text">{errors.password}</span>
             )}
@@ -192,29 +235,16 @@ function Register() {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              className={errors.confirmPassword ? "error" : ""}
-              disabled={isLoading || !formData.password} // 👈 Disabled if password is empty
+              required
+              disabled={isLoading}
             />
-            {/* 👇 Confirm password error message */}
             {errors.confirmPassword && (
               <span className="error-text">{errors.confirmPassword}</span>
-            )}
-
-            {/* 👇 Helper text when confirm password is disabled */}
-            {!formData.password && (
-              <span className="disabled-text">Enter a password first</span>
             )}
           </div>
 
           <button type="submit" className="btn-submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <span className="loading-spinner"></span>
-                Creating Account...
-              </>
-            ) : (
-              "Register"
-            )}
+            {isLoading ? "Creating Account..." : "Register"}
           </button>
         </form>
 
