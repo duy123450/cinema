@@ -11,33 +11,35 @@ $path_parts = array_values(array_filter(explode('/', $requested_path)));
 
 // Get the first part (API endpoint)
 $endpoint = $path_parts[0] ?? '';
+$sub_endpoint = $path_parts[1] ?? '';
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Handle API requests only
-if ($endpoint === 'api' && isset($path_parts[1])) {
-    $api_file = $path_parts[1];
+if ($endpoint === 'api' && isset($sub_endpoint)) {
+    $api_file = $sub_endpoint;
 
     // Handle files with parameters (like ?id=1)
     $api_file = strtok($api_file, '?');
 
     switch ($api_file) {
-        case 'login.php':
+        case 'login':
             require_once 'api/login.php';
             break;
 
-        case 'register.php':
+        case 'register':
             require_once 'api/register.php';
             break;
 
-        case 'update-profile.php':
+        case 'update-profile':
             require_once 'api/update-profile.php';
             break;
 
-        case 'upload-avatar.php':
+        case 'upload-avatar':
             require_once 'api/upload-avatar.php';
             break;
 
-        case 'users.php':
+        case 'users':
             require_once 'api/users.php';
             break;
 
@@ -58,11 +60,11 @@ if ($endpoint === 'api' && isset($path_parts[1])) {
             require_once 'api/bookings.php';
             break;
 
-        case 'ping.php':
+        case 'ping':
             require_once 'api/ping.php';
             break;
 
-        case 'logout.php':
+        case 'logout':
             require_once 'api/logout.php';
             break;
 

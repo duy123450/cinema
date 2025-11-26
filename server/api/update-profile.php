@@ -5,7 +5,6 @@ require_once '../config/dbconnect.php';
 $conn = connectDB();
 $auth_user = checkAuth();
 
-
 $user_id = $_POST['user_id'];
 
 error_log("Session user ID: " . $auth_user['user_id']);

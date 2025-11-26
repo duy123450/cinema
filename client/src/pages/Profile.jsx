@@ -24,13 +24,10 @@ function Profile() {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    console.log("User ID:", user?.user_id);
     if (!user) {
       navigate("/login");
       return;
     }
-
-    console.log("User inside component:", user);
 
     setFormData({
       username: user.username || "",
@@ -43,14 +40,14 @@ function Profile() {
 
     // Set avatar preview
     const avatarUrl = user.avatar
-      ? `/server/uploads/${user.avatar}`
+      ? `http://localhost/server/uploads/${user.avatar}`
       : `https://ui-avatars.com/api/?name=${
           user.username || "U"
         }&background=200&color=fff`;
 
     setAvatarPreview(avatarUrl);
     setIsLoading(false);
-  }, [user, navigate]);
+  }, [user, avatarFile, navigate]);
 
   const validate = () => {
     const newErrors = {};
