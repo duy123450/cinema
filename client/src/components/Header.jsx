@@ -32,17 +32,29 @@ function Header() {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  // Generate avatar URL
+  const getAvatarUrl = () => {
+    if (user.avatar) {
+      return `http://localhost/server/uploads/${user.avatar}`;
+    }
+    // Fallback to placeholder if no avatar
+    return `https://ui-avatars.com/api/?name=${
+      user.username || "U"
+    }&background=200&color=fff`;
+  };
+
   const userMenu = user ? (
     <div className="user-menu" ref={dropdownRef}>
-      <div
-        className="user-avatar"
+      <img
+        src={getAvatarUrl()}
+        alt={user.username}
+        className="user-avatar-image"
         onClick={toggleDropdown}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && toggleDropdown()}
-      >
-        {user.username?.charAt(0).toUpperCase() || "U"}
-      </div>
+        style={{ cursor: "pointer" }}
+      />
 
       {/* Dropdown */}
       {isDropdownOpen && (
