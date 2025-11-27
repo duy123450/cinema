@@ -14,6 +14,7 @@ CREATE TABLE users (
     date_of_birth DATE,
     role ENUM('admin', 'staff', 'customer') DEFAULT 'customer',
     status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+    avatar varchar(255) DEFAULT 'default-avatar.png',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -29,11 +30,11 @@ CREATE TABLE movies (
     duration_minutes INT NOT NULL,
     release_date DATE,
     director VARCHAR(100),
-    cast_names TEXT, -- Comma-separated list
-    genre VARCHAR(100), -- Comma-separated list
+    cast_names TEXT,
+    genre VARCHAR(100),
     language VARCHAR(50) DEFAULT 'English',
     rating ENUM('G', 'PG', 'PG-13', 'R', 'NC-17') DEFAULT 'PG-13',
-    imdb_rating DECIMAL(3,1), -- 0.0 to 10.0
+    imdb_rating DECIMAL(3,1),
     poster_url VARCHAR(500),
     trailer_url VARCHAR(500),
     status ENUM('upcoming', 'now_showing', 'ended') DEFAULT 'upcoming',
@@ -56,7 +57,7 @@ CREATE TABLE cinemas (
     email VARCHAR(100),
     total_screens INT NOT NULL,
     total_seats INT NOT NULL,
-    amenities TEXT, -- Comma-separated list
+    amenities TEXT,
     latitude DECIMAL(10,8),
     longitude DECIMAL(11,8),
     status ENUM('open', 'closed', 'under_construction') DEFAULT 'open',
@@ -72,7 +73,7 @@ CREATE TABLE screens (
     cinema_id INT NOT NULL,
     screen_number VARCHAR(10) NOT NULL,
     total_seats INT NOT NULL,
-    seat_layout JSON, -- Store seat arrangement as JSON
+    seat_layout JSON,
     screen_type ENUM('standard', 'imax', 'dolby_atmos', '3d', '4dx') DEFAULT 'standard',
     status ENUM('active', 'maintenance', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -89,8 +90,8 @@ CREATE TABLE showtimes (
     screen_id INT NOT NULL,
     show_date DATE NOT NULL,
     show_time TIME NOT NULL,
-    price DECIMAL(6,2) NOT NULL, -- Ticket price
-    available_seats JSON, -- Store available seat numbers as JSON
+    price DECIMAL(6,2) NOT NULL,
+    available_seats JSON,
     status ENUM('scheduled', 'active', 'cancelled', 'completed') DEFAULT 'scheduled',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -111,7 +112,7 @@ CREATE TABLE tickets (
     price_paid DECIMAL(6,2) NOT NULL,
     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('booked', 'paid', 'cancelled', 'used') DEFAULT 'booked',
-    qr_code VARCHAR(255), -- For ticket verification
+    qr_code VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id) ON DELETE CASCADE,
@@ -129,7 +130,7 @@ CREATE TABLE payments (
     amount DECIMAL(8,2) NOT NULL,
     payment_method ENUM('credit_card', 'debit_card', 'paypal', 'cash', 'mobile') NOT NULL,
     payment_status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
-    transaction_id VARCHAR(100), -- Payment gateway transaction ID
+    transaction_id VARCHAR(100),
     payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -163,12 +164,12 @@ CREATE TABLE promotions (
     description TEXT,
     discount_type ENUM('percentage', 'fixed_amount', 'buy_x_get_y') NOT NULL,
     discount_value DECIMAL(5,2) NOT NULL,
-    min_amount DECIMAL(6,2), -- Minimum purchase required
-    max_discount DECIMAL(6,2), -- Maximum discount amount
+    min_amount DECIMAL(6,2),
+    max_discount DECIMAL(6,2),
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     code VARCHAR(20) UNIQUE,
-    usage_limit INT, -- Max times this promotion can be used
+    usage_limit INT,
     used_count INT DEFAULT 0,
     status ENUM('active', 'inactive', 'expired') DEFAULT 'inactive',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
