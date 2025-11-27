@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
 
 function Login() {
@@ -64,7 +63,7 @@ function Login() {
     }
 
     setErrors({});
-    setSuccessMessage(""); 
+    setSuccessMessage("");
     setIsLoading(true);
 
     try {
