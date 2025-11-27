@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect } from "react";
-import { apiService } from "../services/api";
 
 const AuthContext = createContext();
 
@@ -8,50 +7,19 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const initializeAuth = async () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
       try {
-        // First, check if there's a stored user in localStorage
-        const storedUser = localStorage.getItem("user");
-
-        if (storedUser && storedUser !== "undefined") {
-          try {
-            const parsedUser = JSON.parse(storedUser);
-            if (parsedUser && typeof parsedUser === "object") {
-              try {
-                // Verify the session is still active on the server
-                const response = await apiService.ping();
-
-                if (response.success) {
-                  // Session is valid, set the user
-                  setUser(parsedUser);
-                } else {
-                  // Session expired, clear localStorage
-                  localStorage.removeItem("user");
-                }
-              } catch (pingError) {
-                // Ping failed (network error, server down, etc)
-                // Keep user logged in locally but note the error
-                console.warn(
-                  "Could not verify session with server:",
-                  pingError
-                );
-                setUser(parsedUser);
-              }
-            }
-          } catch (error) {
-            console.error("Failed to parse user from localStorage:", error);
-            localStorage.removeItem("user");
-          }
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser && typeof parsedUser === "object") {
+          setUser(parsedUser);
         }
       } catch (error) {
-        console.error("Auth initialization error:", error);
+        console.error("Failed to parse user from localStorage:", error);
         localStorage.removeItem("user");
-      } finally {
-        setIsLoading(false);
       }
-    };
-
-    initializeAuth();
+    }
+    setIsLoading(false);
   }, []);
 
   const login = (userData) => {
@@ -73,9 +41,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, isLoading, login, logout, updateUser }}
-    >
+    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

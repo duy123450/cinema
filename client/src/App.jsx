@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index.jsx";
 import Movies from "./pages/Movies.jsx";
 import Showtimes from "./pages/Showtimes.jsx";
@@ -14,108 +9,86 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Layout from "./components/Layout.jsx";
 import Profile from "./pages/Profile.jsx";
-import { AuthProvider } from "./contexts/AuthContext.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Routes>
-          {/* Public Routes - with Layout */}
-          <Route
-            path="/login"
-            element={
-              <Layout>
-                <Login />
-              </Layout>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <Layout>
-                <Register />
-              </Layout>
-            }
-          />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Index />
+            </Layout>
+          }
+        />
+        <Route
+          path="/movies"
+          element={
+            <Layout>
+              <Movies />
+            </Layout>
+          }
+        />
+        <Route
+          path="/showtimes"
+          element={
+            <Layout>
+              <Showtimes />
+            </Layout>
+          }
+        />
+        <Route
+          path="/theaters"
+          element={
+            <Layout>
+              <Theaters />
+            </Layout>
+          }
+        />
+        <Route
+          path="/bookings"
+          element={
+            <Layout>
+              <Bookings />
+            </Layout>
+          }
+        />
 
-          {/* Protected Routes - with Layout */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Index />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/movies"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Movies />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/showtimes"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Showtimes />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/theaters"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Theaters />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/bookings"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Bookings />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Admin />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Profile />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Catch-all - Redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AuthProvider>
+        {/* Admin page (also needs header/footer) */}
+        <Route
+          path="/admin"
+          element={
+            <Layout>
+              <Admin />
+            </Layout>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Layout>
+              <Login />
+            </Layout>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <Layout>
+              <Register />
+            </Layout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Layout>
+              <Profile />
+            </Layout>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
