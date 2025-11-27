@@ -97,17 +97,3 @@
     }
   }
 }
-
-.user-avatar-image {
-  width: $avatar-size;
-  height: $avatar-size;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid $avatar-border-color;
-  cursor: pointer;
-  transition: transform $avatar-transition;
-  
-  &:hover {
-    transform: scale($avatar-hover-scale);
-  }
-}

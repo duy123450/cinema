@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get user from database with ALL fields
     if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
-        $sql = "SELECT user_id, username, email, first_name, last_name, phone, role, password_hash, avatar FROM users WHERE email = ? AND status = 'active'";
+        $sql = "SELECT user_id, username, email, first_name, last_name, phone, role, password_hash FROM users WHERE email = ? AND status = 'active'";
     } else {
-        $sql = "SELECT user_id, username, email, first_name, last_name, phone, role, password_hash, avatar FROM users WHERE username = ? AND status = 'active'";
+        $sql = "SELECT user_id, username, email, first_name, last_name, phone, role, password_hash FROM users WHERE username = ? AND status = 'active'";
     }
 
     $stmt = $conn->prepare($sql);
