@@ -6,6 +6,7 @@
   align-items: center;
   gap: $spacing-sm;
   cursor: pointer;
+  
 }
 
 .user-avatar {
@@ -36,7 +37,6 @@
   box-shadow: 0 8px 20px $user-menu-shadow;
   min-width: 200px;
   z-index: 1000;
-  // Remove hover dependency - controlled by React state
   opacity: 1;
   visibility: visible;
   transform: translateY(0);

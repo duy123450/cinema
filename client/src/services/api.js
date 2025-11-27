@@ -74,8 +74,16 @@ export const apiService = {
     },
 
     // Update profile with optional avatar
-    updateProfile: async (formData) => {
-        const response = await api.post('/update-profile.php', formData, { 
+    updateProfile: async (userId, formData, avatarFile = null) => {
+        const formDataWithAvatar = new FormData();
+        formDataWithAvatar.append('user_id', userId);
+        formDataWithAvatar.append('profile_data', JSON.stringify(formData));
+
+        if (avatarFile) {
+            formDataWithAvatar.append('avatar', avatarFile);
+        }
+
+        const response = await api.post(`/users?id=${userId}`, formDataWithAvatar, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -102,11 +110,6 @@ export const apiService = {
     // Ping endpoint for session keep-alive
     ping: async () => {
         const response = await api.get('/ping.php');
-        return response.data;
-    },
-
-    logout: async () => {
-        const response = await api.post('/logout.php');
         return response.data;
     },
 };

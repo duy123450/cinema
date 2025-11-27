@@ -132,12 +132,15 @@ function Profile() {
 
       // Handle avatar upload
       if (avatarFile) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("avatar", avatarFile);
+        formDataUpload.append("user_id", user.user_id);
+
+        if (avatarFile.success) {
+          finalData.avatar = avatarFile;
+        }
         // 👇 Use updateProfile for everything
-        const updatedUser = await apiService.updateProfile({
-          user_id: user.user_id,
-          profileData: finalData,
-          avatar: avatarFile, 
-        });
+        const updatedUser = await apiService.updateProfile(user.user_id, finalData);
 
         if (updatedUser) {
           // 👇 Update context with full user data including avatar
