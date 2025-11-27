@@ -23,3 +23,48 @@
     margin-top: $spacing-xs;
     display: block;
 }
+
+.page-not-found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-container {
+  max-width: 600px;
+  padding: 3rem;
+  background: hsl(0, 0%, 13%);
+  border-radius: $radius-lg;
+  border: 1px solid hsla(0, 0%, 100%, 0.1);
+}
+
+.error-code {
+  font-size: 4rem;
+  color: $color-red;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.error-title {
+  font-size: 2rem;
+  color: $color-gray-85;
+  margin-bottom: 1rem;
+}
+
+.error-message-404 {
+  font-size: 1rem;
+  color: $color-gray-60;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}

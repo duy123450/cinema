@@ -1,4 +1,4 @@
-@use 'variables' as *;
+@use "variables" as *;
 
 .btn-primary {
     background: $color-yellow;
@@ -9,6 +9,7 @@
     cursor: pointer;
     font-weight: bold;
     transition: $transition;
+    text-decoration: none;
 
     &:hover {
         background: $color-yellow-light;
@@ -119,3 +120,55 @@
         background: $color-blue-light;
     }
 }
+
+// Page not found button
+.btn-index {
+    background: $color-yellow-50;
+    color: $color-gray-10;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background $transition;
+    text-decoration: none;
+    display: inline-block;
+
+    &:hover {
+        background: $color-yellow-60;
+    }
+}
+
+.btn-movies {
+    background: $color-blue;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background $transition;
+    text-decoration: none;
+    display: inline-block;
+
+    &:hover {
+        background: $color-blue-light;
+    }
+}
+
+.btn-showtimes {
+    background: $color-red; // Red color
+    color: white;
+    padding: 0.6rem 1.3rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background $transition;
+    text-decoration: none;
+    display: inline-block;
+  
+    &:hover {
+      background: $color-red-light; // Lighter red on hover
+    }
+  }

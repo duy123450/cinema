@@ -9,6 +9,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Layout from "./components/Layout.jsx";
 import Profile from "./pages/Profile.jsx";
+import PageNotFound from "./pages/PageNotFound.jsx";
 
 function App() {
   return (
@@ -87,6 +88,16 @@ function App() {
               <Profile />
             </Layout>
           }
+        />
+
+        {/* 404 Page Not Found */}
+        <Route 
+          path="*" 
+          element={
+            <Layout>
+              <PageNotFound />
+            </Layout>
+          } 
         />
       </Routes>
     </Router>
