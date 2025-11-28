@@ -2,9 +2,7 @@
 require_once '../cors.php';
 require_once '../config/dbconnect.php';
 
-if (!isset($_SESSION)) {
-    session_start();
-}
+// cors.php already starts session
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get user data from form
@@ -41,7 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array($file['type'], $allowedTypes) && $file['size'] <= 2 * 1024 * 1024) {
             $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $avatar_filename = 'avatar_' . time() . '_' . uniqid() . '.' . $fileExtension;
-            $uploadDir = __DIR__ . '/../../uploads/';
+            $uploadDir = __DIR__ . '/../uploads/';
+
+            // Create uploads directory if it doesn't exist
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
             $targetPath = $uploadDir . $avatar_filename;
 
             if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
@@ -65,12 +69,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     if ($result) {
+        // Get the newly created user ID
+        $user_id = $conn->lastInsertId();
+
+        // Set session for auto-login after registration
+        $_SESSION['user'] = [
+            'user_id' => $user_id,
+            'username' => $userData['username'],
+            'email' => $userData['email'],
+            'first_name' => $userData['first_name'] ?? '',
+            'last_name' => $userData['last_name'] ?? '',
+            'phone' => $userData['phone'] ?? '',
+            'role' => 'customer',
+            'avatar' => $avatar_filename,
+            'created_at' => time()
+        ];
+
         http_response_code(201);
-        echo json_encode(['success' => true, 'message' => 'User created successfully']);
+        echo json_encode([
+            'success' => true,
+            'message' => 'User created successfully',
+            'user' => [
+                'user_id' => $user_id,
+                'username' => $userData['username'],
+                'email' => $userData['email'],
+                'first_name' => $userData['first_name'] ?? '',
+                'last_name' => $userData['last_name'] ?? '',
+                'phone' => $userData['phone'] ?? '',
+                'role' => 'customer',
+                'avatar' => $avatar_filename
+            ]
+        ]);
     } else {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'Failed to create user']);
     }
+
+    $conn = null;
 } else {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);

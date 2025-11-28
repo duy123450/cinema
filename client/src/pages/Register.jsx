@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiService } from "../services/api";
+import AuthContext from "../contexts/AuthContext";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -15,8 +16,8 @@ function Register() {
   const [avatarPreview, setAvatarPreview] = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const validate = () => {
     const newErrors = {};
@@ -109,15 +110,25 @@ function Register() {
       const response = await apiService.registerUser(formDataWithAvatar);
 
       if (response.success) {
-        navigate("/login", {
-          state: { message: "Registration successful! Please login." },
+        // 👇 Auto-login after registration
+        login(response.user);
+
+        // Redirect to home or profile
+        navigate("/", {
+          state: { message: "Registration successful! Welcome!" },
         });
       } else {
         setErrors({ general: response.message || "Registration failed" });
       }
     } catch (error) {
       console.error("Registration error:", error);
-      setErrors({ general: "Network error. Please try again." });
+
+      let errorMessage = "Network error. Please try again.";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
+      setErrors({ general: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -165,7 +176,6 @@ function Register() {
               name="first_name"
               value={formData.first_name}
               onChange={handleInputChange}
-              required
               disabled={isLoading}
             />
           </div>
@@ -178,7 +188,6 @@ function Register() {
               name="last_name"
               value={formData.last_name}
               onChange={handleInputChange}
-              required
               disabled={isLoading}
             />
           </div>
@@ -193,6 +202,7 @@ function Register() {
               onChange={handleInputChange}
               required
               disabled={isLoading}
+              className={errors.username ? "error" : ""}
             />
             {errors.username && (
               <span className="error-text">{errors.username}</span>
@@ -209,6 +219,7 @@ function Register() {
               onChange={handleInputChange}
               required
               disabled={isLoading}
+              className={errors.email ? "error" : ""}
             />
             {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
@@ -223,6 +234,7 @@ function Register() {
               onChange={handleInputChange}
               required
               disabled={isLoading}
+              className={errors.password ? "error" : ""}
             />
             {errors.password && (
               <span className="error-text">{errors.password}</span>
@@ -239,6 +251,7 @@ function Register() {
               onChange={handleInputChange}
               required
               disabled={isLoading}
+              className={errors.confirmPassword ? "error" : ""}
             />
             {errors.confirmPassword && (
               <span className="error-text">{errors.confirmPassword}</span>

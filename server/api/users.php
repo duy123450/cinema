@@ -5,8 +5,8 @@ require_once '../config/dbconnect.php';
 $conn = connectDB();
 $auth_user = checkAuth();
 
-if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-    $user_id = $_GET['id'] ?? null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $user_id = $_POST['user_id'] ?? null;
 
     if ($auth_user['user_id'] != $user_id) {
         http_response_code(403);
@@ -14,12 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         exit();
     }
 
-    $rawData = file_get_contents('php://input');
-    $input = json_decode($rawData, true);
+    // Get profile data
+    $profileData = json_decode($_POST['profile_data'] ?? '{}', true);
 
-    if (!is_array($input)) {
+    if (!is_array($profileData)) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Invalid JSON format']);
+        echo json_encode(['success' => false, 'message' => 'Invalid profile data']);
         exit();
     }
 
@@ -29,9 +29,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $allowed_fields = ['username', 'email', 'first_name', 'last_name', 'phone'];
 
     foreach ($allowed_fields as $field) {
-        if (isset($input[$field])) {
+        if (isset($profileData[$field])) {
             $fields[] = "$field = ?";
-            $params[] = $input[$field];
+            $params[] = $profileData[$field];
+        }
+    }
+
+    // Handle avatar upload (optional)
+    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['avatar'];
+        $allowedTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/jpg',
+            'image/jfif'
+        ];
+
+        if (in_array($file['type'], $allowedTypes) && $file['size'] <= 2 * 1024 * 1024) {
+            $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $avatar_filename = 'avatar_' . time() . '_' . uniqid() . '.jpg';
+            $uploadDir = __DIR__ . '/../uploads/';
+            $targetPath = $uploadDir . $avatar_filename;
+
+            if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                // 👇 Convert to JPG if necessary
+                $image = imagecreatefromstring(file_get_contents($targetPath));
+                if ($image) {
+                    imagejpeg($image, $targetPath, 90); // Save as JPG
+                    imagedestroy($image);
+                }
+                $fields[] = "avatar = ?";
+                $params[] = $avatar_filename;
+            }
         }
     }
 
@@ -47,18 +77,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $result = $stmt->execute($params);
 
     if ($result) {
-        // 👇 CRITICAL: Fetch the UPDATED user data from database
-        $updated_user_query = "SELECT user_id, username, email, first_name, last_name, phone, role, status FROM users WHERE user_id = ?";
+        // Fetch updated user data
+        $updated_user_query = "SELECT user_id, username, email, first_name, last_name, phone, role, avatar FROM users WHERE user_id = ?";
         $updated_stmt = $conn->prepare($updated_user_query);
         $updated_stmt->execute([$user_id]);
         $updated_user = $updated_stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($updated_user) {
             $_SESSION['user'] = $updated_user;
+            http_response_code(200);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Profile updated successfully',
+                'user' => $updated_user
+            ]);
         }
-
-        http_response_code(200);
-        echo json_encode(['success' => true, 'message' => 'Profile updated successfully']);
     } else {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'Failed to update profile']);
