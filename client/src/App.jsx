@@ -10,11 +10,13 @@ import Register from "./pages/Register.jsx";
 import Layout from "./components/Layout.jsx";
 import Profile from "./pages/Profile.jsx";
 import PageNotFound from "./pages/PageNotFound.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route
           path="/"
           element={
@@ -47,24 +49,7 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/bookings"
-          element={
-            <Layout>
-              <Bookings />
-            </Layout>
-          }
-        />
 
-        {/* Admin page (also needs header/footer) */}
-        <Route
-          path="/admin"
-          element={
-            <Layout>
-              <Admin />
-            </Layout>
-          }
-        />
         <Route
           path="/login"
           element={
@@ -81,23 +66,55 @@ function App() {
             </Layout>
           }
         />
+
+        {/* Protected Routes */}
+        <Route
+          path="/bookings"
+          element={
+            <ProtectedRoute
+              element={
+                <Layout>
+                  <Bookings />
+                </Layout>
+              }
+            />
+          }
+        />
+
         <Route
           path="/profile"
           element={
-            <Layout>
-              <Profile />
-            </Layout>
+            <ProtectedRoute
+              element={
+                <Layout>
+                  <Profile />
+                </Layout>
+              }
+            />
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute
+              element={
+                <Layout>
+                  <Admin />
+                </Layout>
+              }
+            />
           }
         />
 
         {/* 404 Page Not Found */}
-        <Route 
-          path="*" 
+        <Route
+          path="*"
           element={
             <Layout>
               <PageNotFound />
             </Layout>
-          } 
+          }
         />
       </Routes>
     </Router>
