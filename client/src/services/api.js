@@ -91,6 +91,15 @@ export const apiService = {
         return response.data.user;
     },
 
+    // Update password
+    updatePassword: async (userId, passwordData) => {
+        const response = await api.post('/update-password.php', {
+            user_id: userId,
+            ...passwordData
+        });
+        return response.data;
+    },
+
     // Bookings
     getBookings: async (userId) => {
         const response = await api.get(`/bookings?user_id=${userId}`);

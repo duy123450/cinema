@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiService } from "../services/api";
 import AuthContext from "../contexts/AuthContext";
+import PasswordInput from "../components/PasswordInput";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -65,15 +66,13 @@ function Register() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.match("image.*")) {
         setErrors({
-          avatar: "Please upload an image file (jpg, png, gif, jpg, jfif)",
+          avatar: "Please upload an image file (jpg, png, gif)",
         });
         return;
       }
 
-      // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         setErrors({ avatar: "File size must be less than 2MB" });
         return;
@@ -98,11 +97,9 @@ function Register() {
     setIsLoading(true);
 
     try {
-      // Prepare form data for API
       const formDataWithAvatar = new FormData();
       formDataWithAvatar.append("user_data", JSON.stringify(formData));
 
-      // Only add avatar if provided
       if (avatarFile) {
         formDataWithAvatar.append("avatar", avatarFile);
       }
@@ -110,10 +107,7 @@ function Register() {
       const response = await apiService.registerUser(formDataWithAvatar);
 
       if (response.success) {
-        // 👇 Auto-login after registration
         login(response.user);
-
-        // Redirect to home or profile
         navigate("/", {
           state: { message: "Registration successful! Welcome!" },
         });
@@ -122,12 +116,10 @@ function Register() {
       }
     } catch (error) {
       console.error("Registration error:", error);
-
       let errorMessage = "Network error. Please try again.";
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-
       setErrors({ general: errorMessage });
     } finally {
       setIsLoading(false);
@@ -144,7 +136,7 @@ function Register() {
         )}
 
         <form onSubmit={handleRegister}>
-          {/* Avatar Upload (Optional) */}
+          {/* Avatar Upload */}
           <div className="avatar-upload-section">
             <div className="avatar-preview">
               {avatarPreview ? (
@@ -224,39 +216,29 @@ function Register() {
             {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-              disabled={isLoading}
-              className={errors.password ? "error" : ""}
-            />
-            {errors.password && (
-              <span className="error-text">{errors.password}</span>
-            )}
-          </div>
+          {/* Password Input with Eye Icon */}
+          <PasswordInput
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            label="Password"
+            error={errors.password}
+            disabled={isLoading}
+            required
+          />
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required
-              disabled={isLoading}
-              className={errors.confirmPassword ? "error" : ""}
-            />
-            {errors.confirmPassword && (
-              <span className="error-text">{errors.confirmPassword}</span>
-            )}
-          </div>
+          {/* Confirm Password Input with Eye Icon */}
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            label="Confirm Password"
+            error={errors.confirmPassword}
+            disabled={isLoading}
+            required
+          />
 
           <button type="submit" className="btn-submit" disabled={isLoading}>
             {isLoading ? "Creating Account..." : "Register"}

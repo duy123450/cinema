@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../contexts/AuthContext";
+import PasswordInput from "../components/PasswordInput";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -101,12 +102,10 @@ function Login() {
       <div className="auth-container">
         <h2>Login to Your Account</h2>
 
-        {/* 👇 Show success message */}
         {successMessage && (
           <div className="success-message">{successMessage}</div>
         )}
 
-        {/* 👇 Show error message */}
         {errors.general && (
           <div className="error-message">{errors.general}</div>
         )}
@@ -129,21 +128,17 @@ function Login() {
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className={errors.password ? "error" : ""}
-              disabled={isLoading}
-            />
-            {errors.password && (
-              <span className="error-text">{errors.password}</span>
-            )}
-          </div>
+          {/* Password Input with Eye Icon */}
+          <PasswordInput
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            label="Password"
+            error={errors.password}
+            disabled={isLoading}
+            required
+          />
 
           <button type="submit" className="btn-submit" disabled={isLoading}>
             {isLoading ? (

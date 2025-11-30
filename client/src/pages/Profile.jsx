@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
 import { apiService } from "../services/api";
+import PasswordInput from "../components/PasswordInput";
 
 function Profile() {
   const { user, logout, updateUser } = useContext(AuthContext);
@@ -13,15 +14,22 @@ function Profile() {
     first_name: "",
     last_name: "",
     phone: "",
-    avatar: "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    current_password: "",
+    new_password: "",
   });
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [passwordErrors, setPasswordErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+  const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
 
   useEffect(() => {
     if (!user) {
@@ -35,10 +43,8 @@ function Profile() {
       first_name: user.first_name || "",
       last_name: user.last_name || "",
       phone: user.phone || "",
-      avatar: avatarFile || "",
     });
 
-    // Set avatar preview
     const avatarUrl = user.avatar
       ? `http://localhost/server/uploads/${user.avatar}`
       : `https://ui-avatars.com/api/?name=${
@@ -47,7 +53,7 @@ function Profile() {
 
     setAvatarPreview(avatarUrl);
     setIsLoading(false);
-  }, [user, avatarFile, navigate]);
+  }, [user, navigate]);
 
   const validate = () => {
     const newErrors = {};
@@ -66,6 +72,27 @@ function Profile() {
 
     if (formData.phone && !/^\+?\d{10,15}$/.test(formData.phone)) {
       newErrors.phone = "Phone number is invalid";
+    }
+
+    return newErrors;
+  };
+
+  const validatePassword = () => {
+    const newErrors = {};
+
+    if (!passwordData.current_password) {
+      newErrors.current_password = "Current password is required";
+    }
+
+    if (!passwordData.new_password) {
+      newErrors.new_password = "New password is required";
+    } else if (passwordData.new_password.length < 6) {
+      newErrors.new_password = "Password must be at least 6 characters";
+    }
+
+    if (passwordData.current_password === passwordData.new_password) {
+      newErrors.new_password =
+        "New password must be different from current password";
     }
 
     return newErrors;
@@ -90,10 +117,28 @@ function Profile() {
     }
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData({
+      ...passwordData,
+      [name]: value,
+    });
+
+    if (passwordErrors[name]) {
+      setPasswordErrors({
+        ...passwordErrors,
+        [name]: "",
+      });
+    }
+
+    if (passwordSuccessMessage) {
+      setPasswordSuccessMessage("");
+    }
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.match("image.*")) {
         setErrors({
           avatar: "Please upload an image file (jpg, png, gif, jpg, jfif)",
@@ -101,7 +146,6 @@ function Profile() {
         return;
       }
 
-      // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         setErrors({ avatar: "File size must be less than 2MB" });
         return;
@@ -130,7 +174,6 @@ function Profile() {
     try {
       const finalData = { ...formData };
 
-      // Handle avatar upload
       if (avatarFile) {
         const formDataUpload = new FormData();
         formDataUpload.append("avatar", avatarFile);
@@ -139,15 +182,16 @@ function Profile() {
         if (avatarFile.success) {
           finalData.avatar = avatarFile;
         }
-        // 👇 Use updateProfile for everything
-        const updatedUser = await apiService.updateProfile(user.user_id, finalData);
+
+        const updatedUser = await apiService.updateProfile(
+          user.user_id,
+          finalData
+        );
 
         if (updatedUser) {
-          // 👇 Update context with full user data including avatar
           updateUser(updatedUser);
           setSuccessMessage("Profile updated successfully!");
 
-          // 👇 Update avatar preview immediately
           if (updatedUser.avatar) {
             const newAvatarUrl = `/server/uploads/${updatedUser.avatar}`;
             setAvatarPreview(newAvatarUrl);
@@ -156,7 +200,6 @@ function Profile() {
           setErrors({ general: "Update failed" });
         }
       } else {
-        // No avatar upload, just update profile
         const updatedUser = await apiService.updateProfile(
           user.user_id,
           finalData
@@ -180,6 +223,48 @@ function Profile() {
       setErrors({ general: errorMessage });
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
+
+    const newErrors = validatePassword();
+    if (Object.keys(newErrors).length > 0) {
+      setPasswordErrors(newErrors);
+      return;
+    }
+
+    setPasswordErrors({});
+    setIsUpdatingPassword(true);
+    setPasswordSuccessMessage("");
+
+    try {
+      const response = await apiService.updatePassword(user.user_id, {
+        current_password: passwordData.current_password,
+        new_password: passwordData.new_password,
+      });
+
+      if (response.success) {
+        setPasswordSuccessMessage("Password updated successfully!");
+        setPasswordData({
+          current_password: "",
+          new_password: "",
+        });
+      } else {
+        setPasswordErrors({ general: response.message || "Update failed" });
+      }
+    } catch (error) {
+      console.error("Password update error:", error);
+      let errorMessage = "Network error. Please try again.";
+
+      if (error.response) {
+        errorMessage = error.response.data.message || "Update failed";
+      }
+
+      setPasswordErrors({ general: errorMessage });
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -236,102 +321,154 @@ function Profile() {
         </div>
 
         <div className="profile-content">
-          {errors.general && (
-            <div className="error-message">{errors.general}</div>
-          )}
+          {/* Profile Update Form */}
+          <div className="profile-section">
+            <h2>Profile Information</h2>
 
-          {successMessage && (
-            <div className="success-message">{successMessage}</div>
-          )}
+            {errors.general && (
+              <div className="error-message">{errors.general}</div>
+            )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-row">
+            {successMessage && (
+              <div className="success-message">{successMessage}</div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="username">Username</label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className={errors.username ? "error" : ""}
+                    disabled={isUpdating}
+                  />
+                  {errors.username && (
+                    <span className="error-text">{errors.username}</span>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={errors.email ? "error" : ""}
+                    disabled={isUpdating}
+                  />
+                  {errors.email && (
+                    <span className="error-text">{errors.email}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="first_name">First Name</label>
+                  <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    disabled={isUpdating}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="last_name">Last Name</label>
+                  <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    disabled={isUpdating}
+                  />
+                </div>
+              </div>
+
               <div className="form-group">
-                <label htmlFor="username">Username</label>
+                <label htmlFor="phone">Phone</label>
                 <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={formData.username}
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
                   onChange={handleInputChange}
-                  className={errors.username ? "error" : ""}
+                  className={errors.phone ? "error" : ""}
+                  placeholder="+84 123 456 789"
                   disabled={isUpdating}
                 />
-                {errors.username && (
-                  <span className="error-text">{errors.username}</span>
+                {errors.phone && (
+                  <span className="error-text">{errors.phone}</span>
                 )}
               </div>
 
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={errors.email ? "error" : ""}
+              <div className="profile-actions">
+                <button
+                  type="submit"
+                  className="btn-primary"
                   disabled={isUpdating}
-                />
-                {errors.email && (
-                  <span className="error-text">{errors.email}</span>
-                )}
+                >
+                  {isUpdating ? "Updating..." : "Update Profile"}
+                </button>
               </div>
-            </div>
+            </form>
+          </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="first_name">First Name</label>
-                <input
-                  type="text"
-                  id="first_name"
-                  name="first_name"
-                  value={formData.first_name}
-                  onChange={handleInputChange}
-                  disabled={isUpdating}
-                />
-              </div>
+          {/* Password Update Form */}
+          <div className="profile-section password-section">
+            <h2>Change Password</h2>
 
-              <div className="form-group">
-                <label htmlFor="last_name">Last Name</label>
-                <input
-                  type="text"
-                  id="last_name"
-                  name="last_name"
-                  value={formData.last_name}
-                  onChange={handleInputChange}
-                  disabled={isUpdating}
-                />
-              </div>
-            </div>
+            {passwordErrors.general && (
+              <div className="error-message">{passwordErrors.general}</div>
+            )}
 
-            <div className="form-group">
-              <label htmlFor="phone">Phone</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className={errors.phone ? "error" : ""}
-                placeholder="+84 123 456 789"
-                disabled={isUpdating}
+            {passwordSuccessMessage && (
+              <div className="success-message">{passwordSuccessMessage}</div>
+            )}
+
+            <form onSubmit={handlePasswordUpdate}>
+              <PasswordInput
+                id="current_password"
+                name="current_password"
+                value={passwordData.current_password}
+                onChange={handlePasswordChange}
+                label="Current Password"
+                error={passwordErrors.current_password}
+                disabled={isUpdatingPassword}
+                required
               />
-              {errors.phone && (
-                <span className="error-text">{errors.phone}</span>
-              )}
-            </div>
 
-            <div className="profile-actions">
-              <button
-                type="submit"
-                className="btn-primary"
-                disabled={isUpdating}
-              >
-                {isUpdating ? "Updating..." : "Update Profile"}
-              </button>
-            </div>
-          </form>
+              <PasswordInput
+                id="new_password"
+                name="new_password"
+                value={passwordData.new_password}
+                onChange={handlePasswordChange}
+                label="New Password"
+                error={passwordErrors.new_password}
+                disabled={isUpdatingPassword}
+                required
+              />
+
+              <div className="profile-actions">
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={isUpdatingPassword}
+                >
+                  {isUpdatingPassword ? "Updating..." : "Update Password"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
