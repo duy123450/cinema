@@ -74,6 +74,87 @@ CREATE TABLE screens (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (cinema_id) REFERENCES cinemas(cinema_id) ON DELETE CASCADE
 );
+CREATE TABLE showtimes (
+    showtime_id INT PRIMARY KEY AUTO_INCREMENT,
+    movie_id INT NOT NULL,
+    screen_id INT NOT NULL,
+    show_date DATE NOT NULL,
+    show_time TIME NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    available_seats INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
+    FOREIGN KEY (screen_id) REFERENCES screens(screen_id) ON DELETE CASCADE
+);
+CREATE TABLE tickets (
+    ticket_id INT PRIMARY KEY AUTO_INCREMENT,
+    showtime_id INT NOT NULL,
+    user_id INT NOT NULL,
+    seat_number VARCHAR(10) NOT NULL,
+    ticket_type ENUM('adult', 'student', 'child') DEFAULT 'adult',
+    price_paid DECIMAL(10, 2) NOT NULL,
+    status ENUM('booked', 'paid', 'cancelled') DEFAULT 'booked',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY AUTO_INCREMENT,
+    ticket_id INT NOT NULL,
+    user_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_method ENUM(
+        'credit_card',
+        'debit_card',
+        'paypal',
+        'cash',
+        'mobile'
+    ) DEFAULT 'credit_card',
+    payment_status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
+    transaction_id VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+CREATE TABLE reviews (
+    review_id INT PRIMARY KEY AUTO_INCREMENT,
+    movie_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL CHECK (
+        rating BETWEEN 1 AND 5
+    ),
+    comment TEXT,
+    is_verified_purchase BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+CREATE TABLE promotions (
+    promotion_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    discount_type ENUM('percentage', 'fixed_amount') DEFAULT 'percentage',
+    discount_value DECIMAL(10, 2) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    code VARCHAR(50) UNIQUE,
+    status ENUM('active', 'inactive', 'expired') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE bookmarks (
+    bookmark_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    movie_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_bookmark (user_id, movie_id)
+);
 -- ========================================
 -- SEATS TABLE (7 columns x 9 rows per screen)
 -- ========================================
@@ -307,57 +388,214 @@ VALUES (
     ),
     (
         'Avengers Reborn',
-        'Earth\'s mightiest return',150,' 2026 -05 -01 ',' Russo ',' Action ',' PG -13 ',' upcoming '),
-(' Frozen 3 ',' Elsa returns ',120,' 2026 -11 -20 ',' Buck ',' Animation ',' PG ',' upcoming '),
-(' Batman Legacy ',' Dark Knight rises again ',155,' 2025 -10 -01 ',' Reeves ',' Action ',' PG -13 ',' upcoming '),
-(' One Piece Red 2 ',' Shanks returns ',125,' 2026 -01 -15 ',' Oda ',' Animation ',' PG ',' upcoming '),
-(' Harry Potter Reboot ',' New cast ',180,' 2027 -07 -10 ',' Columbus ',' Fantasy ',' PG -13 ',' upcoming '),
-(' Sonic 4 ',' Blue hedgehog again ',115,' 2025 -12 -01 ',' Fowler ',' Action ',' PG ',' now_showing '),
-(' Godzilla x Kong 3 ',' Titans clash ',160,' 2026 -03 -01 ',' Wingard ',' Action ',' PG -13 ',' upcoming '),
-(' Mario Movie 2 ',' Mario adventure ',110,' 2026 -06 -15 ',' Horvath ',' Animation ',' PG ',' upcoming '),
-(' Avatar 4 ',' Pandora again ',180,' 2027 -12 -20 ',' Cameron ',' Sci - Fi ',' PG -13 ',' upcoming '),
-(' John Wick 5 ',' Baba Yaga returns ',145,' 2026 -09 -01 ',' Stahelski ',' Action ',' R ',' upcoming ');
-
+        'Earths mightiest return',
+        150,
+        '2026-05-01',
+        'Russo',
+        'Action',
+        'PG-13',
+        'upcoming'
+    ),
+    (
+        ' Frozen 3 ',
+        ' Elsa returns ',
+        120,
+        ' 2026 -11 -20 ',
+        ' Buck ',
+        ' Animation ',
+        ' PG ',
+        ' upcoming '
+    ),
+    (
+        ' Batman Legacy ',
+        ' Dark Knight rises again ',
+        155,
+        ' 2025 -10 -01 ',
+        ' Reeves ',
+        ' Action ',
+        ' PG -13 ',
+        ' upcoming '
+    ),
+    (
+        ' One Piece Red 2 ',
+        ' Shanks returns ',
+        125,
+        ' 2026 -01 -15 ',
+        ' Oda ',
+        ' Animation ',
+        ' PG ',
+        ' upcoming '
+    ),
+    (
+        ' Harry Potter Reboot ',
+        ' New cast ',
+        180,
+        ' 2027 -07 -10 ',
+        ' Columbus ',
+        ' Fantasy ',
+        ' PG -13 ',
+        ' upcoming '
+    ),
+    (
+        ' Sonic 4 ',
+        ' Blue hedgehog again ',
+        115,
+        ' 2025 -12 -01 ',
+        ' Fowler ',
+        ' Action ',
+        ' PG ',
+        ' now_showing '
+    ),
+    (
+        ' Godzilla x Kong 3 ',
+        ' Titans clash ',
+        160,
+        ' 2026 -03 -01 ',
+        ' Wingard ',
+        ' Action ',
+        ' PG -13 ',
+        ' upcoming '
+    ),
+    (
+        ' Mario Movie 2 ',
+        ' Mario adventure ',
+        110,
+        ' 2026 -06 -15 ',
+        ' Horvath ',
+        ' Animation ',
+        ' PG ',
+        ' upcoming '
+    ),
+    (
+        ' Avatar 4 ',
+        ' Pandora again ',
+        180,
+        ' 2027 -12 -20 ',
+        ' Cameron ',
+        ' Sci - Fi ',
+        ' PG -13 ',
+        ' upcoming '
+    ),
+    (
+        ' John Wick 5 ',
+        ' Baba Yaga returns ',
+        145,
+        ' 2026 -09 -01 ',
+        ' Stahelski ',
+        ' Action ',
+        ' R ',
+        ' upcoming '
+    );
 -- TICKETS (7 more)
-INSERT INTO tickets (showtime_id, user_id, seat_number, ticket_type, price_paid, status) VALUES
-(1,2,' A1 ',' adult ',12.99,' paid '),
-(1,2,' A2 ',' adult ',12.99,' paid '),
-(1,3,' A3 ',' student ',9.99,' paid '),
-(1,4,' A4 ',' adult ',12.99,' paid '),
-(2,5,' A1 ',' adult ',12.99,' paid '),
-(2,6,' A2 ',' adult ',12.99,' paid '),
-(3,7,' B3 ',' adult ',10.99,' paid '),
-(3,2,' B4 ',' adult ',10.99,' paid '),
-(3,3,' B5 ',' adult ',10.99,' paid ');
-
+INSERT INTO tickets (
+        showtime_id,
+        user_id,
+        seat_number,
+        ticket_type,
+        price_paid,
+        status
+    )
+VALUES 
+    (1, 2, ' A1 ', ' adult ', 12.99, 'paid'),
+    (1, 2, ' A2 ', ' adult ', 12.99, 'paid'),
+    (1, 3, ' A3 ', ' student ', 9.99, 'paid'),
+    (1, 4, ' A4 ', ' adult ', 12.99, 'paid'),
+    (2, 5, ' A1 ', ' adult ', 12.99, 'paid'),
+    (2, 6, ' A2 ', ' adult ', 12.99, 'paid'),
+    (3, 7, ' B3 ', ' adult ', 10.99, 'paid'),
+    (3, 2, ' B4 ', ' adult ', 10.99, 'paid'),
+    (3, 3, ' B5 ', ' adult ', 10.99, 'paid');
 -- PAYMENTS (7 more)
-INSERT INTO payments (ticket_id, user_id, amount, payment_method, payment_status) VALUES
-(1,2,12.99,' credit_card ',' completed '),
-(2,2,12.99,' paypal ',' completed '),
-(3,3,9.99,' credit_card ',' completed '),
-(4,4,12.99,' credit_card ',' completed '),
-(5,5,12.99,' cash ',' completed '),
-(6,6,12.99,' debit_card ',' completed '),
-(7,7,10.99,' mobile ',' completed ');
-
+INSERT INTO payments (
+        ticket_id,
+        user_id,
+        amount,
+        payment_method,
+        payment_status
+    )
+VALUES (1, 2, 12.99, ' credit_card ', ' completed '),
+    (2, 2, 12.99, ' paypal ', ' completed '),
+    (3, 3, 9.99, ' credit_card ', ' completed '),
+    (4, 4, 12.99, ' credit_card ', ' completed '),
+    (5, 5, 12.99, ' cash ', ' completed '),
+    (6, 6, 12.99, ' debit_card ', ' completed '),
+    (7, 7, 10.99, ' mobile ', ' completed ');
 -- REVIEWS (8 more)
-INSERT INTO reviews (movie_id, user_id, rating, comment, is_verified_purchase) VALUES
-(1,2,5,' Amazing ! ',TRUE),
-(2,3,4,' Great ! ',TRUE),
-(3,4,5,' Epic movie ',TRUE),
-(4,5,4,' Good effects ',FALSE),
-(5,6,5,' Family fun ',TRUE),
-(6,7,4,' Great action ',TRUE),
-(7,2,5,' Masterpiece ',FALSE),
-(8,3,4,' Nice reboot ',FALSE);
-
+INSERT INTO reviews (
+        movie_id,
+        user_id,
+        rating,
+        comment,
+        is_verified_purchase
+    )
+VALUES (1, 2, 5, ' Amazing ! ', TRUE),
+    (2, 3, 4, ' Great ! ', TRUE),
+    (3, 4, 5, ' Epic movie ', TRUE),
+    (4, 5, 4, ' Good effects ', FALSE),
+    (5, 6, 5, ' Family fun ', TRUE),
+    (6, 7, 4, ' Great action ', TRUE),
+    (7, 2, 5, ' Masterpiece ', FALSE),
+    (8, 3, 4, ' Nice reboot ', FALSE);
 -- PROMOTIONS (3 more)
-INSERT INTO promotions (title, description, discount_type, discount_value, start_date, end_date, code, status) VALUES
-(' Black Friday ',' 25 % off ',' percentage ',25,' 2025 -11 -28 ',' 2025 -11 -30 ',' BF25 ',' active '),
-(' Student Discount ',' 20 % off ',' percentage ',20,' 2025 -01 -01 ',' 2025 -12 -31 ',' STUDENT20 ',' active '),
-(' Holiday Sale ',' 15 % off ',' percentage ',15,' 2025 -12 -20 ',' 2025 -12 -31 ',' HOLIDAY15 ',' active '),
-(' Early Bird ',' $3 off ',' fixed_amount ',3,' 2025 -01 -01 ',' 2025 -06 -01 ',' EARLY3 ',' active ');
-
+INSERT INTO promotions (
+        title,
+        description,
+        discount_type,
+        discount_value,
+        start_date,
+        end_date,
+        code,
+        status
+    )
+VALUES (
+        ' Black Friday ',
+        ' 25 % off ',
+        ' percentage ',
+        25,
+        ' 2025 -11 -28 ',
+        ' 2025 -11 -30 ',
+        ' BF25 ',
+        ' active '
+    ),
+    (
+        ' Student Discount ',
+        ' 20 % off ',
+        ' percentage ',
+        20,
+        ' 2025 -01 -01 ',
+        ' 2025 -12 -31 ',
+        ' STUDENT20 ',
+        ' active '
+    ),
+    (
+        ' Holiday Sale ',
+        ' 15 % off ',
+        ' percentage ',
+        15,
+        ' 2025 -12 -20 ',
+        ' 2025 -12 -31 ',
+        ' HOLIDAY15 ',
+        ' active '
+    ),
+    (
+        ' Early Bird ',
+        ' $3 off ',
+        ' fixed_amount ',
+        3,
+        ' 2025 -01 -01 ',
+        ' 2025 -06 -01 ',
+        ' EARLY3 ',
+        ' active '
+    );
 -- BOOKMARKS (random many)
-INSERT INTO bookmarks (user_id, movie_id) VALUES
-(2,1),(2,2),(2,3),(3,1),(3,5),(4,2),(5,3),(6,7),(7,4),(7,5);
+INSERT INTO bookmarks (user_id, movie_id)
+VALUES (2, 1),
+(2, 2),
+(2, 3),
+(3, 1),
+(3, 5),
+(4, 2),
+(5, 3),
+(6, 7),
+(7, 4),
+(7, 5);
