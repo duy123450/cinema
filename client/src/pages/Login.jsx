@@ -140,6 +140,12 @@ function Login() {
             required
           />
 
+          <p className="auth-switch">
+            <Link to="/forgot-password" className="switch-link">
+              Forgot password?
+            </Link>
+          </p>
+
           <button type="submit" className="btn-submit" disabled={isLoading}>
             {isLoading ? (
               <>

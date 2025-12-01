@@ -11,6 +11,8 @@ import Layout from "./components/Layout.jsx";
 import Profile from "./pages/Profile.jsx";
 import PageNotFound from "./pages/PageNotFound.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 function App() {
   return (
@@ -63,6 +65,22 @@ function App() {
           element={
             <Layout>
               <Register />
+            </Layout>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <Layout>
+              <ForgotPassword />
+            </Layout>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <Layout>
+              <ResetPassword />
             </Layout>
           }
         />

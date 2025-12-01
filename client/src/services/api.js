@@ -73,6 +73,11 @@ export const apiService = {
         return response.data;
     },
 
+    logout: async () => {
+        const response = await api.get('/logout.php');
+        return response.data;
+    },
+
     // Update profile with optional avatar
     updateProfile: async (userId, formData, avatarFile = null) => {
         const formDataWithAvatar = new FormData();
@@ -97,6 +102,17 @@ export const apiService = {
             user_id: userId,
             ...passwordData
         });
+        return response.data;
+    },
+
+    // Password recovery
+    forgotPassword: async (email) => {
+        const response = await api.post('/forget-password.php', { email });
+        return response.data;
+    },
+
+    resetPassword: async (token, password) => {
+        const response = await api.post('/reset-password.php', { token, password });
         return response.data;
     },
 
