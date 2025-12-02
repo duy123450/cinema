@@ -1,7 +1,7 @@
 -- FULL UPDATED CINEMA MANAGEMENT SQL SCRIPT
 USE cinema_management;
 -- ========================================
--- USERS TABLE (add reset_token & reset_token_expiry)
+-- USERS TABLE
 -- ========================================
 CREATE TABLE users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -23,7 +23,6 @@ CREATE TABLE users (
 -- ========================================
 -- MOVIES, CINEMAS, SCREENS, SHOWTIMES, TICKETS,
 -- PAYMENTS, REVIEWS, PROMOTIONS, BOOKMARKS
--- (same as before but expanded sample data)
 -- ========================================
 CREATE TABLE movies (
     movie_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -156,7 +155,7 @@ CREATE TABLE bookmarks (
     UNIQUE KEY unique_bookmark (user_id, movie_id)
 );
 -- ========================================
--- SEATS TABLE (7 columns x 9 rows per screen)
+-- SEATS TABLE
 -- ========================================
 CREATE TABLE seats (
     seat_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -172,7 +171,7 @@ CREATE TABLE seats (
 -- ========================================
 -- INSERT DATA
 -- ========================================
--- USERS (add 2 staff + 2 more customers)
+-- USERS
 INSERT INTO users (
         username,
         email,
@@ -278,7 +277,7 @@ VALUES (
         5,
         800
     );
--- SCREENS (Option A: 5 screens per cinema, each with different type)
+-- SCREENS
 INSERT INTO screens (
         cinema_id,
         screen_number,
@@ -345,7 +344,7 @@ FROM screens s
         UNION
         SELECT 7
     ) n;
--- MOVIES (add 12 more)
+-- MOVIES
 INSERT INTO movies (
         title,
         description,
@@ -486,7 +485,20 @@ VALUES (
         'R',
         'upcoming'
     );
--- TICKETS (7 more)
+-- SHOWTIMES
+INSERT INTO showtimes (
+        movie_id,
+        screen_id,
+        show_date,
+        show_time,
+        price,
+        available_seats
+    )
+VALUES (1, 1, '2025-11-25', '18:00', 12.99, 60),
+    (1, 1, '2025-11-25', '20:30', 12.99, 50),
+    (2, 2, '2025-11-26', '19:00', 12.99, 55),
+    (3, 3, '2025-11-26', '21:00', 14.99, 48);
+-- TICKETS
 INSERT INTO tickets (
         showtime_id,
         user_id,
@@ -504,7 +516,7 @@ VALUES (1, 2, 'A1', 'adult', 12.99, 'paid'),
     (3, 7, 'B3', 'adult', 10.99, 'paid'),
     (3, 2, 'B4', 'adult', 10.99, 'paid'),
     (3, 3, 'B5', 'adult', 10.99, 'paid');
--- PAYMENTS (7 more)
+-- PAYMENTS
 INSERT INTO payments (
         ticket_id,
         user_id,
@@ -519,7 +531,7 @@ VALUES (1, 2, 12.99, 'credit_card', 'completed'),
     (5, 5, 12.99, 'cash', 'completed'),
     (6, 6, 12.99, 'debit_card', 'completed'),
     (7, 7, 10.99, 'mobile', 'completed');
--- REVIEWS (8 more)
+-- REVIEWS
 INSERT INTO reviews (
         movie_id,
         user_id,
@@ -535,7 +547,7 @@ VALUES (1, 2, 5, 'Amazing !', TRUE),
     (6, 7, 4, 'Great action', TRUE),
     (7, 2, 5, 'Masterpiece', FALSE),
     (8, 3, 4, 'Nice reboot', FALSE);
--- PROMOTIONS (3 more)
+-- PROMOTIONS
 INSERT INTO promotions (
         title,
         description,
@@ -586,7 +598,7 @@ VALUES (
         'EARLY3',
         'active'
     );
--- BOOKMARKS (random many)
+-- BOOKMARKS 
 INSERT INTO bookmarks (user_id, movie_id)
 VALUES (2, 1),
     (2, 2),
