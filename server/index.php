@@ -39,6 +39,14 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
             require_once 'api/update-password.php';
             break;
 
+        case 'forget-password':
+            require_once 'api/forget-password.php';
+            break;
+
+        case 'reset-password':
+            require_once 'api/reset-password.php';
+            break;
+
         case 'upload-avatar':
             require_once 'api/upload-avatar.php';
             break;

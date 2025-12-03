@@ -55,8 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Insert new user
-    $query = "INSERT INTO users (username, email, password_hash, first_name, last_name, phone, role, status, avatar) VALUES (?, ?, ?, ?, ?, ?, 'customer', 'active', ?)";
+    // Insert new user with phone and date_of_birth
+    $query = "INSERT INTO users (username, email, password_hash, first_name, last_name, phone, date_of_birth, role, status, avatar) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, 'customer', 'active', ?)";
     $stmt = $conn->prepare($query);
     $result = $stmt->execute([
         $userData['username'],
@@ -64,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password_hash,
         $userData['first_name'] ?? '',
         $userData['last_name'] ?? '',
-        $userData['phone'] ?? '',
+        $userData['phone'] ?? null,
+        $userData['date_of_birth'] ?? null,
         $avatar_filename
     ]);
 
@@ -80,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'first_name' => $userData['first_name'] ?? '',
             'last_name' => $userData['last_name'] ?? '',
             'phone' => $userData['phone'] ?? '',
+            'date_of_birth' => $userData['date_of_birth'] ?? '',
             'role' => 'customer',
             'avatar' => $avatar_filename,
             'created_at' => time()
@@ -96,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'first_name' => $userData['first_name'] ?? '',
                 'last_name' => $userData['last_name'] ?? '',
                 'phone' => $userData['phone'] ?? '',
+                'date_of_birth' => $userData['date_of_birth'] ?? '',
                 'role' => 'customer',
                 'avatar' => $avatar_filename
             ]

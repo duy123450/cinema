@@ -11,7 +11,8 @@ $allowed_origins = [
     'http://localhost:3000',      
     'http://localhost:8000',
     'https://cinema-ipx0.onrender.com',
-    'http://localhost/server'     
+    'http://localhost/server',
+    'http://localhost',  
 ];
 
 # Get the origin from the request

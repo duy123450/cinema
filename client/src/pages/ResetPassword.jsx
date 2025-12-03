@@ -19,13 +19,13 @@ function ResetPassword() {
 
   // Validate token on component mount
   useEffect(() => {
+    console.log("Token from URL:", token); // Debug log
+
     if (!token) {
       setIsTokenValid(false);
       return;
     }
 
-    // You can add token validation here if your backend supports it
-    // For now, we'll assume the token is valid if it exists
     setIsTokenValid(true);
   }, [token]);
 
@@ -82,7 +82,13 @@ function ResetPassword() {
     setIsLoading(true);
 
     try {
+      console.log("Submitting reset with token:", token); // Debug log
+      console.log("Password:", formData.password); // Debug log
+
+      // Make sure token and password are being sent correctly
       const response = await apiService.resetPassword(token, formData.password);
+
+      console.log("Reset password response:", response); // Debug log
 
       if (response.success) {
         setSuccessMessage(
@@ -92,13 +98,16 @@ function ResetPassword() {
           navigate("/login");
         }, 2000);
       } else {
-        setErrors({ general: response.message || "Reset failed" });
+        setErrors({
+          general: response.message || "Reset failed. Token may be expired.",
+        });
       }
     } catch (error) {
-      console.error("Reset password error:", error);
+      console.error("Reset password error:", error); // Debug log
       let errorMessage = "Network error. Please try again.";
 
       if (error.response) {
+        console.log("Error response data:", error.response.data); // Debug log
         errorMessage = error.response.data.message || "Reset failed";
       } else if (error.request) {
         errorMessage = "Network error. Check if server is running.";

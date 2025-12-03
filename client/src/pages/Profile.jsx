@@ -14,6 +14,7 @@ function Profile() {
     first_name: "",
     last_name: "",
     phone: "",
+    date_of_birth: "",
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -43,6 +44,7 @@ function Profile() {
       first_name: user.first_name || "",
       last_name: user.last_name || "",
       phone: user.phone || "",
+      date_of_birth: user.date_of_birth || "",
     });
 
     const avatarUrl = user.avatar
@@ -71,7 +73,16 @@ function Profile() {
     }
 
     if (formData.phone && !/^\+?\d{10,15}$/.test(formData.phone)) {
-      newErrors.phone = "Phone number is invalid";
+      newErrors.phone = "Phone number must be 10-15 digits (optional +)";
+    }
+
+    if (formData.date_of_birth) {
+      const dob = new Date(formData.date_of_birth);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+      if (age < 13) {
+        newErrors.date_of_birth = "You must be at least 13 years old";
+      }
     }
 
     return newErrors;
@@ -394,21 +405,39 @@ function Profile() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="phone">Phone</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className={errors.phone ? "error" : ""}
-                  placeholder="+84 123 456 789"
-                  disabled={isUpdating}
-                />
-                {errors.phone && (
-                  <span className="error-text">{errors.phone}</span>
-                )}
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className={errors.phone ? "error" : ""}
+                    placeholder="+84 123 456 789 (Optional)"
+                    disabled={isUpdating}
+                  />
+                  {errors.phone && (
+                    <span className="error-text">{errors.phone}</span>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="date_of_birth">Date of Birth</label>
+                  <input
+                    type="date"
+                    id="date_of_birth"
+                    name="date_of_birth"
+                    value={formData.date_of_birth}
+                    onChange={handleInputChange}
+                    className={errors.date_of_birth ? "error" : ""}
+                    disabled={isUpdating}
+                  />
+                  {errors.date_of_birth && (
+                    <span className="error-text">{errors.date_of_birth}</span>
+                  )}
+                </div>
               </div>
 
               <div className="profile-actions">

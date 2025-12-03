@@ -12,6 +12,8 @@ function Register() {
     confirmPassword: "",
     first_name: "",
     last_name: "",
+    phone: "",
+    date_of_birth: "",
   });
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
@@ -43,6 +45,19 @@ function Register() {
 
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (formData.phone && !/^\+?\d{10,15}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must be 10-15 digits (optional +)";
+    }
+
+    if (formData.date_of_birth) {
+      const dob = new Date(formData.date_of_birth);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+      if (age < 13) {
+        newErrors.date_of_birth = "You must be at least 13 years old";
+      }
     }
 
     return newErrors;
@@ -160,28 +175,30 @@ function Register() {
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="first_name">First Name</label>
-            <input
-              type="text"
-              id="first_name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleInputChange}
-              disabled={isLoading}
-            />
-          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="first_name">First Name</label>
+              <input
+                type="text"
+                id="first_name"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="last_name">Last Name</label>
-            <input
-              type="text"
-              id="last_name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleInputChange}
-              disabled={isLoading}
-            />
+            <div className="form-group">
+              <label htmlFor="last_name">Last Name</label>
+              <input
+                type="text"
+                id="last_name"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           <div className="form-group">
@@ -214,6 +231,41 @@ function Register() {
               className={errors.email ? "error" : ""}
             />
             {errors.email && <span className="error-text">{errors.email}</span>}
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="phone">Phone Number</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="+84 123 456 789 (Optional)"
+                disabled={isLoading}
+                className={errors.phone ? "error" : ""}
+              />
+              {errors.phone && (
+                <span className="error-text">{errors.phone}</span>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="date_of_birth">Date of Birth</label>
+              <input
+                type="date"
+                id="date_of_birth"
+                name="date_of_birth"
+                value={formData.date_of_birth}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                className={errors.date_of_birth ? "error" : ""}
+              />
+              {errors.date_of_birth && (
+                <span className="error-text">{errors.date_of_birth}</span>
+              )}
+            </div>
           </div>
 
           {/* Password Input with Eye Icon */}

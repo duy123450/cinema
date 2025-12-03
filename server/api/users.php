@@ -3,6 +3,10 @@ require_once '../auth/check-auth.php';
 require_once '../config/dbconnect.php';
 
 $conn = connectDB();
+
+// SET TIMEZONE FOR MYSQL SESSION
+$conn->exec("SET time_zone = '+00:00'");
+
 $auth_user = checkAuth();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Build update query
     $fields = [];
     $params = [];
-    $allowed_fields = ['username', 'email', 'first_name', 'last_name', 'phone'];
+    $allowed_fields = ['username', 'email', 'first_name', 'last_name', 'phone', 'date_of_birth'];
 
     foreach ($allowed_fields as $field) {
         if (isset($profileData[$field])) {
             $fields[] = "$field = ?";
-            $params[] = $profileData[$field];
+            $params[] = $profileData[$field] ?: null;
         }
     }
 
@@ -53,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $targetPath = $uploadDir . $avatar_filename;
 
             if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-                // 👇 Convert to JPG if necessary
+                // Convert to JPG if necessary
                 $image = imagecreatefromstring(file_get_contents($targetPath));
                 if ($image) {
                     imagejpeg($image, $targetPath, 90); // Save as JPG
@@ -77,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->execute($params);
 
     if ($result) {
-        // Fetch updated user data
-        $updated_user_query = "SELECT user_id, username, email, first_name, last_name, phone, role, avatar FROM users WHERE user_id = ?";
+        // Fetch updated user data with phone and date_of_birth
+        $updated_user_query = "SELECT user_id, username, email, first_name, last_name, phone, date_of_birth, role, avatar FROM users WHERE user_id = ?";
         $updated_stmt = $conn->prepare($updated_user_query);
         $updated_stmt->execute([$user_id]);
         $updated_user = $updated_stmt->fetch(PDO::FETCH_ASSOC);

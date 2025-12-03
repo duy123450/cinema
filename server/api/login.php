@@ -8,6 +8,9 @@ if (!isset($_SESSION)) {
 
 $conn = connectDB();
 
+// SET TIMEZONE FOR MYSQL SESSION
+$conn->exec("SET time_zone = '+00:00'");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     $identifier = $input['identifier'] ?? '';
@@ -16,17 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($identifier) || empty($password)) {
         http_response_code(400);
         echo json_encode([
-            "success" => false, 
+            "success" => false,
             "message" => "Username/Email and password are required"
         ]);
         exit();
     }
 
-    // Get user from database with ALL fields
+    // Get user from database with ALL fields including phone and date_of_birth
     if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
-        $sql = "SELECT user_id, username, email, first_name, last_name, phone, role, password_hash, avatar FROM users WHERE email = ? AND status = 'active'";
+        $sql = "SELECT user_id, username, email, first_name, last_name, phone, date_of_birth, role, password_hash, avatar FROM users WHERE email = ? AND status = 'active'";
     } else {
-        $sql = "SELECT user_id, username, email, first_name, last_name, phone, role, password_hash, avatar FROM users WHERE username = ? AND status = 'active'";
+        $sql = "SELECT user_id, username, email, first_name, last_name, phone, date_of_birth, role, password_hash, avatar FROM users WHERE username = ? AND status = 'active'";
     }
 
     $stmt = $conn->prepare($sql);
@@ -34,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['password_hash'])) {
+        // Set status to active on successful login
+        $update_sql = "UPDATE users SET status = 'active' WHERE user_id = ?";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->execute([$user['user_id']]);
+
         // Set default avatar if missing or null
         $avatar = $user['avatar'] ?? 'default-avatar.png';
 
@@ -44,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "first_name" => $user['first_name'],
             "last_name" => $user['last_name'],
             "phone" => $user['phone'],
+            "date_of_birth" => $user['date_of_birth'],
             "role" => $user['role'],
             "avatar" => $avatar,
             "created_at" => time()
@@ -60,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 "first_name" => $user['first_name'],
                 "last_name" => $user['last_name'],
                 "phone" => $user['phone'],
+                "date_of_birth" => $user['date_of_birth'],
                 "role" => $user['role'],
                 "avatar" => $avatar
             ]
