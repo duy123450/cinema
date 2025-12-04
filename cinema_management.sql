@@ -1200,6 +1200,7 @@ VALUES (2, 1),
     (7, 4),
     (7, 5),
     (7, 10);
+
 -- ========================================
 -- QUERY TO CHECK IF USER HAS BIRTHDAY TODAY
 -- ========================================
@@ -1264,112 +1265,97 @@ ORDER BY DAY(u.date_of_birth);
 -- ========================================
 -- PROCEDURE: GET USER BIRTHDAY PROMO
 -- ========================================
-DELIMITER $$ CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT) BEGIN
-SELECT u.user_id,
-    u.username,
-    u.email,
-    u.date_of_birth,
-    YEAR(CURDATE()) - YEAR(u.date_of_birth) as age,
-    CASE
-        WHEN DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') THEN 'TODAY'
-        ELSE 'NOT TODAY'
-    END as birthday_status,
-    p.promotion_id,
-    p.title,
-    p.code,
-    p.discount_value,
-    p.discount_type,
-    CONCAT(
+DELIMITER $$ 
+CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT) 
+BEGIN
+    SELECT u.user_id,
+        u.username,
+        u.email,
+        u.date_of_birth,
+        YEAR(CURDATE()) - YEAR(u.date_of_birth) as age,
+        CASE
+            WHEN DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') THEN 'TODAY'
+            ELSE 'NOT TODAY'
+        END as birthday_status,
+        p.promotion_id,
+        p.title,
+        p.code,
         p.discount_value,
-        IF(p.discount_type = 'percentage', '%', '$')
-    ) as discount_display
-FROM users u
-    LEFT JOIN promotions p ON p.promotion_type = 'birthday'
-    AND p.status = 'active'
-    AND CURDATE() BETWEEN p.start_date AND p.end_date
-WHERE u.user_id = p_user_id;
-END $$ DELIMITER;
+        p.discount_type,
+        CONCAT(
+            p.discount_value,
+            IF(p.discount_type = 'percentage', '%', '$')
+        ) as discount_display
+    FROM users u
+        LEFT JOIN promotions p ON p.promotion_type = 'birthday'
+        AND p.status = 'active'
+        AND CURDATE() BETWEEN p.start_date AND p.end_date
+    WHERE u.user_id = p_user_id;
+END $$ 
+DELIMITER ;
 -- ========================================
 -- PROCEDURE: CHECK IF USER HAS BIRTHDAY TODAY
 -- ========================================
-DELIMITER $$ CREATE PROCEDURE check_user_birthday(IN p_user_id INT, OUT is_birthday BOOLEAN) BEGIN
-SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO is_birthday
-FROM users
-WHERE user_id = p_user_id;
-END $$ DELIMITER;
+DELIMITER $$ 
+CREATE PROCEDURE check_user_birthday(IN p_user_id INT, OUT is_birthday BOOLEAN) 
+BEGIN
+    SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO is_birthday
+    FROM users
+    WHERE user_id = p_user_id;
+END $$ 
+DELIMITER ;
 -- ========================================
 -- PROCEDURE: APPLY BIRTHDAY DISCOUNT TO TICKET
 -- ========================================
-DELIMITER $$ CREATE PROCEDURE apply_birthday_discount(
+DELIMITER $$ 
+CREATE PROCEDURE apply_birthday_discount(
     IN p_user_id INT,
     IN p_ticket_price DECIMAL(10, 2),
     OUT p_discounted_price DECIMAL(10, 2),
     OUT p_discount_amount DECIMAL(10, 2),
     OUT has_birthday BOOLEAN
 ) BEGIN
-DECLARE promo_discount_value DECIMAL(10, 2);
-DECLARE promo_discount_type VARCHAR(20);
--- Check if user has birthday today
-SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO has_birthday
-FROM users
-WHERE user_id = p_user_id;
--- Get birthday promotion details
-SELECT p.discount_value,
-    p.discount_type INTO promo_discount_value,
-    promo_discount_type
-FROM promotions p
-WHERE p.promotion_type = 'birthday'
-    AND p.status = 'active'
-    AND CURDATE() BETWEEN p.start_date AND p.end_date
-LIMIT 1;
--- Calculate discount if birthday today
-IF has_birthday
-AND promo_discount_value IS NOT NULL THEN IF promo_discount_type = 'percentage' THEN
-SET p_discount_amount = p_ticket_price * (promo_discount_value / 100);
-ELSE
-SET p_discount_amount = promo_discount_value;
-END IF;
-SET p_discounted_price = p_ticket_price - p_discount_amount;
-ELSE
-SET p_discount_amount = 0;
-SET p_discounted_price = p_ticket_price;
-END IF;
-END $$ DELIMITER;
--- ========================================
--- TEST DATA: USER WITH TODAY'S BIRTHDAY
--- ========================================
--- Update a user to have today's birthday (for testing)
-UPDATE users
-SET date_of_birth = DATE_SUB(CURDATE(), INTERVAL YEAR(CURDATE()) - 1995 YEAR)
-WHERE user_id = 6;
--- customer_bob
--- ========================================
--- TEST QUERIES
--- ========================================
--- Check today's birthday users
-SELECT *
-FROM birthday_users_today;
--- Get specific user's birthday promotion
-CALL get_user_birthday_promo(6);
--- Check if user 6 has birthday today
-CALL check_user_birthday(6, @is_birthday);
-SELECT @is_birthday as has_birthday_today;
--- Apply birthday discount to ticket
-CALL apply_birthday_discount(6, 12.99, @discounted, @discount, @is_bday);
-SELECT @is_bday as has_birthday,
-    12.99 as original_price,
-    @discount as discount_amount,
-    @discounted as final_price;
+    DECLARE promo_discount_value DECIMAL(10, 2);
+    DECLARE promo_discount_type VARCHAR(20);
+    -- Check if user has birthday today
+    SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO has_birthday
+    FROM users
+    WHERE user_id = p_user_id;
+    -- Get birthday promotion details
+    SELECT p.discount_value,
+        p.discount_type INTO promo_discount_value,
+        promo_discount_type
+    FROM promotions p
+    WHERE p.promotion_type = 'birthday'
+        AND p.status = 'active'
+        AND CURDATE() BETWEEN p.start_date AND p.end_date
+    LIMIT 1;
+    -- Calculate discount if birthday today
+    IF has_birthday
+    AND promo_discount_value IS NOT NULL THEN IF promo_discount_type = 'percentage' THEN
+    SET p_discount_amount = p_ticket_price * (promo_discount_value / 100);
+    ELSE
+    SET p_discount_amount = promo_discount_value;
+    END IF;
+    SET p_discounted_price = p_ticket_price - p_discount_amount;
+    ELSE
+    SET p_discount_amount = 0;
+    SET p_discounted_price = p_ticket_price;
+    END IF;
+END $$ 
+DELIMITER ;
 -- ========================================
 -- TRIGGER: AUTO-CREATE BIRTHDAY PROMO DAILY
 -- ========================================
-DELIMITER $$ CREATE TRIGGER create_daily_birthday_promotion BEFORE
-INSERT ON promotions FOR EACH ROW BEGIN -- This trigger ensures birthday promotion is always available
-    IF NEW.promotion_type = 'birthday' THEN
-SET NEW.start_date = CURDATE();
-SET NEW.end_date = CURDATE();
-END IF;
-END $$ DELIMITER;
+DELIMITER $$ 
+CREATE TRIGGER create_daily_birthday_promotion BEFORE
+    INSERT ON promotions FOR EACH ROW BEGIN
+        IF NEW.promotion_type = 'birthday' THEN
+    SET NEW.start_date = CURDATE();
+    SET NEW.end_date = CURDATE();
+    END IF;
+END $$ 
+DELIMITER ;
 -- ========================================
 -- VERIFICATION QUERIES
 -- ========================================

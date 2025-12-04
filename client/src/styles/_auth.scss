@@ -1,4 +1,4 @@
-@use 'variables' as *;
+@use "variables" as *;
 
 .auth-page {
     display: flex;
@@ -15,7 +15,7 @@
     padding: $spacing-xl;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 8px 32px hsla(0, 0%, 0%, 0.3);
+    box-shadow: 0 8px 32px $color-overlay-medium;
 
     h2 {
         text-align: center;
@@ -36,7 +36,7 @@
     input {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid hsla(0, 0%, 100%, 0.1);
+        border: 1px solid $color-overlay-light;
         border-radius: $radius-sm;
         background: $color-gray-13;
         color: white;
@@ -50,11 +50,11 @@
         }
 
         &.error {
-            border-color: $color-red;
-            background: hsla(0, 100%, 50%, 0.1);
+            border-color: $color-error;
+            background: $color-overlay-red-light;
 
             &:focus {
-                border-color: $color-red;
+                border-color: $color-error;
             }
         }
     }
@@ -75,7 +75,7 @@
     margin-left: $spacing-xs;
 
     &:hover {
-        color: $color-yellow-50;
+        color: $color-yellow-60;
     }
 }
 

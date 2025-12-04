@@ -1,4 +1,4 @@
-@use 'variables' as *;
+@use "variables" as *;
 
 .banner-slider {
     position: relative;
@@ -24,7 +24,7 @@
 .banner-card {
     width: 80%;
     max-width: 1000px;
-    background: hsla(0, 0%, 0%, 0.7);
+    background: $color-overlay-heavy;
     border-radius: $radius-lg;
     padding: $spacing-xl;
     color: white;
@@ -36,7 +36,7 @@
     h1 {
         font-size: 2.5rem;
         margin-bottom: $spacing-sm;
-        text-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.7);
+        text-shadow: 2px 2px 4px $color-overlay-heavy;
         letter-spacing: 1px;
         font-weight: bold;
     }
@@ -93,12 +93,12 @@
     white-space: nowrap;
 }
 
-// Slider Navigation
+/* Slider Navigation */
 .slider-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: hsla(0, 0%, 0%, 0.5);
+    background: $color-overlay-medium;
     color: white;
     border: none;
     padding: $spacing-md $spacing-lg;
@@ -108,7 +108,7 @@
     transition: background 0.3s;
 
     &:hover {
-        background: hsla(0, 0%, 0%, 0.7);
+        background: $color-overlay-heavy;
     }
 
     &.left {
@@ -133,7 +133,7 @@
 .dot {
     width: 10px;
     height: 10px;
-    background: hsla(0, 0%, 100%, 0.5);
+    background: $color-overlay-light;
     border-radius: 50%;
     cursor: pointer;
     transition: background 0.3s;
