@@ -4,6 +4,7 @@
 DROP DATABASE IF EXISTS cinema_management;
 CREATE DATABASE cinema_management;
 USE cinema_management;
+
 -- ========================================
 -- USERS TABLE
 -- ========================================
@@ -24,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- MOVIES TABLE
 -- ========================================
@@ -37,13 +39,14 @@ CREATE TABLE IF NOT EXISTS movies (
     director VARCHAR(100),
     genre VARCHAR(100),
     language VARCHAR(50) DEFAULT 'English',
-    rating ENUM('G', 'PG', 'PG-13', 'R', 'NC-17') DEFAULT 'PG-13',
+    rating ENUM('G', 'PG', 'PG-13', 'R', 'NC-17', 'NR') DEFAULT 'PG-13',
     imdb_rating DECIMAL(3, 1),
     poster_url VARCHAR(500),
     status ENUM('upcoming', 'now_showing', 'ended') DEFAULT 'upcoming',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- CINEMAS TABLE
 -- ========================================
@@ -66,6 +69,7 @@ CREATE TABLE IF NOT EXISTS cinemas (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- SCREENS TABLE
 -- ========================================
@@ -80,6 +84,7 @@ CREATE TABLE IF NOT EXISTS screens (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (cinema_id) REFERENCES cinemas(cinema_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- SHOWTIMES TABLE
 -- ========================================
@@ -96,6 +101,7 @@ CREATE TABLE IF NOT EXISTS showtimes (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (screen_id) REFERENCES screens(screen_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- TICKETS TABLE
 -- ========================================
@@ -112,6 +118,7 @@ CREATE TABLE IF NOT EXISTS tickets (
     FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- PAYMENTS TABLE
 -- ========================================
@@ -134,6 +141,7 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- REVIEWS TABLE
 -- ========================================
@@ -151,6 +159,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- PROMOTIONS TABLE
 -- ========================================
@@ -168,6 +177,7 @@ CREATE TABLE IF NOT EXISTS promotions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- BOOKMARKS TABLE
 -- ========================================
@@ -180,6 +190,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     UNIQUE KEY unique_bookmark (user_id, movie_id)
 );
+
 -- ========================================
 -- SEATS TABLE
 -- ========================================
@@ -194,6 +205,7 @@ CREATE TABLE IF NOT EXISTS seats (
     FOREIGN KEY (screen_id) REFERENCES screens(screen_id) ON DELETE CASCADE,
     UNIQUE KEY unique_seat (screen_id, seat_label)
 );
+
 -- ========================================
 -- ACTORS TABLE (NEW)
 -- ========================================
@@ -204,6 +216,7 @@ CREATE TABLE IF NOT EXISTS actors (
     image_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- MOVIE_CAST TABLE (NEW - Junction Table)
 -- ========================================
@@ -219,6 +232,7 @@ CREATE TABLE IF NOT EXISTS movie_cast (
     FOREIGN KEY (actor_id) REFERENCES actors(actor_id) ON DELETE CASCADE,
     UNIQUE KEY unique_cast (movie_id, actor_id, character_name)
 );
+
 -- ========================================
 -- MOVIE_TRAILERS TABLE (NEW)
 -- ========================================
@@ -240,6 +254,7 @@ CREATE TABLE IF NOT EXISTS movie_trailers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- CREATE INDEXES FOR BETTER PERFORMANCE
 -- ========================================
@@ -262,6 +277,7 @@ CREATE INDEX idx_bookmarks_movie ON bookmarks(movie_id);
 CREATE INDEX idx_movie_cast_movie ON movie_cast(movie_id);
 CREATE INDEX idx_movie_cast_actor ON movie_cast(actor_id);
 CREATE INDEX idx_trailers_movie ON movie_trailers(movie_id);
+
 -- ========================================
 -- USERS DATA
 -- ========================================
@@ -361,6 +377,7 @@ VALUES (
         'active',
         'default-avatar.png'
     );
+
 -- ========================================
 -- CINEMAS DATA
 -- ========================================
@@ -428,6 +445,7 @@ VALUES (
         -87.6298,
         'open'
     );
+
 -- ========================================
 -- SCREENS DATA
 -- ========================================
@@ -456,65 +474,223 @@ VALUES -- Downtown Cinema (cinema_id = 1)
     (3, 'Screen 3', 180, 'dolby_atmos', 'active'),
     (3, 'Screen 4', 160, '3d', 'active'),
     (3, 'Screen 5', 100, '4dx', 'active');
+
 -- ========================================
 -- ACTORS DATA
 -- ========================================
 INSERT INTO actors (name, bio, image_url)
-VALUES (
+VALUES -- Tensura Movie 2
+    (
         'Rimuru Tempest',
-        'The protagonist reborn as a powerful Slime monster with incredible abilities',
-        'https://cdn.example.com/actors/rimuru.jpg'
+        'Protagonist: powerful slime reborn with memories.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/q2CqzdaaxHrpH1SKlqjKOBKCUEm.jpg'
     ),
     (
         'Benimaru',
-        'A skilled demon warrior and loyal companion to Rimuru',
-        'https://cdn.example.com/actors/benimaru.jpg'
+        'Demon warrior, loyal general under Rimuru.',
+        NULL
     ),
     (
         'Shion',
-        'An intelligent demon maid devoted to Rimuru',
-        'https://cdn.example.com/actors/shion.jpg'
+        'Oni maid and bodyguard to Rimuru.',
+        NULL
     ),
     (
         'Hiiro',
-        'A powerful harpy with mastery of lightning magic',
-        'https://cdn.example.com/actors/hiiro.jpg'
+        'Harpy warrior appearing in the Tensura movie.',
+        NULL
     ),
     (
-        'Veldora',
-        'An ancient dragon with immense magical power',
-        'https://cdn.example.com/actors/veldora.jpg'
+        'Veldora Tempest',
+        'Storm Dragon and ancient friend of Rimuru.',
+        NULL
     ),
-    (
-        'Timothée Chalamet',
-        'Lead actor known for intense dramatic roles',
-        'https://cdn.example.com/actors/timothee.jpg'
-    ),
-    (
-        'Zendaya',
-        'Talented actress and producer with global appeal',
-        'https://cdn.example.com/actors/zendaya.jpg'
-    ),
-    (
-        'Rebecca Ferguson',
-        'Award-winning actress known for diverse roles',
-        'https://cdn.example.com/actors/rebecca.jpg'
-    ),
-    (
-        'Austin Butler',
-        'Rising star actor with incredible range',
-        'https://cdn.example.com/actors/austin.jpg'
-    ),
+    -- Spider-Man: Across the Spider-Verse
     (
         'Miles Morales',
-        'Spider-Man from the animated multiverse',
-        'https://cdn.example.com/actors/miles.jpg'
+        'Spider-Man from an alternate universe.',
+        NULL
     ),
     (
         'Gwen Stacy',
-        'Spider-Gwen from an alternate universe',
-        'https://cdn.example.com/actors/gwen.jpg'
+        'Spider-Gwen from another universe.',
+        NULL
+    ),
+    (
+        'Peter B. Parker',
+        'Alternate-universe Spider-Man (mentor variant).',
+        NULL
+    ),
+    (
+        'Spider-Man 2099',
+        'Future Spider-Man, part of the Spider Society.',
+        NULL
+    ),
+    -- Dune Part Two
+    (
+        'Paul Atreides',
+        'Heir of House Atreides, destined ruler.',
+        NULL
+    ),
+    (
+        'Lady Jessica',
+        'Bene Gesserit adept, mother of Paul.',
+        NULL
+    ),
+    ('Chani', 'Fremen warrior and Paul’s ally.', NULL),
+    (
+        'Duncan Idaho',
+        'Loyal Atreides swordsman.',
+        NULL
+    ),
+    -- Avengers: Endgame
+    (
+        'Iron Man',
+        'Genius inventor and Avenger of Earth.',
+        NULL
+    ),
+    (
+        'Captain America',
+        'Super-soldier and symbol of hope.',
+        NULL
+    ),
+    (
+        'Thor',
+        'God of Thunder and protector of realms.',
+        NULL
+    ),
+    (
+        'Black Widow',
+        'Spy, Avenger, master tactician.',
+        NULL
+    ),
+    -- Frozen II
+    (
+        'Elsa',
+        'Ice queen with powers over ice and snow.',
+        NULL
+    ),
+    ('Anna', 'Brave sister of Elsa.', NULL),
+    ('Olaf', 'Friendly living snowman.', NULL),
+    -- The Batman (2022)
+    (
+        'Bruce Wayne',
+        'The Batman, vigilante protector of Gotham.',
+        NULL
+    ),
+    (
+        'Selina Kyle',
+        'Catwoman — skilled burglar and anti-hero.',
+        NULL
+    ),
+    (
+        'The Riddler',
+        'Gotham criminal mastermind.',
+        NULL
+    ),
+    -- One Piece Film: Red
+    (
+        'Monkey D. Luffy',
+        'Captain of the Straw Hat Pirates.',
+        NULL
+    ),
+    (
+        'Shanks',
+        'Legendary pirate, powerful and influential.',
+        NULL
+    ),
+    (
+        'Uta',
+        'Singer and key figure in the Red storyline.',
+        NULL
+    ),
+        -- Harry Potter (2001)
+    (
+        'Daniel Radcliffe',
+        'British actor best known for portraying Harry Potter.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/nHk7v5HfLCPYHwBtLPQ3OP8cA4E.jpg'
+    ),
+    (
+        'Emma Watson',
+        'Actress known globally for her role as Hermione Granger.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/2Xf8oHtj0nPc2sRkJq0uEn5Gg8g.jpg'
+    ),
+    (
+        'Rupert Grint',
+        'English actor who portrayed Ron Weasley in the Harry Potter series.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/jr6F7g90S5MoA37Y3zhGEylhmAQ.jpg'
+    ),
+    (
+        'Alan Rickman',
+        'Legendary actor known for his portrayal of Severus Snape.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/q2zLgOvwxWQfL0eJi2yXzuT50gp.jpg'
+    ),
+    -- Mario Movie Universe
+    (
+        'Mario',
+        'Heroic plumber from the Mushroom Kingdom.',
+        NULL
+    ),
+    (
+        'Luigi',
+        'Mario’s younger brother and companion.',
+        NULL
+    ),
+    (
+        'Bowser',
+        'King of the Koopas, main antagonist.',
+        NULL
+    ),
+    -- Godzilla × Kong Universe
+    (
+        'Godzilla',
+        'King of the Monsters — colossal Titan.',
+        NULL
+    ),
+    (
+        'Kong',
+        'Guardian Titan from Skull Island.',
+        NULL
+    ),
+    ('Mechagodzilla', 'Robotic Titan threat.', NULL),
+    -- Avatar Universe
+    (
+        'Jake Sully',
+        'Na’vi Marine turned Avatar warrior.',
+        NULL
+    ),
+    (
+        'Neytiri',
+        'Na’vi princess, skilled warrior and guide.',
+        NULL
+    ),
+    (
+        'Toruk Makto',
+        'Legendary Na’vi sky-rider leader.',
+        NULL
+    ),
+    -- John Wick: Chapter 4 (2023)
+    (
+        'Keanu Reeves',
+        'Canadian actor known for playing John Wick.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/4D0PpNI0kmP58hgrwGC3wCjxhnm.jpg'
+    ),
+    (
+        'Donnie Yen',
+        'Actor and martial artist known for John Wick: Chapter 4 and Ip Man.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/7iHuccSi7uECgCHCtszzZJKUBGc.jpg'
+    ),
+    (
+        'Bill Skarsgård',
+        'Actor who portrayed the Marquis in John Wick: Chapter 4.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/oWnYQnVnq1JN2nDSEfjT88j4A5J.jpg'
+    ),
+    (
+        'Laurence Fishburne',
+        'Actor known for Bowery King and Morpheus roles.',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/6uW9aYI2jUwBfQeWGk8Z88twyl5.jpg'
     );
+
 -- ========================================
 -- MOVIES DATA
 -- ========================================
@@ -526,44 +702,48 @@ INSERT INTO movies (
         release_date,
         director,
         genre,
-        language,
+        language, -- Added language here to align the rest of the data
         rating,
         imdb_rating,
         poster_url,
         status
     )
-VALUES (
-        'Tensura Movie 2',
-        'That Time I Got Reincarnated as a Slime Movie 2',
-        'Rimuru and his allies face new challenges as powerful forces emerge from the depths. A stunning anime continuation with breathtaking action sequences.',
+VALUES 
+    -- 1. That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea
+    (
+        'That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea', -- Updated title
+        'Tensei Shitara Slime Datta Ken Movie: Guren no Kizuna-hen', -- Updated original title
+        'After concluding the opening ceremony of the Demon Kingdom Federation Tempest, Rimuru and his companions are invited by the Celestial Emperor Hermesia of the great elven nation - the Magi Dynasty Salion - to visit her private resort island. As the group enjoys their brief vacation, a mysterious woman named Yura appears. A new incident unfolds against the backdrop of the boundless azure sea.', -- Updated description
         120,
-        '2025-11-25',
-        'Makoto Uchida',
+        '2026-02-27',
+        'Yasuhito Kikuchi',
         'Animation/Fantasy',
         'Japanese',
-        'PG-13',
+        'NR',
         8.5,
-        'https://cdn.example.com/posters/tensura2.jpg',
-        'now_showing'
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/q2CqzdaaxHrpH1SKlqjKOBKCUEm.jpg',
+        'upcoming'
     ),
+    -- 2. Spider-Man: Across the Spider-Verse
     (
-        'Spider-Verse: Across the Multiverse',
         'Spider-Man: Across the Spider-Verse',
-        'Miles Morales ventures across the Spider-Verse in an epic adventure that breaks animation boundaries.',
+        'Spider-Man: Across the Spider-Verse',
+        'Miles Morales ventures across the Spider-Verse in an epic animated adventure.',
         140,
-        '2024-01-10',
-        'Justin K. Thompson',
+        '2023-06-02',
+        'Joaquim Dos Santos, Justin K. Thompson, Kemp Powers',
         'Animation/Action',
         'English',
         'PG',
         8.9,
-        'https://cdn.example.com/posters/spiderverse.jpg',
+        'https://media.themoviedb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg',
         'now_showing'
     ),
+    -- 3. Dune: Part Two
     (
         'Dune: Part Two',
         'Dune: Part Two',
-        'Paul Atreides travels to the dangerous planet Arrakis to fulfill a dangerous prophecy. Epic sci-fi drama based on Frank Herberts masterpiece.',
+        'Paul Atreides travels to the dangerous planet Arrakis to fulfill a dangerous prophecy.',
         166,
         '2024-03-01',
         'Denis Villeneuve',
@@ -571,13 +751,14 @@ VALUES (
         'English',
         'PG-13',
         8.7,
-        'https://cdn.example.com/posters/dune2.jpg',
+        'https://media.themoviedb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg',
         'now_showing'
     ),
+    -- 4. Avengers: Endgame
     (
-        'Avengers: Reborn',
-        'Avengers: Endgame - Extended',
-        'The Earths mightiest heroes reunite for one final stand against cosmic forces.',
+        'Avengers: Endgame',
+        'Avengers: Endgame',
+        'The Earth''s mightiest heroes reunite for one final stand against cosmic forces.', 
         150,
         '2026-05-01',
         'Russo Brothers',
@@ -585,13 +766,14 @@ VALUES (
         'English',
         'PG-13',
         9.0,
-        'https://cdn.example.com/posters/avengers_reborn.jpg',
+        'https://media.themoviedb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',
         'upcoming'
     ),
+    -- 5. Frozen II
     (
-        'Frozen III',
-        'Frozen III',
-        'Elsa and Anna embark on a new adventure beyond the enchanted forest.',
+        'Frozen II',
+        'Frozen II',
+        'Elsa and Anna embark on a magical journey beyond Arendelle''s borders.', 
         120,
         '2026-11-20',
         'Chris Buck',
@@ -599,12 +781,13 @@ VALUES (
         'English',
         'PG',
         8.3,
-        'https://cdn.example.com/posters/frozen3.jpg',
+        'https://media.themoviedb.org/t/p/w500/pjeMs3yqRmFL3giJy4PMXWZTTPa.jpg',
         'upcoming'
     ),
+    -- 6. The Batman (2022)
     (
-        'The Batman: Legacy',
-        'The Batman: Legacy',
+        'The Batman',
+        'The Batman',
         'The Dark Knight rises again to face a new threat to Gotham City.',
         155,
         '2025-10-01',
@@ -613,27 +796,29 @@ VALUES (
         'English',
         'PG-13',
         8.8,
-        'https://cdn.example.com/posters/batman_legacy.jpg',
+        'https://media.themoviedb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg',
         'upcoming'
     ),
+    -- 7. One Piece Film: Red
     (
-        'One Piece: Red Resurrection',
-        'One Piece Red Resurrection',
-        'Shanks returns with unprecedented power. An epic pirate adventure awaits.',
+        'One Piece Film: Red',
+        'One Piece Film: Red',
+        'A new adventure emerges in the world of pirates.',
         125,
         '2026-01-15',
-        'Eiichiro Oda',
+        'Goro Taniguchi',
         'Animation/Adventure',
         'Japanese',
         'PG',
         8.6,
-        'https://cdn.example.com/posters/onepiece_red2.jpg',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/m80kPdrmmtEh9wlLroCp0bwUGH0.jpg',
         'upcoming'
     ),
+    -- 8. Harry Potter and the Sorcerer's Stone
     (
-        'Harry Potter: The New Generation',
-        'Harry Potter and the New Generation',
-        'A new cast takes over as the wizarding world faces unprecedented threats.',
+        'Harry Potter and the Sorcerer''s Stone', 
+        'Harry Potter and the Sorcerer''s Stone', 
+        'A young wizard begins his magical journey at Hogwarts School of Witchcraft and Wizardry.',
         180,
         '2027-07-10',
         'Chris Columbus',
@@ -641,13 +826,14 @@ VALUES (
         'English',
         'PG-13',
         8.2,
-        'https://cdn.example.com/posters/harrypotter_new.jpg',
+        'https://media.themoviedb.org/t/p/w500/c54HpQmuwXjHq2C9wmoACjxoom3.jpg',
         'upcoming'
     ),
+    -- 9. Sonic the Hedgehog 2
     (
-        'Sonic 4',
-        'Sonic the Hedgehog 4',
-        'The blue speedster returns for his most ambitious adventure yet.',
+        'Sonic the Hedgehog 2',
+        'Sonic the Hedgehog 2',
+        'The blue speedster returns for a high-octane adventure.',
         115,
         '2025-12-01',
         'Jeff Fowler',
@@ -655,13 +841,14 @@ VALUES (
         'English',
         'PG',
         7.9,
-        'https://cdn.example.com/posters/sonic4.jpg',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/3eh7j7zVOc4ZRtOrduYnaWD9mYJ.jpg',
         'now_showing'
     ),
+    -- 10. Godzilla x Kong: The New Empire
     (
-        'Godzilla x Kong: Titans Clash',
-        'Godzilla x Kong 3: Titans Clash',
-        'Two titans battle across a devastated world in an apocalyptic showdown.',
+        'Godzilla x Kong: The New Empire',
+        'Godzilla x Kong: The New Empire',
+        'Two titans battle in an epic showdown.',
         160,
         '2026-03-01',
         'Adam Wingard',
@@ -669,13 +856,14 @@ VALUES (
         'English',
         'PG-13',
         8.4,
-        'https://cdn.example.com/posters/godzilla_kong3.jpg',
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/lTpnAtn1hWXDLxEmkD28l6UyPlF.jpg',
         'upcoming'
     ),
+    -- 11. The Super Mario Bros. Movie
     (
-        'The Super Mario Bros. Movie 2',
-        'The Super Mario Bros. Movie 2',
-        'Mario and friends face off against new enemies in the Mushroom Kingdom.',
+        'The Super Mario Bros. Movie',
+        'The Super Mario Bros. Movie',
+        'Mario and friends embark on a wild adventure in the Mushroom Kingdom.',
         110,
         '2026-06-15',
         'Aaron Horvath',
@@ -683,13 +871,14 @@ VALUES (
         'English',
         'PG',
         8.1,
-        'https://cdn.example.com/posters/mario2.jpg',
+        'https://media.themoviedb.org/t/p/w500/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg',
         'upcoming'
     ),
+    -- 12. Avatar: The Way of Water
     (
-        'Avatar: Reclamation',
-        'Avatar 4: Reclamation',
-        'Return to Pandora for an epic continuation of the Avatar saga.',
+        'Avatar: The Way of Water',
+        'Avatar: The Way of Water',
+        'Return to the world of Pandora for a new chapter of discovery and conflict.',
         180,
         '2027-12-20',
         'James Cameron',
@@ -697,13 +886,14 @@ VALUES (
         'English',
         'PG-13',
         8.8,
-        'https://cdn.example.com/posters/avatar4.jpg',
+        'https://media.themoviedb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg',
         'upcoming'
     ),
+    -- 13. John Wick: Chapter 4
     (
-        'John Wick: Retribution',
-        'John Wick 5: Retribution',
-        'The legendary assassin returns for his final mission.',
+        'John Wick: Chapter 4',
+        'John Wick: Chapter 4',
+        'The legendary assassin embarks on his next mission.',
         145,
         '2026-09-01',
         'Chad Stahelski',
@@ -711,9 +901,40 @@ VALUES (
         'English',
         'R',
         8.5,
-        'https://cdn.example.com/posters/johnwick5.jpg',
+        'https://media.themoviedb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
         'upcoming'
+    ),
+    -- 14. Oppenheimer
+    (
+        'Oppenheimer',
+        'Oppenheimer',
+        'The story of J. Robert Oppenheimer, the theoretical physicist whose landmark work as the director of the Manhattan Project created the first atomic bomb.',
+        180,
+        '2023-07-21',
+        'Christopher Nolan',
+        'Biography/Drama/Thriller',
+        'English',
+        'R',
+        8.4,
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/ecYTEmn3JBZyWbqwzjmBFfGvi3U.jpg',
+        'now_showing'
+    ),
+    -- 15. Barbie
+    (
+        'Barbie',
+        'Barbie',
+        'Barbie suffers an existential crisis and travels to the real world to find true happiness.',
+        114,
+        '2023-07-21',
+        'Greta Gerwig',
+        'Comedy/Fantasy/Adventure',
+        'English',
+        'PG-13',
+        7.0,
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/mqNkQhaXxsH8SLNmJnG5oGz4meR.jpg',
+        'now_showing'
     );
+
 -- ========================================
 -- MOVIE_CAST DATA
 -- ========================================
@@ -724,31 +945,72 @@ INSERT INTO movie_cast (
         role_type,
         cast_order
     )
-VALUES -- Tensura Movie 2 (movie_id = 1)
+VALUES -- 1. Tensura Movie 2
     (1, 1, 'Rimuru Tempest', 'lead', 1),
     (1, 2, 'Benimaru', 'supporting', 2),
     (1, 3, 'Shion', 'supporting', 3),
     (1, 4, 'Hiiro', 'supporting', 4),
-    (1, 5, 'Veldora', 'cameo', 5),
-    -- Spider-Verse (movie_id = 2)
-    (2, 10, 'Miles Morales / Spider-Man', 'lead', 1),
+    (1, 5, 'Veldora Tempest', 'cameo', 5),
+    -- 2. Spider-Man: Across the Spider-Verse
+    (2, 6, 'Miles Morales', 'lead', 1),
+    (2, 7, 'Gwen Stacy', 'supporting', 2),
+    (2, 8, 'Peter B. Parker', 'supporting', 3),
+    (2, 9, 'Spider-Man 2099', 'supporting', 4),
+    -- 3. Dune: Part Two
+    (3, 10, 'Paul Atreides', 'lead', 1),
+    (3, 11, 'Lady Jessica', 'supporting', 2),
+    (3, 12, 'Chani', 'supporting', 3),
+    (3, 13, 'Duncan Idaho', 'cameo', 4),
+    -- 4. Avengers: Endgame
+    (4, 14, 'Iron Man', 'lead', 1),
+    (4, 15, 'Captain America', 'lead', 2),
+    (4, 16, 'Thor', 'supporting', 3),
+    (4, 17, 'Black Widow', 'supporting', 4),
+    -- 5. Frozen II
+    (5, 18, 'Elsa', 'lead', 1),
+    (5, 19, 'Anna', 'lead', 2),
+    (5, 20, 'Olaf', 'supporting', 3),
+    -- 6. The Batman (2022)
+    (6, 21, 'Bruce Wayne / Batman', 'lead', 1),
+    (6, 22, 'Selina Kyle / Catwoman', 'supporting', 2),
+    (6, 23, 'The Riddler', 'supporting', 3),
+    -- 7. One Piece Film: Red
+    (7, 24, 'Monkey D. Luffy', 'lead', 1),
+    (7, 25, 'Shanks', 'supporting', 2),
+    (7, 26, 'Uta', 'lead', 3),
+    -- Harry Potter and the Sorcerer's Stone
+    (8, 36, 'Harry Potter', 'lead', 1),
+    (8, 37, 'Hermione Granger', 'supporting', 2),
+    (8, 38, 'Ron Weasley', 'supporting', 3),
+    (8, 39, 'Severus Snape', 'supporting', 4),
+    -- 9. Sonic the Hedgehog 2
+    (9, 27, 'Sonic the Hedgehog', 'lead', 1),
+    (9, 28, 'Mario', 'cameo', 2),
+    (9, 29, 'Luigi', 'cameo', 3),
+    -- 10. Godzilla x Kong: The New Empire
+    (10, 30, 'Godzilla', 'lead', 1),
+    (10, 31, 'Kong', 'lead', 2),
+    (10, 32, 'Mechagodzilla', 'supporting', 3),
+    -- 11. The Super Mario Bros. Movie
+    (11, 28, 'Mario', 'lead', 1),
+    (11, 29, 'Luigi', 'supporting', 2),
+    (11, 30, 'Bowser', 'lead', 3),
+    -- 12. Avatar: The Way of Water
+    (12, 33, 'Jake Sully', 'lead', 1),
+    (12, 34, 'Neytiri', 'lead', 2),
+    (12, 35, 'Toruk Makto', 'supporting', 3),
+    -- 13. John Wick: Chapter 4
+    (13, 40, 'John Wick', 'lead', 1),
+    (13, 41, 'Caine', 'supporting', 2),
     (
-        2,
-        11,
-        'Gwen Stacy / Spider-Gwen',
+        13,
+        42,
+        'Marquis Vincent de Gramont',
         'supporting',
-        2
+        3
     ),
-    -- Dune: Part Two (movie_id = 3)
-    (3, 6, 'Paul Atreides', 'lead', 1),
-    (3, 7, 'Chani', 'supporting', 2),
-    (3, 8, 'Lady Jessica', 'supporting', 3),
-    (3, 9, 'Feyd-Rautha', 'supporting', 4),
-    -- Additional movies use same actors for simplicity
-    (4, 6, 'Tony Stark', 'cameo', 1),
-    (5, 7, 'Elsa', 'lead', 1),
-    (6, 9, 'Batman / Bruce Wayne', 'lead', 1),
-    (9, 10, 'Sonic the Hedgehog', 'lead', 1);
+    (13, 43, 'Bowery King', 'supporting', 4);
+
 -- ========================================
 -- MOVIE_TRAILERS DATA
 -- ========================================
@@ -762,12 +1024,13 @@ INSERT INTO movie_trailers (
         is_featured,
         views
     )
-VALUES -- Tensura Movie 2 trailers
+VALUES 
+-- That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea trailers (Movie ID 1)
     (
         1,
-        'Tensura Movie 2 - Official Trailer',
-        'https://youtube.com/watch?v=tensura2_official',
-        180,
+        'Azure Sea - Official Trailer',
+        'https://youtu.be/q6YZQqxcS30?si=d8lh-nAN7-kfL8Wz',
+        120,
         'official',
         'Japanese',
         TRUE,
@@ -775,9 +1038,9 @@ VALUES -- Tensura Movie 2 trailers
     ),
     (
         1,
-        'Tensura Movie 2 - Teaser Trailer',
-        'https://youtube.com/watch?v=tensura2_teaser',
-        90,
+        'Azure Sea - Teaser Trailer',
+        'https://youtu.be/kJ-0GbqfuYY?si=25cf5bujIx9CROtj',
+        60,
         'teaser',
         'Japanese',
         FALSE,
@@ -785,19 +1048,19 @@ VALUES -- Tensura Movie 2 trailers
     ),
     (
         1,
-        'Tensura Movie 2 - Behind the Scenes',
-        'https://youtube.com/watch?v=tensura2_bts',
+        'Azure Sea - Behind the Scenes',
+        'https://www.youtube.com/watch?v=azure_sea_bts_2026',
         240,
         'behind_the_scenes',
         'Japanese',
         FALSE,
         420000
     ),
-    -- Spider-Verse trailers
+-- Spider-Verse trailers (Movie ID 2)
     (
         2,
         'Spider-Verse - Official Trailer',
-        'https://youtube.com/watch?v=spiderverse_official',
+        'https://www.youtube.com/watch?v=UUqUZ7uumqE',
         240,
         'official',
         'English',
@@ -807,18 +1070,18 @@ VALUES -- Tensura Movie 2 trailers
     (
         2,
         'Spider-Verse - Teaser',
-        'https://youtube.com/watch?v=spiderverse_teaser',
+        'https://www.youtube.com/watch?v=UUqUZ7uumqE',
         120,
         'teaser',
         'English',
         FALSE,
         1100000
     ),
-    -- Dune: Part Two trailers
+-- Dune: Part Two trailers (Movie ID 3)
     (
         3,
         'Dune Part 2 - Official Trailer',
-        'https://youtube.com/watch?v=dune2_official',
+        'https://www.youtube.com/watch?v=HJp9P3O4JK0',
         180,
         'official',
         'English',
@@ -828,7 +1091,7 @@ VALUES -- Tensura Movie 2 trailers
     (
         3,
         'Dune Part 2 - Special Clip',
-        'https://youtube.com/watch?v=dune2_clip',
+        'https://www.youtube.com/watch?v=HJp9P3O4JK0',
         120,
         'clip',
         'English',
@@ -838,18 +1101,73 @@ VALUES -- Tensura Movie 2 trailers
     (
         3,
         'Dune Part 2 - Behind the Scenes',
-        'https://youtube.com/watch?v=dune2_bts',
+        'https://www.youtube.com/watch?v=HJp9P3O4JK0',
         300,
         'behind_the_scenes',
         'English',
         FALSE,
         780000
     ),
-    -- Sonic 4 trailers
+-- Avengers: Endgame (Movie ID 4)
+    (
+        4,
+        'Avengers: Endgame - Official Trailer',
+        'https://www.youtube.com/watch?v=TcMBFSGVi1c',
+        150,
+        'official',
+        'English',
+        TRUE,
+        90000000
+    ),
+-- Frozen II (Movie ID 5)
+    (
+        5,
+        'Frozen 2 | Official Trailer 2',
+        'https://www.youtube.com/watch?v=bwzLiQZDw2I',
+        138,
+        'official',
+        'English',
+        TRUE,
+        42000000
+    ),
+-- The Batman (Movie ID 6)
+    (
+        6,
+        'The Batman - Final Trailer',
+        'https://www.youtube.com/watch?v=5z98s9SzxSs',
+        153,
+        'official',
+        'English',
+        TRUE,
+        15000000
+    ),
+-- One Piece Film: Red (Movie ID 7)
+    (
+        7,
+        'One Piece Film: Red Trailer #1',
+        'https://www.youtube.com/watch?v=4FDeLtjCslo',
+        98,
+        'official',
+        'Japanese',
+        TRUE,
+        8000000
+    ),
+-- Harry Potter and the Sorcerer's Stone (Movie ID 8)
+    (
+        8,
+        'Harry Potter and the Sorcerer''s Stone (2001) Official Trailer', -- Corrected escape for 's
+        'https://www.youtube.com/watch?v=VyHV0BRtdxo',
+        130,
+        'official',
+        'English',
+        TRUE,
+        18000000
+    ),
+-- Sonic the Hedgehog 2 trailers (Movie ID 9)
     (
         9,
-        'Sonic 4 - Official Trailer',
-        'https://youtube.com/watch?v=sonic4_official',
+        'Sonic the Hedgehog 2 - Official Trailer',
+        'https://www.youtube.com/watch?v=rHAI52zXz9A',
         150,
         'official',
         'English',
@@ -858,14 +1176,81 @@ VALUES -- Tensura Movie 2 trailers
     ),
     (
         9,
-        'Sonic 4 - Teaser',
-        'https://youtube.com/watch?v=sonic4_teaser',
+        'Sonic the Hedgehog 2 - Teaser',
+        'https://www.youtube.com/watch?v=rHAI52zXz9A',
         90,
         'teaser',
         'English',
         FALSE,
         1200000
+    ),
+-- Godzilla x Kong: The New Empire (Movie ID 10)
+    (
+        10,
+        'GODZILLA X KONG: The New Empire Trailer 3',
+        'https://www.youtube.com/watch?v=bsa9LgJBU34',
+        146,
+        'official',
+        'English',
+        TRUE,
+        28000000
+    ),
+-- The Super Mario Bros. Movie (Movie ID 11)
+    (
+        11,
+        'THE SUPER MARIO BROS. MOVIE Super Bowl Trailer',
+        'https://www.youtube.com/watch?v=RaDRlUB1uu8&vl=en',
+        61,
+        'official',
+        'English',
+        TRUE,
+        55000000
+    ),
+-- Avatar: The Way of Water (Movie ID 12)
+    (
+        12,
+        'Avatar: The Way of Water | Official Trailer',
+        'https://www.youtube.com/watch?v=d9MyW72ELq0',
+        135,
+        'official',
+        'English',
+        TRUE,
+        45000000
+    ),
+-- John Wick: Chapter 4 (Movie ID 13)
+    (
+        13,
+        'John Wick: Chapter 4 (2023) Final Trailer',
+        'https://www.youtube.com/watch?v=yjRHZEUamCc',
+        150,
+        'official',
+        'English',
+        TRUE,
+        12000000
+    ),
+-- Oppenheimer trailers (Movie ID 14)
+    (
+        14,
+        'Oppenheimer - Official Trailer',
+        'https://www.youtube.com/watch?v=hPIzgZ16oac',
+        182,
+        'official',
+        'English',
+        TRUE,
+        74000000
+    ),
+-- Barbie trailers (Movie ID 15)
+    (
+        15,
+        'Barbie - Official Trailer',
+        'https://www.youtube.com/watch?v=qcGMKd8iego',
+        167,
+        'official',
+        'English',
+        TRUE,
+        61000000
     );
+
 -- ========================================
 -- SHOWTIMES DATA
 -- ========================================
@@ -892,11 +1277,52 @@ VALUES -- Tensura Movie 2 at Downtown Cinema
     (9, 3, '2025-12-05', '15:00', 10.99, 160),
     (9, 3, '2025-12-05', '17:00', 10.99, 175),
     (9, 3, '2025-12-05', '19:00', 12.99, 140);
+
 -- ========================================
--- SEATS DATA (Auto-generated in actual setup)
+-- SEATS DATA
 -- ========================================
--- This is handled by triggers in the original script
--- INSERT INTO seats is done via CROSS JOIN in the schema setup
+-- seat rows A–I, numbers 1–7
+INSERT INTO seats (screen_id, seat_row, seat_number, seat_label)
+SELECT s.screen_id,
+    r.row_label,
+    n.num,
+    CONCAT(r.row_label, n.num)
+FROM screens s
+    CROSS JOIN (
+        SELECT 'A'
+        UNION
+        SELECT 'B'
+        UNION
+        SELECT 'C'
+        UNION
+        SELECT 'D'
+        UNION
+        SELECT 'E'
+        UNION
+        SELECT 'F'
+        UNION
+        SELECT 'G'
+        UNION
+        SELECT 'H'
+        UNION
+        SELECT 'I'
+    ) r
+    CROSS JOIN (
+        SELECT 1 num
+        UNION
+        SELECT 2
+        UNION
+        SELECT 3
+        UNION
+        SELECT 4
+        UNION
+        SELECT 5
+        UNION
+        SELECT 6
+        UNION
+        SELECT 7
+    ) n;
+
 -- ========================================
 -- TICKETS DATA
 -- ========================================
@@ -918,6 +1344,7 @@ VALUES (1, 2, 'A1', 'adult', 12.99, 'paid'),
     (4, 2, 'D4', 'adult', 12.99, 'paid'),
     (4, 3, 'D5', 'student', 9.99, 'paid'),
     (5, 4, 'E1', 'adult', 12.99, 'cancelled');
+
 -- ========================================
 -- PAYMENTS DATA
 -- ========================================
@@ -1009,6 +1436,7 @@ VALUES (
         'failed',
         'TRX_20251204_006'
     );
+
 -- ========================================
 -- REVIEWS DATA
 -- ========================================
@@ -1089,6 +1517,7 @@ VALUES (
         'Epic scale and incredible visuals. Slightly long but worth it.',
         TRUE
     );
+
 -- ========================================
 -- PROMOTIONS DATA
 -- ========================================
@@ -1180,6 +1609,7 @@ VALUES (
         'inactive',
         'seasonal'
     );
+
 -- ========================================
 -- BOOKMARKS DATA
 -- ========================================
@@ -1224,6 +1654,7 @@ FROM users u
     AND CURDATE() BETWEEN p.start_date AND p.end_date
 WHERE DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
     AND u.status = 'active';
+
 -- ========================================
 -- VIEW: BIRTHDAY PROMOTIONS FOR TODAY
 -- ========================================
@@ -1249,6 +1680,7 @@ WHERE DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
     AND u.status = 'active'
     AND p.status = 'active'
     AND CURDATE() BETWEEN p.start_date AND p.end_date;
+
 -- ========================================
 -- QUERY ALL USERS WITH BIRTHDAYS THIS MONTH
 -- ========================================
@@ -1262,11 +1694,12 @@ FROM users u
 WHERE MONTH(u.date_of_birth) = MONTH(CURDATE())
     AND u.status = 'active'
 ORDER BY DAY(u.date_of_birth);
+
 -- ========================================
 -- PROCEDURE: GET USER BIRTHDAY PROMO
 -- ========================================
-DELIMITER $$ 
-CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT) 
+DELIMITER $$
+CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT)
 BEGIN
     SELECT u.user_id,
         u.username,
@@ -1293,21 +1726,23 @@ BEGIN
     WHERE u.user_id = p_user_id;
 END $$ 
 DELIMITER ;
+
 -- ========================================
 -- PROCEDURE: CHECK IF USER HAS BIRTHDAY TODAY
 -- ========================================
-DELIMITER $$ 
-CREATE PROCEDURE check_user_birthday(IN p_user_id INT, OUT is_birthday BOOLEAN) 
+DELIMITER $$
+CREATE PROCEDURE check_user_birthday(IN p_user_id INT, OUT is_birthday BOOLEAN)
 BEGIN
     SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO is_birthday
     FROM users
     WHERE user_id = p_user_id;
-END $$ 
+END $$
 DELIMITER ;
+
 -- ========================================
 -- PROCEDURE: APPLY BIRTHDAY DISCOUNT TO TICKET
 -- ========================================
-DELIMITER $$ 
+DELIMITER $$
 CREATE PROCEDURE apply_birthday_discount(
     IN p_user_id INT,
     IN p_ticket_price DECIMAL(10, 2),
@@ -1315,47 +1750,52 @@ CREATE PROCEDURE apply_birthday_discount(
     OUT p_discount_amount DECIMAL(10, 2),
     OUT has_birthday BOOLEAN
 ) BEGIN
-    DECLARE promo_discount_value DECIMAL(10, 2);
-    DECLARE promo_discount_type VARCHAR(20);
-    -- Check if user has birthday today
-    SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO has_birthday
-    FROM users
-    WHERE user_id = p_user_id;
-    -- Get birthday promotion details
-    SELECT p.discount_value,
-        p.discount_type INTO promo_discount_value,
-        promo_discount_type
-    FROM promotions p
-    WHERE p.promotion_type = 'birthday'
-        AND p.status = 'active'
-        AND CURDATE() BETWEEN p.start_date AND p.end_date
-    LIMIT 1;
-    -- Calculate discount if birthday today
-    IF has_birthday
-    AND promo_discount_value IS NOT NULL THEN IF promo_discount_type = 'percentage' THEN
-    SET p_discount_amount = p_ticket_price * (promo_discount_value / 100);
+DECLARE promo_discount_value DECIMAL(10, 2);
+DECLARE promo_discount_type VARCHAR(20);
+-- Check if user has birthday today
+SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO has_birthday
+FROM users
+WHERE user_id = p_user_id;
+
+-- Get birthday promotion details
+SELECT p.discount_value,
+    p.discount_type INTO promo_discount_value,
+    promo_discount_type
+FROM promotions p
+WHERE p.promotion_type = 'birthday'
+    AND p.status = 'active'
+    AND CURDATE() BETWEEN p.start_date AND p.end_date
+LIMIT 1;
+
+-- Calculate discount if birthday today
+IF has_birthday AND promo_discount_value IS NOT NULL THEN 
+    IF promo_discount_type = 'percentage' THEN
+        SET p_discount_amount = p_ticket_price * (promo_discount_value / 100);
     ELSE
-    SET p_discount_amount = promo_discount_value;
+        SET p_discount_amount = promo_discount_value;
     END IF;
     SET p_discounted_price = p_ticket_price - p_discount_amount;
     ELSE
-    SET p_discount_amount = 0;
-    SET p_discounted_price = p_ticket_price;
+        SET p_discount_amount = 0;
+        SET p_discounted_price = p_ticket_price;
     END IF;
-END $$ 
+END $$
 DELIMITER ;
+
 -- ========================================
 -- TRIGGER: AUTO-CREATE BIRTHDAY PROMO DAILY
 -- ========================================
-DELIMITER $$ 
+DELIMITER $$
 CREATE TRIGGER create_daily_birthday_promotion BEFORE
-    INSERT ON promotions FOR EACH ROW BEGIN
-        IF NEW.promotion_type = 'birthday' THEN
-    SET NEW.start_date = CURDATE();
-    SET NEW.end_date = CURDATE();
+INSERT ON promotions FOR EACH ROW 
+BEGIN 
+    IF NEW.promotion_type = 'birthday' THEN
+        SET NEW.start_date = CURDATE();
+        SET NEW.end_date = CURDATE();
     END IF;
-END $$ 
+END $$
 DELIMITER ;
+
 -- ========================================
 -- VERIFICATION QUERIES
 -- ========================================
@@ -1373,6 +1813,7 @@ SELECT promotion_id,
 FROM promotions
 WHERE status = 'active'
 ORDER BY promotion_type;
+
 -- Show birthday promotion specifically
 SELECT promotion_id,
     title,
@@ -1383,6 +1824,7 @@ SELECT promotion_id,
     end_date
 FROM promotions
 WHERE promotion_type = 'birthday';
+
 -- Count users with birthdays by month
 SELECT MONTH(date_of_birth) as month,
     COUNT(*) as user_count
@@ -1390,6 +1832,7 @@ FROM users
 WHERE status = 'active'
 GROUP BY MONTH(date_of_birth)
 ORDER BY month;
+
 -- ========================================
 -- SCHEMA CREATION COMPLETE
 -- ========================================

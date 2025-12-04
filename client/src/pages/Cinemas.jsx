@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
 
-function Theaters() {
-  const [theaters, setTheaters] = useState([]);
+function Cinemas() {
+  const [cinemas, setCinemas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTheaters = async () => {
       try {
         const data = await apiService.getCinemas(); // Uses the same endpoint as cinemas
-        setTheaters(data);
+        setCinemas(data);
       } catch (error) {
         console.error("Error fetching theaters:", error);
       } finally {
@@ -26,15 +26,15 @@ function Theaters() {
     <div className="page">
       <h1>Cinemas</h1>
       <div className="theater-grid">
-        {theaters.map((theater) => (
-          <div key={theater.cinema_id} className="theater-card">
-            <h3>{theater.name}</h3>
-            <p>{theater.address}</p>
+        {cinemas.map((cinema) => (
+          <div key={cinema.cinema_id} className="theater-card">
+            <h3>{cinema.name}</h3>
+            <p>{cinema.address}</p>
             <p>
-              {theater.city}, {theater.country}
+              {cinema.city}, {cinema.country}
             </p>
-            <p>Screens: {theater.total_screens}</p>
-            <p>Seats: {theater.total_seats}</p>
+            <p>Screens: {cinema.total_screens}</p>
+            <p>Seats: {cinema.total_seats}</p>
           </div>
         ))}
       </div>
@@ -42,4 +42,4 @@ function Theaters() {
   );
 }
 
-export default Theaters;
+export default Cinemas;

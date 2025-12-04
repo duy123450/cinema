@@ -6,7 +6,7 @@ function Movies() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("all"); // all, now_showing, upcoming, ended
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -14,10 +14,19 @@ function Movies() {
         setLoading(true);
         setError(null);
         const data = await apiService.getMovies();
-        setMovies(data);
+
+        // ✅ Add safety check to ensure data is an array
+        if (Array.isArray(data)) {
+          setMovies(data);
+        } else {
+          console.error("API returned non-array data:", data);
+          setMovies([]);
+          setError("Invalid data format received from server");
+        }
       } catch (err) {
         console.error("Error fetching movies:", err);
         setError("Failed to load movies. Please try again later.");
+        setMovies([]);
       } finally {
         setLoading(false);
       }
@@ -26,11 +35,13 @@ function Movies() {
     fetchMovies();
   }, []);
 
-  // Filter movies based on selected status
-  const filteredMovies = movies.filter((movie) => {
-    if (filter === "all") return true;
-    return movie.status === filter;
-  });
+  // ✅ Add safety check before filtering
+  const filteredMovies = Array.isArray(movies)
+    ? movies.filter((movie) => {
+        if (filter === "all") return true;
+        return movie.status === filter;
+      })
+    : [];
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -74,7 +85,8 @@ function Movies() {
       <div className="movies-header">
         <h1>Movies</h1>
         <p className="movies-subtitle">
-          {filteredMovies.length} {filteredMovies.length === 1 ? "movie" : "movies"} found
+          {filteredMovies.length}{" "}
+          {filteredMovies.length === 1 ? "movie" : "movies"} found
         </p>
       </div>
 
@@ -90,7 +102,8 @@ function Movies() {
           className={`filter-btn ${filter === "now_showing" ? "active" : ""}`}
           onClick={() => setFilter("now_showing")}
         >
-          Now Showing ({movies.filter((m) => m.status === "now_showing").length})
+          Now Showing ({movies.filter((m) => m.status === "now_showing").length}
+          )
         </button>
         <button
           className={`filter-btn ${filter === "upcoming" ? "active" : ""}`}
@@ -132,14 +145,18 @@ function Movies() {
               <div className="movie-info">
                 <h3 className="movie-title">{movie.title}</h3>
 
-                {movie.original_title && movie.original_title !== movie.title && (
-                  <p className="movie-original-title">{movie.original_title}</p>
-                )}
+                {movie.original_title &&
+                  movie.original_title !== movie.title && (
+                    <p className="movie-original-title">
+                      {movie.original_title}
+                    </p>
+                  )}
 
                 <div className="movie-meta">
                   {movie.release_date && (
                     <span className="meta-item">
-                      <strong>Release:</strong> {new Date(movie.release_date).toLocaleDateString()}
+                      <strong>Release:</strong>{" "}
+                      {new Date(movie.release_date).toLocaleDateString()}
                     </span>
                   )}
                   {movie.duration_minutes && (
@@ -163,18 +180,24 @@ function Movies() {
 
                 {movie.rating && (
                   <p className="movie-rating">
-                    <strong>Rating:</strong> <span className="rating-badge">{movie.rating}</span>
+                    <strong>Rating:</strong>{" "}
+                    <span className="rating-badge">{movie.rating}</span>
                   </p>
                 )}
 
                 {movie.imdb_rating && (
                   <p className="movie-imdb">
-                    <strong>IMDB:</strong> <span className="imdb-score">⭐ {movie.imdb_rating}/10</span>
+                    <strong>IMDB:</strong>{" "}
+                    <span className="imdb-score">
+                      ⭐ {movie.imdb_rating}/10
+                    </span>
                   </p>
                 )}
 
                 {movie.description && (
-                  <p className="movie-description">{movie.description.substring(0, 100)}...</p>
+                  <p className="movie-description">
+                    {movie.description.substring(0, 100)}...
+                  </p>
                 )}
 
                 <div className="movie-actions">

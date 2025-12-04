@@ -167,8 +167,25 @@
     transition: background $transition;
     text-decoration: none;
     display: inline-block;
-  
+
     &:hover {
-      background: $color-red-light; // Lighter red on hover
+        background: $color-red-light; // Lighter red on hover
     }
-  }
+}
+
+.logout-btn {
+    background: $color-red;
+    color: white;
+    border: none;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background $transition;
+    width: 100%;
+    text-align: left;
+
+    &:hover {
+        background: $color-red-light;
+    }
+}

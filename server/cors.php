@@ -1,18 +1,17 @@
 <?php
 // Start session on every request
 if (!isset($_SESSION)) {
+    // Set session cookie parameters for better compatibility
+    session_set_cookie_params([
+        'lifetime' => 3600,      // 1 hour
+        'path' => '/',
+        'domain' => '',
+        'secure' => true,
+        'httponly' => true,      // Prevent JavaScript access
+        'samesite' => 'None'      // Allow cross-origin requests
+    ]);
     session_start();
 }
-
-// Set session cookie parameters for better compatibility
-session_set_cookie_params([
-    'lifetime' => 3600,      // 1 hour
-    'path' => '/',
-    'domain' => '',
-    'secure' => false,       // Set to true if using HTTPS
-    'httponly' => true,      // Prevent JavaScript access
-    'samesite' => 'Lax'      // Allow cross-origin requests
-]);
 
 // Allow only your frontend origin (no trailing spaces!)
 # List of allowed origins

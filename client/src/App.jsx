@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index.jsx";
 import Movies from "./pages/Movies.jsx";
 import Showtimes from "./pages/Showtimes.jsx";
-import Theaters from "./pages/Theaters.jsx";
+import Cinemas from "./pages/Cinemas.jsx";
 import Bookings from "./pages/Bookings.jsx";
 import Admin from "./pages/Admin.jsx";
 import Login from "./pages/Login.jsx";
@@ -44,10 +44,10 @@ function App() {
           }
         />
         <Route
-          path="/theaters"
+          path="/cinemas"
           element={
             <Layout>
-              <Theaters />
+              <Cinemas />
             </Layout>
           }
         />

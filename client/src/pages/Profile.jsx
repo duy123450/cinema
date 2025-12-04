@@ -186,17 +186,10 @@ function Profile() {
       const finalData = { ...formData };
 
       if (avatarFile) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("avatar", avatarFile);
-        formDataUpload.append("user_id", user.user_id);
-
-        if (avatarFile.success) {
-          finalData.avatar = avatarFile;
-        }
-
         const updatedUser = await apiService.updateProfile(
           user.user_id,
-          finalData
+          finalData,
+          avatarFile
         );
 
         if (updatedUser) {
