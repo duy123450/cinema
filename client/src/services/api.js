@@ -31,34 +31,34 @@ api.interceptors.response.use(
 export const apiService = {
     // ===== MOVIES =====
     getMovies: async (status = null) => {
-        const url = status ? `/movies?status=${status}` : '/movies';
+        const url = status ? `/movies.php?status=${status}` : '/movies.php';
         const response = await api.get(url);
         return response.data;
     },
 
     getMovieById: async (movieId) => {
-        const response = await api.get(`/movies?id=${movieId}`);
+        const response = await api.get(`/movies.php?id=${movieId}`);
         return response.data;
     },
 
     createMovie: async (movieData) => {
-        const response = await api.post('/movies', movieData);
+        const response = await api.post('/movies.php', movieData);
         return response.data;
     },
 
     updateMovie: async (movieId, movieData) => {
-        const response = await api.put(`/movies?id=${movieId}`, movieData);
+        const response = await api.put(`/movies.php?id=${movieId}`, movieData);
         return response.data;
     },
 
     deleteMovie: async (movieId) => {
-        const response = await api.delete(`/movies?id=${movieId}`);
+        const response = await api.delete(`/movies.php?id=${movieId}`);
         return response.data;
     },
 
     // ===== SHOWTIMES =====
     getShowtimes: async (filters = {}) => {
-        let url = '/showtimes';
+        let url = '/showtimes.php';
         const params = new URLSearchParams();
 
         if (filters.movieId) params.append('movie_id', filters.movieId);
@@ -74,97 +74,97 @@ export const apiService = {
     },
 
     getShowtimeById: async (showtimeId) => {
-        const response = await api.get(`/showtimes?id=${showtimeId}`);
+        const response = await api.get(`/showtimes.php?id=${showtimeId}`);
         return response.data;
     },
 
     createShowtime: async (showtimeData) => {
-        const response = await api.post('/showtimes', showtimeData);
+        const response = await api.post('/showtimes.php', showtimeData);
         return response.data;
     },
 
     updateShowtime: async (showtimeId, showtimeData) => {
-        const response = await api.put(`/showtimes?id=${showtimeId}`, showtimeData);
+        const response = await api.put(`/showtimes.php?id=${showtimeId}`, showtimeData);
         return response.data;
     },
 
     deleteShowtime: async (showtimeId) => {
-        const response = await api.delete(`/showtimes?id=${showtimeId}`);
+        const response = await api.delete(`/showtimes.php?id=${showtimeId}`);
         return response.data;
     },
 
     // ===== CINEMAS/THEATERS =====
     getCinemas: async (city = null) => {
-        const url = city ? `/theaters?city=${encodeURIComponent(city)}` : '/theaters';
+        const url = city ? `/cinemas.php?city=${encodeURIComponent(city)}` : '/cinemas.php';
         const response = await api.get(url);
         return response.data;
     },
 
     getCinemaById: async (cinemaId) => {
-        const response = await api.get(`/theaters?id=${cinemaId}`);
+        const response = await api.get(`/cinemas.php?id=${cinemaId}`);
         return response.data;
     },
 
     createCinema: async (cinemaData) => {
-        const response = await api.post('/theaters', cinemaData);
+        const response = await api.post('/cinemas.php', cinemaData);
         return response.data;
     },
 
     updateCinema: async (cinemaId, cinemaData) => {
-        const response = await api.put(`/theaters?id=${cinemaId}`, cinemaData);
+        const response = await api.put(`/cinemas.php?id=${cinemaId}`, cinemaData);
         return response.data;
     },
 
     deleteCinema: async (cinemaId) => {
-        const response = await api.delete(`/theaters?id=${cinemaId}`);
+        const response = await api.delete(`/cinemas.php?id=${cinemaId}`);
         return response.data;
     },
 
     // ===== BOOKINGS/TICKETS =====
     getBookings: async (userId = null) => {
-        const url = userId ? `/bookings?user_id=${userId}` : '/bookings';
+        const url = userId ? `/bookings.php?user_id=${userId}` : '/bookings.php';
         const response = await api.get(url);
         return response.data;
     },
 
     createBooking: async (bookingData) => {
-        const response = await api.post('/bookings', bookingData);
+        const response = await api.post('/bookings.php', bookingData);
         return response.data;
     },
 
     updateBooking: async (ticketId, bookingData) => {
-        const response = await api.put(`/bookings?id=${ticketId}`, bookingData);
+        const response = await api.put(`/bookings.php?id=${ticketId}`, bookingData);
         return response.data;
     },
 
     cancelBooking: async (ticketId) => {
-        const response = await api.delete(`/bookings?id=${ticketId}`);
+        const response = await api.delete(`/bookings.php?id=${ticketId}`);
         return response.data;
     },
 
     // ===== USERS =====
     getUsers: async () => {
-        const response = await api.get('/users');
+        const response = await api.get('/users.php');
         return response.data;
     },
 
     getUserById: async (userId) => {
-        const response = await api.get(`/users?id=${userId}`);
+        const response = await api.get(`/users.php?id=${userId}`);
         return response.data;
     },
 
     createUser: async (userData) => {
-        const response = await api.post('/users', userData);
+        const response = await api.post('/users.php', userData);
         return response.data;
     },
 
     updateUser: async (userId, userData) => {
-        const response = await api.put(`/users?id=${userId}`, userData);
+        const response = await api.put(`/users.php?id=${userId}`, userData);
         return response.data;
     },
 
     deleteUser: async (userId) => {
-        const response = await api.delete(`/users?id=${userId}`);
+        const response = await api.delete(`/users.php?id=${userId}`);
         return response.data;
     },
 
@@ -193,7 +193,7 @@ export const apiService = {
             formDataWithAvatar.append('avatar', avatarFile);
         }
 
-        const response = await api.post(`/users?id=${userId}`, formDataWithAvatar, {
+        const response = await api.post(`/users.php?id=${userId}`, formDataWithAvatar, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

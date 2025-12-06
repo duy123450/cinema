@@ -9,6 +9,39 @@ $conn->exec("SET time_zone = '+00:00'");
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
+        // Check if requesting a single movie by ID
+        $movie_id = $_GET['id'] ?? null;
+        
+        if ($movie_id) {
+            // GET single movie with cast and trailers
+            $query = "SELECT m.*, 
+                             GROUP_CONCAT(DISTINCT a.name SEPARATOR ', ') as cast_list,
+                             COUNT(DISTINCT mt.trailer_id) as trailer_count
+                      FROM movies m
+                      LEFT JOIN movie_cast mc ON m.movie_id = mc.movie_id
+                      LEFT JOIN actors a ON mc.actor_id = a.actor_id
+                      LEFT JOIN movie_trailers mt ON m.movie_id = mt.movie_id
+                      WHERE m.movie_id = ?
+                      GROUP BY m.movie_id";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$movie_id]);
+            $movie = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$movie) {
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Movie not found'
+                ]);
+                exit();
+            }
+            
+            http_response_code(200);
+            echo json_encode($movie);
+            exit();
+        }
+        
         // Get all movies or filter by status
         $status = $_GET['status'] ?? null;
         
@@ -32,46 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode([
             'success' => false,
             'message' => 'Error fetching movies: ' . $e->getMessage()
-        ]);
-    }
-}
-
-// GET single movie by ID
-elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
-    try {
-        $movie_id = $_GET['id'];
-        
-        $query = "SELECT m.*, 
-                         GROUP_CONCAT(DISTINCT mc.actor_id) as actor_ids,
-                         GROUP_CONCAT(DISTINCT a.name SEPARATOR ', ') as cast_list,
-                         GROUP_CONCAT(DISTINCT mt.trailer_id) as trailer_ids
-                  FROM movies m
-                  LEFT JOIN movie_cast mc ON m.movie_id = mc.movie_id
-                  LEFT JOIN actors a ON mc.actor_id = a.actor_id
-                  LEFT JOIN movie_trailers mt ON m.movie_id = mt.movie_id
-                  WHERE m.movie_id = ?
-                  GROUP BY m.movie_id";
-        
-        $stmt = $conn->prepare($query);
-        $stmt->execute([$movie_id]);
-        $movie = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if (!$movie) {
-            http_response_code(404);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Movie not found'
-            ]);
-            exit();
-        }
-        
-        http_response_code(200);
-        echo json_encode($movie);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Error fetching movie: ' . $e->getMessage()
         ]);
     }
 }

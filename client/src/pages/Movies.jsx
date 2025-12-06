@@ -6,7 +6,9 @@ function Movies() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("all"); // all, now_showing, upcoming, ended
+  const [sortBy, setSortBy] = useState("id"); // id, title, release_date, imdb_rating
+  const [sortOrder, setSortOrder] = useState("asc"); // asc, desc
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -14,19 +16,10 @@ function Movies() {
         setLoading(true);
         setError(null);
         const data = await apiService.getMovies();
-
-        // ✅ Add safety check to ensure data is an array
-        if (Array.isArray(data)) {
-          setMovies(data);
-        } else {
-          console.error("API returned non-array data:", data);
-          setMovies([]);
-          setError("Invalid data format received from server");
-        }
+        setMovies(data);
       } catch (err) {
         console.error("Error fetching movies:", err);
         setError("Failed to load movies. Please try again later.");
-        setMovies([]);
       } finally {
         setLoading(false);
       }
@@ -35,13 +28,53 @@ function Movies() {
     fetchMovies();
   }, []);
 
-  // ✅ Add safety check before filtering
-  const filteredMovies = Array.isArray(movies)
-    ? movies.filter((movie) => {
-        if (filter === "all") return true;
-        return movie.status === filter;
-      })
-    : [];
+  // Filter movies based on selected status
+  const filteredMovies = movies.filter((movie) => {
+    if (filter === "all") return true;
+    return movie.status === filter;
+  });
+
+  // Sort movies based on selected criteria
+  const sortedMovies = [...filteredMovies].sort((a, b) => {
+    let aValue, bValue;
+
+    switch (sortBy) {
+      case "title":
+        aValue = a.title.toLowerCase();
+        bValue = b.title.toLowerCase();
+        break;
+      case "release_date":
+        aValue = new Date(a.release_date || "1900-01-01");
+        bValue = new Date(b.release_date || "1900-01-01");
+        break;
+      case "imdb_rating":
+        aValue = parseFloat(a.imdb_rating || 0);
+        bValue = parseFloat(b.imdb_rating || 0);
+        break;
+      case "id":
+      default:
+        aValue = a.movie_id;
+        bValue = b.movie_id;
+        break;
+    }
+
+    if (sortOrder === "asc") {
+      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+    } else {
+      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+    }
+  });
+
+  const handleSortChange = (newSortBy) => {
+    if (sortBy === newSortBy) {
+      // Toggle sort order if clicking the same sort button
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // Set new sort by and default to ascending
+      setSortBy(newSortBy);
+      setSortOrder("asc");
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -69,6 +102,11 @@ function Movies() {
     }
   };
 
+  const getSortIcon = (field) => {
+    if (sortBy !== field) return "⇅";
+    return sortOrder === "asc" ? "↑" : "↓";
+  };
+
   if (loading) {
     return (
       <div className="page movies-page">
@@ -85,8 +123,7 @@ function Movies() {
       <div className="movies-header">
         <h1>Movies</h1>
         <p className="movies-subtitle">
-          {filteredMovies.length}{" "}
-          {filteredMovies.length === 1 ? "movie" : "movies"} found
+          {sortedMovies.length} {sortedMovies.length === 1 ? "movie" : "movies"} found
         </p>
       </div>
 
@@ -102,8 +139,7 @@ function Movies() {
           className={`filter-btn ${filter === "now_showing" ? "active" : ""}`}
           onClick={() => setFilter("now_showing")}
         >
-          Now Showing ({movies.filter((m) => m.status === "now_showing").length}
-          )
+          Now Showing ({movies.filter((m) => m.status === "now_showing").length})
         </button>
         <button
           className={`filter-btn ${filter === "upcoming" ? "active" : ""}`}
@@ -119,15 +155,44 @@ function Movies() {
         </button>
       </div>
 
+      {/* Sort Buttons */}
+      <div className="movies-sort">
+        <span className="sort-label">Sort by:</span>
+        <button
+          className={`sort-btn ${sortBy === "id" ? "active" : ""}`}
+          onClick={() => handleSortChange("id")}
+        >
+          Default {getSortIcon("id")}
+        </button>
+        <button
+          className={`sort-btn ${sortBy === "title" ? "active" : ""}`}
+          onClick={() => handleSortChange("title")}
+        >
+          Title {getSortIcon("title")}
+        </button>
+        <button
+          className={`sort-btn ${sortBy === "release_date" ? "active" : ""}`}
+          onClick={() => handleSortChange("release_date")}
+        >
+          Release Date {getSortIcon("release_date")}
+        </button>
+        <button
+          className={`sort-btn ${sortBy === "imdb_rating" ? "active" : ""}`}
+          onClick={() => handleSortChange("imdb_rating")}
+        >
+          IMDB Rating {getSortIcon("imdb_rating")}
+        </button>
+      </div>
+
       {error && <div className="error-message">{error}</div>}
 
-      {filteredMovies.length === 0 ? (
+      {sortedMovies.length === 0 ? (
         <div className="no-movies">
           <p>No movies found in this category.</p>
         </div>
       ) : (
         <div className="movie-grid">
-          {filteredMovies.map((movie) => (
+          {sortedMovies.map((movie) => (
             <div key={movie.movie_id} className="movie-card">
               <div className="movie-poster">
                 {movie.poster_url ? (
@@ -142,72 +207,35 @@ function Movies() {
                 </div>
               </div>
 
-              <div className="movie-info">
+                              <div className="movie-info">
                 <h3 className="movie-title">{movie.title}</h3>
-
-                {movie.original_title &&
-                  movie.original_title !== movie.title && (
-                    <p className="movie-original-title">
-                      {movie.original_title}
-                    </p>
-                  )}
 
                 <div className="movie-meta">
                   {movie.release_date && (
                     <span className="meta-item">
-                      <strong>Release:</strong>{" "}
-                      {new Date(movie.release_date).toLocaleDateString()}
+                      📅 {new Date(movie.release_date).toLocaleDateString()}
                     </span>
                   )}
                   {movie.duration_minutes && (
                     <span className="meta-item">
-                      <strong>Duration:</strong> {movie.duration_minutes} min
+                      ⏱️ {movie.duration_minutes} min
                     </span>
                   )}
                 </div>
 
-                {movie.genre && (
-                  <p className="movie-genre">
-                    <strong>Genre:</strong> {movie.genre}
-                  </p>
-                )}
-
-                {movie.director && (
-                  <p className="movie-director">
-                    <strong>Director:</strong> {movie.director}
-                  </p>
-                )}
-
                 {movie.rating && (
-                  <p className="movie-rating">
-                    <strong>Rating:</strong>{" "}
+                  <div className="movie-rating-badge">
                     <span className="rating-badge">{movie.rating}</span>
-                  </p>
-                )}
-
-                {movie.imdb_rating && (
-                  <p className="movie-imdb">
-                    <strong>IMDB:</strong>{" "}
-                    <span className="imdb-score">
-                      ⭐ {movie.imdb_rating}/10
-                    </span>
-                  </p>
+                  </div>
                 )}
 
                 {movie.description && (
-                  <p className="movie-description">
-                    {movie.description.substring(0, 100)}...
-                  </p>
+                  <p className="movie-description">{movie.description.substring(0, 120)}...</p>
                 )}
 
-                <div className="movie-actions">
-                  <Link to="/showtimes" className="btn-showtimes">
-                    View Showtimes
-                  </Link>
-                  <Link to="/bookings" className="btn-book">
-                    Book Tickets
-                  </Link>
-                </div>
+                <Link to={`/movies/${movie.movie_id}`} className="btn-view-details">
+                  View Details
+                </Link>
               </div>
             </div>
           ))}

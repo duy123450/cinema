@@ -1,5 +1,3 @@
-// src/components/Header.jsx
-
 import React, { useContext, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
@@ -195,12 +193,12 @@ function Header() {
         </Link>
 
         <Link
-          to="/theaters"
+          to="/cinemas"
           className={`nav-link ${
             location.pathname === "/cinemas" ? "active" : ""
           }`}
         >
-          Theaters
+          Cinemas
         </Link>
 
         <Link

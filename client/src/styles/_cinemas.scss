@@ -1,0 +1,336 @@
+@use "variables" as *;
+
+.cinemas-page {
+    padding: $spacing-xl;
+    background: linear-gradient(135deg, $color-gray-7 0%, $color-gray-10 100%);
+    min-height: 80vh;
+}
+
+.cinemas-header {
+    text-align: center;
+    margin-bottom: $spacing-xxl;
+
+    h1 {
+        font-size: 2.5rem;
+        color: $color-yellow-70;
+        margin-bottom: $spacing-md;
+        text-shadow: 2px 2px 4px $color-overlay-medium;
+    }
+
+    .cinemas-subtitle {
+        color: $color-gray-85;
+        font-size: 1.1rem;
+    }
+}
+
+/* Filter */
+.cinemas-filter {
+    display: flex;
+    justify-content: center;
+    margin-bottom: $spacing-xxl;
+    padding: $spacing-lg;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    border: 1px solid $color-overlay-light;
+    box-shadow: 0 4px 15px $color-overlay-medium;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    min-width: 300px;
+
+    label {
+        color: $color-gray-85;
+        font-weight: bold;
+        font-size: 0.95rem;
+    }
+
+    .filter-select {
+        padding: $spacing-sm $spacing-md;
+        border: 1px solid $color-overlay-light;
+        border-radius: $radius-md;
+        background: $color-gray-10;
+        color: $color-gray-85;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all $transition;
+
+        &:hover {
+            border-color: $color-yellow-70;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $color-yellow-70;
+            box-shadow: 0 0 0 3px $color-overlay-yellow-light;
+        }
+    }
+}
+
+/* Cinemas Grid */
+.cinemas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: $spacing-xl;
+}
+
+.cinema-card {
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    border: 1px solid $color-overlay-light;
+    transition: all $transition;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    box-shadow: 0 4px 15px $color-overlay-medium;
+
+    &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px $color-overlay-heavy;
+        border-color: $color-yellow-70;
+    }
+}
+
+.cinema-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-md;
+    padding-bottom: $spacing-md;
+    border-bottom: 2px solid $color-overlay-light;
+
+    .cinema-name {
+        font-size: 1.5rem;
+        color: $color-yellow-70;
+        margin: 0;
+        font-weight: bold;
+        flex: 1;
+    }
+
+    .cinema-status {
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-sm;
+        font-weight: bold;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+
+        &.status-open {
+            background: $color-overlay-success-medium;
+            color: white;
+            border: 1px solid $color-success-light;
+        }
+
+        &.status-closed {
+            background: hsla(0, 100%, 50%, 0.9);
+            color: white;
+            border: 1px solid $color-red-light;
+        }
+
+        &.status-construction {
+            background: hsla(51, 100%, 50%, 0.9);
+            color: $color-gray-10;
+            border: 1px solid $color-yellow-60;
+        }
+
+        &.status-default {
+            background: $color-overlay-blue-medium;
+            color: white;
+        }
+    }
+}
+
+.cinema-info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+}
+
+.info-item {
+    display: flex;
+    gap: $spacing-md;
+    align-items: flex-start;
+
+    .icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .info-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+
+        p {
+            margin: 0;
+            color: $color-gray-85;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .address {
+            font-weight: 600;
+        }
+
+        .location {
+            color: $color-gray-70;
+        }
+
+        .postal {
+            color: $color-gray-60;
+            font-size: 0.85rem;
+        }
+
+        .contact-link {
+            color: $color-blue-70;
+            text-decoration: none;
+            transition: color $transition;
+
+            &:hover {
+                color: $color-blue-light;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.cinema-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+    padding: $spacing-md;
+    background: $color-gray-10;
+    border-radius: $radius-md;
+    border: 1px solid $color-overlay-light;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: $color-yellow-70;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: $color-gray-60;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+.cinema-amenities {
+    background: $color-gray-10;
+    padding: $spacing-md;
+    border-radius: $radius-md;
+    border: 1px solid $color-overlay-light;
+
+    h4 {
+        margin: 0 0 $spacing-sm 0;
+        color: $color-yellow-70;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .amenities-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-xs;
+    }
+
+    .amenity-tag {
+        background: $color-blue;
+        color: white;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $radius-sm;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+}
+
+.cinema-actions {
+    margin-top: auto;
+
+    .btn-view-showtimes {
+        display: block;
+        background: $color-yellow-50;
+        color: $color-gray-10;
+        padding: $spacing-md $spacing-lg;
+        border-radius: $radius-md;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all $transition;
+        font-size: 1rem;
+        box-shadow: 0 4px 10px $color-overlay-yellow-medium;
+
+        &:hover {
+            background: $color-yellow-60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px $color-overlay-yellow-medium;
+        }
+    }
+}
+
+/* No Cinemas Message */
+.no-cinemas {
+    text-align: center;
+    padding: $spacing-xxl;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    border: 1px dashed $color-overlay-light;
+
+    p {
+        color: $color-gray-85;
+        font-size: 1.2rem;
+    }
+}
+
+/* Loading */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xxl;
+    gap: $spacing-lg;
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid $color-overlay-light;
+        border-top-color: $color-yellow-70;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    p {
+        color: $color-gray-85;
+        font-size: 1.1rem;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,317 @@
+@use "variables" as *;
+
+.movie-detail-page {
+    padding: $spacing-xl;
+    background: linear-gradient(135deg, $color-gray-7 0%, $color-gray-10 100%);
+    min-height: 80vh;
+}
+
+.btn-back {
+    background: $color-gray-13;
+    color: $color-gray-85;
+    border: 1px solid $color-overlay-light;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all $transition;
+    font-size: 0.95rem;
+    margin-bottom: $spacing-xl;
+    display: inline-block;
+    text-decoration: none;
+
+    &:hover {
+        background: $color-gray-20;
+        border-color: $color-yellow-70;
+        transform: translateX(-5px);
+    }
+}
+
+.movie-detail-container {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: $spacing-xxl;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    padding: $spacing-xxl;
+    border: 1px solid $color-overlay-light;
+    box-shadow: 0 8px 30px $color-overlay-heavy;
+}
+
+/* Poster Section */
+.movie-poster-section {
+    position: relative;
+}
+
+.movie-poster-large {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: $radius-lg;
+    box-shadow: 0 8px 25px $color-overlay-medium;
+}
+
+.poster-placeholder-large {
+    width: 100%;
+    aspect-ratio: 2/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, $color-gray-10 0%, $color-gray-13 100%);
+    border-radius: $radius-lg;
+    font-size: 5rem;
+    box-shadow: 0 8px 25px $color-overlay-medium;
+}
+
+.movie-status-badge {
+    position: absolute;
+    top: $spacing-lg;
+    right: $spacing-lg;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-md;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px $color-overlay-heavy;
+
+    &.status-now-showing {
+        background: $color-overlay-success-medium;
+        color: white;
+        border: 1px solid $color-success-light;
+    }
+
+    &.status-upcoming {
+        background: hsla(51, 100%, 50%, 0.9);
+        color: $color-gray-10;
+        border: 1px solid $color-yellow-60;
+    }
+
+    &.status-ended {
+        background: hsla(0, 100%, 50%, 0.9);
+        color: white;
+        border: 1px solid $color-red-light;
+    }
+
+    &.status-default {
+        background: $color-overlay-blue-medium;
+        color: white;
+    }
+}
+
+/* Info Section */
+.movie-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+}
+
+.movie-detail-title {
+    font-size: 2.5rem;
+    color: $color-yellow-70;
+    margin: 0;
+    line-height: 1.2;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px $color-overlay-medium;
+}
+
+.movie-original-title {
+    font-size: 1.2rem;
+    color: $color-gray-60;
+    font-style: italic;
+    margin: 0;
+}
+
+.movie-rating-badge {
+    .rating-badge {
+        background: $color-blue;
+        color: white;
+        padding: $spacing-sm $spacing-lg;
+        border-radius: $radius-md;
+        font-weight: bold;
+        font-size: 1rem;
+        display: inline-block;
+        box-shadow: 0 4px 10px $color-overlay-blue-medium;
+    }
+}
+
+/* Meta Grid */
+.movie-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-lg;
+    background: $color-gray-10;
+    padding: $spacing-lg;
+    border-radius: $radius-md;
+    border: 1px solid $color-overlay-light;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .meta-label {
+        font-size: 0.85rem;
+        color: $color-gray-60;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: bold;
+    }
+
+    .meta-value {
+        font-size: 1rem;
+        color: $color-gray-85;
+        font-weight: 500;
+
+        &.imdb-score {
+            color: $color-yellow;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    }
+}
+
+/* Cast Section */
+.movie-cast-section {
+    background: $color-gray-10;
+    padding: $spacing-lg;
+    border-radius: $radius-md;
+    border: 1px solid $color-overlay-light;
+
+    .section-title {
+        font-size: 1.3rem;
+        color: $color-yellow-70;
+        margin: 0 0 $spacing-md 0;
+        font-weight: bold;
+    }
+
+    .cast-list {
+        font-size: 1rem;
+        color: $color-gray-85;
+        line-height: 1.6;
+        margin: 0;
+    }
+}
+
+/* Description Section */
+.movie-description-section {
+    background: $color-gray-10;
+    padding: $spacing-lg;
+    border-radius: $radius-md;
+    border: 1px solid $color-overlay-light;
+
+    .section-title {
+        font-size: 1.3rem;
+        color: $color-yellow-70;
+        margin: 0 0 $spacing-md 0;
+        font-weight: bold;
+    }
+
+    .movie-description-full {
+        font-size: 1rem;
+        color: $color-gray-85;
+        line-height: 1.8;
+        margin: 0;
+    }
+}
+
+/* Action Buttons */
+.movie-actions {
+    display: flex;
+    gap: $spacing-md;
+    margin-top: auto;
+
+    a {
+        flex: 1;
+        padding: $spacing-md $spacing-lg;
+        border-radius: $radius-md;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all $transition;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-showtimes {
+        background: $color-yellow-50;
+        color: $color-gray-10;
+        box-shadow: 0 4px 15px $color-overlay-yellow-medium;
+
+        &:hover {
+            background: $color-yellow-60;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px $color-overlay-yellow-medium;
+        }
+    }
+
+    .btn-book-tickets {
+        background: $color-blue;
+        color: white;
+        box-shadow: 0 4px 15px $color-overlay-blue-medium;
+
+        &:hover {
+            background: $color-blue-light;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px $color-overlay-blue-medium;
+        }
+    }
+}
+
+/* Error Container */
+.error-container {
+    text-align: center;
+    padding: $spacing-xxl;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    border: 1px solid $color-overlay-light;
+
+    h2 {
+        color: $color-red;
+        margin-bottom: $spacing-md;
+        font-size: 2rem;
+    }
+
+    p {
+        color: $color-gray-85;
+        margin-bottom: $spacing-xl;
+        font-size: 1.1rem;
+    }
+
+    .btn-back {
+        margin: 0;
+    }
+}
+
+/* Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xxl;
+    gap: $spacing-lg;
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid $color-overlay-light;
+        border-top-color: $color-yellow-70;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    p {
+        color: $color-gray-85;
+        font-size: 1.1rem;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

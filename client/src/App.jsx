@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index.jsx";
 import Movies from "./pages/Movies.jsx";
+import MovieDetail from "./pages/MovieDetail.jsx";
 import Showtimes from "./pages/Showtimes.jsx";
 import Cinemas from "./pages/Cinemas.jsx";
 import Bookings from "./pages/Bookings.jsx";
@@ -32,6 +33,14 @@ function App() {
           element={
             <Layout>
               <Movies />
+            </Layout>
+          }
+        />
+        <Route
+          path="/movies/:id"
+          element={
+            <Layout>
+              <MovieDetail />
             </Layout>
           }
         />

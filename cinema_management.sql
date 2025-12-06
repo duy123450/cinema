@@ -702,7 +702,7 @@ INSERT INTO movies (
         release_date,
         director,
         genre,
-        language, -- Added language here to align the rest of the data
+        language,
         rating,
         imdb_rating,
         poster_url,
