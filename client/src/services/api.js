@@ -25,10 +25,22 @@ api.interceptors.response.use(
 );
 
 // =============================================
-// AUTHENTICATION ENDPOINTS
+// API SERVICE METHODS
 // =============================================
 
 export const apiService = {
+    // ===== BANNER =====
+    getBanners: async () => {
+        const response = await api.get('/banner.php');
+        return response.data;
+    },
+
+    // ===== SEARCH =====
+    searchMovies: async (query) => {
+        const response = await api.get(`/search.php?q=${encodeURIComponent(query)}`);
+        return response.data;
+    },
+
     // ===== MOVIES =====
     getMovies: async (status = null) => {
         const url = status ? `/movies.php?status=${status}` : '/movies.php';
@@ -53,6 +65,57 @@ export const apiService = {
 
     deleteMovie: async (movieId) => {
         const response = await api.delete(`/movies.php?id=${movieId}`);
+        return response.data;
+    },
+
+    // ===== MOVIE TRAILERS =====
+    getMovieTrailers: async (movieId) => {
+        const response = await api.get(`/movie-trailers.php?movie_id=${movieId}`);
+        return response.data;
+    },
+
+    // ===== MOVIE CAST =====
+    getMovieCast: async (movieId) => {
+        const response = await api.get(`/movie-cast.php?movie_id=${movieId}`);
+        return response.data;
+    },
+
+    // ===== USER MOVIE RATING =====
+    getUserMovieRating: async (movieId, userId) => {
+        try {
+            const response = await api.get(`/user-rating.php?movie_id=${movieId}&user_id=${userId}`);
+            return response.data.rating;
+        } catch (error) {
+            // If no rating found, return 0
+            if (error.response?.status === 404) {
+                return 0;
+            }
+            throw error;
+        }
+    },
+
+    rateMovie: async (movieId, userId, rating) => {
+        const response = await api.post('/user-rating.php', {
+            movie_id: movieId,
+            user_id: userId,
+            rating: rating
+        });
+        return response.data;
+    },
+
+    // ===== ACTORS =====
+    getActors: async () => {
+        const response = await api.get('/actors.php');
+        return response.data;
+    },
+
+    getActorById: async (actorId) => {
+        const response = await api.get(`/actors.php?id=${actorId}`);
+        return response.data;
+    },
+
+    getActorMovies: async (actorId) => {
+        const response = await api.get(`/actor-movies.php?actor_id=${actorId}`);
         return response.data;
     },
 

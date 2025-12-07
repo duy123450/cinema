@@ -1,6 +1,7 @@
 import React, { useContext, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
+import SearchBar from "./SearchBar";
 import useClickOutside from "../hooks/useClickOutside";
 import { apiService } from "../services/api";
 
@@ -211,9 +212,12 @@ function Header() {
         </Link>
       </nav>
 
-      <div className="header-buttons">
-        {notificationMenu}
-        {userMenu}
+      <div className="header-right">
+        <SearchBar />
+        <div className="header-buttons">
+          {notificationMenu}
+          {userMenu}
+        </div>
       </div>
     </header>
   );

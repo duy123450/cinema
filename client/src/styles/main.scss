@@ -2,6 +2,8 @@
 @use 'global';
 @use 'header';
 @use 'banner';
+@use 'search';
+@use 'dashboard';
 @use 'content';
 @use 'cards';
 @use 'buttons';
@@ -15,6 +17,7 @@
 @use 'animations';
 @use 'movies';
 @use 'movie-detail';
+@use 'actor-detail';
 @use 'showtimes';
 @use 'cinemas';
 @use 'errors';

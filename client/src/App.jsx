@@ -14,6 +14,7 @@ import PageNotFound from "./pages/PageNotFound.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import ActorDetail from "./pages/ActorDetail.jsx";
 
 function App() {
   return (
@@ -41,6 +42,14 @@ function App() {
           element={
             <Layout>
               <MovieDetail />
+            </Layout>
+          }
+        />
+        <Route
+          path="/actors/:id"
+          element={
+            <Layout>
+              <ActorDetail />
             </Layout>
           }
         />

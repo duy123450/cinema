@@ -23,6 +23,14 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
     $api_file = strtok($api_file, '?');
 
     switch ($api_file) {
+        case 'banner':
+            require_once 'api/banner.php';
+            break;
+
+        case 'search':
+            require_once 'api/search.php';
+            break;
+
         case 'login':
             require_once 'api/login.php';
             break;
@@ -57,6 +65,26 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
 
         case 'movies':
             require_once 'api/movies.php';
+            break;
+
+        case 'movie-trailers':
+            require_once 'api/movie-trailers.php';
+            break;
+
+        case 'movie-cast':
+            require_once 'api/movie-cast.php';
+            break;
+
+        case 'user-rating':
+            require_once 'api/user-rating.php';
+            break;
+
+        case 'actors':
+            require_once 'api/actors.php';
+            break;
+
+        case 'actor-movies':
+            require_once 'api/actor-movies.php';
             break;
 
         case 'showtimes':

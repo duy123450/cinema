@@ -1,5 +1,181 @@
 @use 'variables' as *;
 
+/* =============================================
+   ALL CARD COMPONENTS WITH GLOWING + ROTATING BORDER
+   ============================================= */
+
+// Movie Cards (Dashboard & Movies Page)
+.movie-card {
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    overflow: visible;
+    border: 2px solid transparent;
+    transition: all $transition;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+
+    // Rotating border effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: conic-gradient(
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70
+        );
+        border-radius: $radius-lg;
+        opacity: 0;
+        transition: opacity 0.3s;
+        animation: rotate-border 3s linear infinite;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: $color-gray-13;
+        border-radius: $radius-lg;
+        z-index: -1;
+    }
+
+    &:hover {
+        transform: translateY(-10px);
+        
+        &::before {
+            opacity: 1;
+        }
+
+        // Glowing effect
+        box-shadow: 
+            0 12px 30px $color-overlay-heavy,
+            0 0 30px hsla(51, 100%, 70%, 0.3),
+            0 0 50px hsla(51, 100%, 70%, 0.2);
+
+        .movie-overlay {
+            opacity: 1;
+        }
+
+        .movie-poster img {
+            transform: scale(1.05);
+        }
+    }
+}
+
+.movie-poster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    background: $color-gray-10;
+    border-radius: $radius-lg $radius-lg 0 0;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform $transition;
+    }
+
+    .poster-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, $color-gray-10 0%, $color-gray-13 100%);
+        font-size: 3rem;
+    }
+}
+
+.movie-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $color-overlay-heavy;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity $transition;
+
+    .view-details {
+        background: $color-yellow-50;
+        color: $color-gray-10;
+        padding: $spacing-sm $spacing-lg;
+        border-radius: $radius-md;
+        font-weight: bold;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px $color-overlay-yellow-medium;
+    }
+}
+
+.movie-info {
+    padding: $spacing-md;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    position: relative;
+    z-index: 1;
+}
+
+.movie-title {
+    font-size: 1.1rem;
+    color: $color-gray-85;
+    margin: 0;
+    font-weight: bold;
+    line-height: 1.3;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6rem;
+}
+
+.movie-meta {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: $spacing-xs;
+
+    .duration {
+        font-size: 0.85rem;
+        color: $color-gray-60;
+    }
+
+    .rating-badge {
+        background: $color-blue;
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: $radius-sm;
+        font-weight: bold;
+        font-size: 0.75rem;
+    }
+}
+
+.movie-genre {
+    font-size: 0.85rem;
+    color: $color-gray-60;
+    margin: 0;
+}
+
+// Theater/Cinema Cards
 .theater-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -7,30 +183,243 @@
     margin-top: $spacing-lg;
 }
 
-.theater-card,
-.booking-card,
-.admin-card {
+.theater-card {
     background: $color-gray-13;
     padding: $spacing-lg;
     border-radius: $radius-md;
-    border: 1px solid hsla(0, 0%, 100%, 0.1);
+    border: 2px solid transparent;
+    transition: all $transition;
+    position: relative;
+
+    // Rotating border effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: conic-gradient(
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70
+        );
+        border-radius: $radius-md;
+        opacity: 0;
+        transition: opacity 0.3s;
+        animation: rotate-border 3s linear infinite;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: $color-gray-13;
+        border-radius: $radius-md;
+        z-index: -1;
+    }
+
+    &:hover {
+        transform: translateY(-5px);
+        
+        &::before {
+            opacity: 1;
+        }
+
+        box-shadow: 
+            0 8px 20px $color-overlay-medium,
+            0 0 25px hsla(51, 100%, 70%, 0.25),
+            0 0 40px hsla(51, 100%, 70%, 0.15);
+    }
 }
 
+// Booking Cards
 .booking-list {
     margin-top: $spacing-lg;
 }
 
 .booking-card {
+    background: $color-gray-13;
+    padding: $spacing-lg;
+    border-radius: $radius-md;
+    border: 2px solid transparent;
     margin-bottom: $spacing-md;
+    transition: all $transition;
+    position: relative;
+
+    // Rotating border effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: conic-gradient(
+            $color-blue-70,
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70,
+            $color-blue-70
+        );
+        border-radius: $radius-md;
+        opacity: 0;
+        transition: opacity 0.3s;
+        animation: rotate-border 3s linear infinite;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: $color-gray-13;
+        border-radius: $radius-md;
+        z-index: -1;
+    }
+
+    &:hover {
+        transform: translateY(-3px);
+        
+        &::before {
+            opacity: 1;
+        }
+
+        box-shadow: 
+            0 6px 15px $color-overlay-medium,
+            0 0 20px hsla(200, 100%, 70%, 0.25),
+            0 0 35px hsla(200, 100%, 70%, 0.15);
+    }
 }
 
+// Admin Cards
 .admin-card {
+    background: $color-gray-13;
+    padding: $spacing-lg;
+    border-radius: $radius-md;
+    border: 2px solid transparent;
     text-decoration: none;
     color: $color-gray-85;
-    transition: transform $transition;
+    transition: all $transition;
+    display: block;
+    position: relative;
+
+    // Rotating border effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: conic-gradient(
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70
+        );
+        border-radius: $radius-md;
+        opacity: 0;
+        transition: opacity 0.3s;
+        animation: rotate-border 3s linear infinite;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: $color-gray-13;
+        border-radius: $radius-md;
+        z-index: -1;
+    }
 
     &:hover {
         transform: translateY(-5px);
-        background: hsl(0, 0%, 15%);
+        
+        &::before {
+            opacity: 1;
+        }
+
+        box-shadow: 
+            0 8px 20px $color-overlay-medium,
+            0 0 25px hsla(51, 100%, 70%, 0.25),
+            0 0 40px hsla(51, 100%, 70%, 0.15);
+    }
+}
+
+// Generic Card
+.card {
+    background: $color-gray-13;
+    border: 2px solid transparent;
+    padding: $spacing-lg;
+    border-radius: $radius-lg;
+    transition: all $transition;
+    position: relative;
+
+    // Rotating border effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: conic-gradient(
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70
+        );
+        border-radius: $radius-lg;
+        opacity: 0;
+        transition: opacity 0.3s;
+        animation: rotate-border 3s linear infinite;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: $color-gray-13;
+        border-radius: $radius-lg;
+        z-index: -1;
+    }
+
+    &:hover {
+        transform: translateY(-5px);
+        
+        &::before {
+            opacity: 1;
+        }
+
+        box-shadow: 
+            0 8px 20px hsla(0, 0%, 0%, 0.4),
+            0 0 25px hsla(51, 100%, 70%, 0.25),
+            0 0 40px hsla(51, 100%, 70%, 0.15);
+    }
+}
+
+.card-img {
+    width: 100%;
+    height: 180px;
+    background: $color-gray-10;
+    border-radius: 10px;
+    margin-bottom: $spacing-md;
+}
+
+// Rotation Animation
+@keyframes rotate-border {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }

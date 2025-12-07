@@ -1,44 +1,101 @@
 @use "variables" as *;
 
-.btn-primary {
+// Primary Buttons (Main Actions)
+.btn-primary,
+.btn-banner,
+.btn-submit {
     background: $color-yellow;
-    color: hsl(0, 0%, 10%);
+    color: $color-gray-10;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all $transition;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+
+    // Shimmer effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            hsla(0, 0%, 100%, 0.4),
+            transparent
+        );
+        transition: left 0.5s;
+    }
+
+    &:hover {
+        background: $color-yellow-light;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 20px $color-overlay-yellow-medium;
+
+        &::before {
+            left: 100%;
+        }
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+}
+
+// Secondary Buttons (Navigation)
+.btn-secondary {
+    background: $color-red;
+    color: white;
     padding: 0.6rem 1.3rem;
     border: none;
     border-radius: $radius-md;
     cursor: pointer;
     font-weight: bold;
-    transition: $transition;
+    transition: all $transition;
     text-decoration: none;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            hsla(0, 0%, 100%, 0.3),
+            transparent
+        );
+        transition: left 0.5s;
+    }
 
     &:hover {
-        background: $color-yellow-light;
-    }
-}
+        background: $color-red-light;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 15px $color-overlay-red-medium;
 
-.btn-secondary {
-    background: $color-red;
-    color: white;
-    padding: 0.6rem 0;
-    border: none;
-    border-radius: $radius-md;
-    cursor: pointer;
-    font-weight: bold;
-    transition: $transition;
-    width: 80px;
-    text-align: center;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    text-decoration: none;
+        &::before {
+            left: 100%;
+        }
+    }
 
     &.login-btn {
         background: $color-blue;
 
         &:hover {
             background: $color-blue-light;
+            box-shadow: 0 6px 15px $color-overlay-blue-medium;
         }
     }
 
@@ -51,59 +108,66 @@
     }
 }
 
-.btn-hero {
-    background-color: $color-red;
-    color: hsl(0, 0%, 0%);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: $radius-sm;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color $transition;
-    font-size: 1rem;
-
-    &:hover {
-        background-color: $color-red-light;
-    }
-}
-
-.btn-banner {
+// Action Buttons (Book/View)
+.btn-hero,
+.btn-showtimes,
+.btn-book-tickets,
+.btn-view-details {
     background-color: $color-blue;
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
-    border-radius: $radius-sm;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color $transition;
-    font-size: 1rem;
-    white-space: nowrap;
-
-    &:hover {
-        background-color: $color-blue-light;
-    }
-}
-
-.btn-submit {
-    background: $color-yellow;
-    color: hsl(0, 0%, 10%);
-    padding: 0.75rem;
-    border: none;
     border-radius: $radius-md;
     cursor: pointer;
     font-weight: bold;
-    transition: $transition;
-    width: 100%;
-    margin-top: $spacing-md;
+    transition: all $transition;
     font-size: 1rem;
-    box-sizing: border-box;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            hsla(0, 0%, 100%, 0.3),
+            transparent
+        );
+        transition: left 0.5s;
+    }
 
     &:hover {
-        background: $color-yellow-light;
+        background-color: $color-blue-light;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 20px $color-overlay-blue-medium;
+
+        &::before {
+            left: 100%;
+        }
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
     }
 }
 
-// Admin button
+.btn-showtimes {
+    background: $color-red;
+
+    &:hover {
+        background: $color-red-light;
+        box-shadow: 0 8px 20px $color-overlay-red-medium;
+    }
+}
+
+// Admin Button
 .btn-admin {
     background: $color-blue;
     color: white;
@@ -112,17 +176,43 @@
     border-radius: $radius-md;
     cursor: pointer;
     font-weight: bold;
-    transition: $transition;
+    transition: all $transition;
     text-decoration: none;
     margin-right: $spacing-sm;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            hsla(0, 0%, 100%, 0.3),
+            transparent
+        );
+        transition: left 0.5s;
+    }
 
     &:hover {
         background: $color-blue-light;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 15px $color-overlay-blue-medium;
+
+        &::before {
+            left: 100%;
+        }
     }
 }
 
-// Page not found button
-.btn-index {
+// Page Navigation Buttons
+.btn-index,
+.btn-movies,
+.btn-back {
     background: $color-yellow-50;
     color: $color-gray-10;
     padding: 0.75rem 1.5rem;
@@ -130,49 +220,40 @@
     border-radius: $radius-md;
     cursor: pointer;
     font-weight: bold;
-    transition: background $transition;
+    transition: all $transition;
     text-decoration: none;
     display: inline-block;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            hsla(0, 0%, 100%, 0.4),
+            transparent
+        );
+        transition: left 0.5s;
+    }
 
     &:hover {
         background: $color-yellow-60;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 15px $color-overlay-yellow-light;
+
+        &::before {
+            left: 100%;
+        }
     }
 }
 
-.btn-movies {
-    background: $color-blue;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: $radius-md;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background $transition;
-    text-decoration: none;
-    display: inline-block;
-
-    &:hover {
-        background: $color-blue-light;
-    }
-}
-
-.btn-showtimes {
-    background: $color-red; // Red color
-    color: white;
-    padding: 0.6rem 1.3rem;
-    border: none;
-    border-radius: $radius-md;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background $transition;
-    text-decoration: none;
-    display: inline-block;
-
-    &:hover {
-        background: $color-red-light; // Lighter red on hover
-    }
-}
-
+// Logout Button
 .logout-btn {
     background: $color-red;
     color: white;
@@ -181,11 +262,35 @@
     border-radius: $radius-sm;
     cursor: pointer;
     font-weight: bold;
-    transition: background $transition;
+    transition: all $transition;
     width: 100%;
     text-align: left;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            hsla(0, 0%, 100%, 0.3),
+            transparent
+        );
+        transition: left 0.5s;
+    }
 
     &:hover {
         background: $color-red-light;
+        transform: translateX(5px);
+        box-shadow: 0 4px 10px $color-overlay-red-light;
+
+        &::before {
+            left: 100%;
+        }
     }
 }
