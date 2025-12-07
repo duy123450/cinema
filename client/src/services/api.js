@@ -288,6 +288,12 @@ export const apiService = {
         const response = await api.get('/ping.php');
         return response.data;
     },
+
+    // ===== NOTIFICATIONS =====
+    getNotifications: async () => {
+        const response = await api.get('/notifications.php');
+        return response.data;
+    },
 };
 
 export default apiService;

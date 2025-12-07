@@ -30,7 +30,8 @@ function SearchBar() {
     try {
       setIsSearching(true);
       const results = await apiService.searchMovies(query);
-      setSearchResults(results);
+      // Limit to 5 results for dropdown
+      setSearchResults(results.slice(0, 5));
       setShowResults(true);
     } catch (error) {
       console.error("Search error:", error);
@@ -44,12 +45,14 @@ function SearchBar() {
     setSearchQuery("");
     setSearchResults([]);
     setShowResults(false);
+    // Navigate to movie detail page
     navigate(`/movies/${movieId}`);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
       setShowResults(false);
+      // Navigate to movies page with search query
       navigate(`/movies?search=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -110,6 +113,7 @@ function SearchBar() {
             <>
               <div className="search-results-header">
                 <span>Found {searchResults.length} results</span>
+                <span className="search-hint">Press Enter to see all</span>
               </div>
               <div className="search-results-list">
                 {searchResults.map((movie) => (
@@ -159,6 +163,7 @@ function SearchBar() {
           ) : (
             <div className="search-no-results">
               <span>No movies found for "{searchQuery}"</span>
+              <p className="search-hint-text">Press Enter to search all content</p>
             </div>
           )}
         </div>

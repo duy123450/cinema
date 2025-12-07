@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -9,14 +9,25 @@ function Movies() {
   const [filter, setFilter] = useState("all"); // all, now_showing, upcoming, ended
   const [sortBy, setSortBy] = useState("id"); // id, title, release_date, imdb_rating
   const [sortOrder, setSortOrder] = useState("asc"); // asc, desc
+  
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await apiService.getMovies();
-        setMovies(data);
+        
+        if (searchQuery) {
+          // If there's a search query, use search API
+          const data = await apiService.searchMovies(searchQuery);
+          setMovies(data);
+        } else {
+          // Otherwise, get all movies
+          const data = await apiService.getMovies();
+          setMovies(data);
+        }
       } catch (err) {
         console.error("Error fetching movies:", err);
         setError("Failed to load movies. Please try again later.");
@@ -26,7 +37,7 @@ function Movies() {
     };
 
     fetchMovies();
-  }, []);
+  }, [searchQuery]);
 
   // Filter movies based on selected status
   const filteredMovies = movies.filter((movie) => {
@@ -122,10 +133,17 @@ function Movies() {
     <div className="page movies-page">
       <div className="movies-header">
         <h1>Movies</h1>
+        {searchQuery && (
+          <p className="search-query-display">
+            Search results for: <strong>"{searchQuery}"</strong>
+          </p>
+        )}
         <p className="movies-subtitle">
           {sortedMovies.length} {sortedMovies.length === 1 ? "movie" : "movies"} found
         </p>
       </div>
+
+      {error && <div className="error-message">{error}</div>}
 
       {/* Filter Buttons */}
       <div className="movies-filter">
@@ -184,11 +202,18 @@ function Movies() {
         </button>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
-
       {sortedMovies.length === 0 ? (
         <div className="no-movies">
-          <p>No movies found in this category.</p>
+          <p>
+            {searchQuery 
+              ? `No movies found matching "${searchQuery}".` 
+              : "No movies found in this category."}
+          </p>
+          {searchQuery && (
+            <Link to="/movies" className="btn-back">
+              Clear Search
+            </Link>
+          )}
         </div>
       ) : (
         <div className="movie-grid">
@@ -207,7 +232,7 @@ function Movies() {
                 </div>
               </div>
 
-                              <div className="movie-info">
+              <div className="movie-info">
                 <h3 className="movie-title">{movie.title}</h3>
 
                 <div className="movie-meta">

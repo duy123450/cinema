@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS seats (
 );
 
 -- ========================================
--- ACTORS TABLE (NEW)
+-- ACTORS TABLE
 -- ========================================
 CREATE TABLE IF NOT EXISTS actors (
     actor_id INT PRIMARY KEY AUTO_INCREMENT,
