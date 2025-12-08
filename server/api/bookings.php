@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $user_id = $_GET['user_id'] ?? $auth_user['user_id'];
 
         // Users can only see their own bookings unless they're admin
-        if ($auth_user['role'] !== 'admin' && $auth_user['user_id'] != $user_id) {
+        if (isset($auth_user['role']) && $auth_user['role'] !== 'admin' && $auth_user['user_id'] != $user_id) {
             http_response_code(403);
             echo json_encode([
                 'success' => false,
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Get bookings with movie and showtime details
         $query = "SELECT t.ticket_id, t.showtime_id, t.user_id, t.seat_number, t.ticket_type,
                          t.price_paid, t.status, t.created_at,
-                         m.title as movie_title, m.rating, m.poster_url,
+                         m.movie_id, m.title as movie_title, m.rating, m.poster_url,
                          s.show_date, s.show_time, s.price,
                          sc.screen_number, sc.screen_type,
                          c.name as cinema_name, c.address, c.city
@@ -172,7 +172,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         }
 
         // Users can only cancel their own bookings unless they're admin
-        if ($auth_user['role'] !== 'admin' && $auth_user['user_id'] != $ticket['user_id']) {
+        if (isset($auth_user['role']) && $auth_user['role'] !== 'admin' && $auth_user['user_id'] != $ticket['user_id']) {
             http_response_code(403);
             echo json_encode([
                 'success' => false,

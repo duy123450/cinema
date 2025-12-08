@@ -218,7 +218,7 @@ CREATE TABLE IF NOT EXISTS actors (
 );
 
 -- ========================================
--- MOVIE_CAST TABLE (NEW - Junction Table)
+-- MOVIE_CAST TABLE (Junction Table)
 -- ========================================
 CREATE TABLE IF NOT EXISTS movie_cast (
     cast_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS movie_cast (
 );
 
 -- ========================================
--- MOVIE_TRAILERS TABLE (NEW)
+-- MOVIE_TRAILERS TABLE
 -- ========================================
 CREATE TABLE IF NOT EXISTS movie_trailers (
     trailer_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -253,6 +253,35 @@ CREATE TABLE IF NOT EXISTS movie_trailers (
     views INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
+);
+
+-- ========================================
+-- CONCESSIONS TABLE
+-- ========================================
+CREATE TABLE IF NOT EXISTS concessions (
+    concession_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    category ENUM('popcorn', 'drink', 'combo', 'snack', 'candy') NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    image_url VARCHAR(500),
+    is_available BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- ========================================
+-- TICKET_CONCESSIONS TABLE (Junction Table)
+-- ========================================
+CREATE TABLE IF NOT EXISTS ticket_concessions (
+    ticket_concession_id INT PRIMARY KEY AUTO_INCREMENT,
+    ticket_id INT NOT NULL,
+    concession_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    price_at_purchase DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
+    FOREIGN KEY (concession_id) REFERENCES concessions(concession_id) ON DELETE CASCADE
 );
 
 -- ========================================
@@ -277,6 +306,10 @@ CREATE INDEX idx_bookmarks_movie ON bookmarks(movie_id);
 CREATE INDEX idx_movie_cast_movie ON movie_cast(movie_id);
 CREATE INDEX idx_movie_cast_actor ON movie_cast(actor_id);
 CREATE INDEX idx_trailers_movie ON movie_trailers(movie_id);
+CREATE INDEX idx_concessions_category ON concessions(category);
+CREATE INDEX idx_concessions_available ON concessions(is_available);
+CREATE INDEX idx_ticket_concessions_ticket ON ticket_concessions(ticket_id);
+CREATE INDEX idx_ticket_concessions_concession ON ticket_concessions(concession_id);
 
 -- ========================================
 -- USERS DATA
@@ -1632,28 +1665,38 @@ VALUES (2, 1),
     (7, 10);
 
 -- ========================================
--- QUERY TO CHECK IF USER HAS BIRTHDAY TODAY
+-- SAMPLE CONCESSIONS DATA
 -- ========================================
-SELECT u.user_id,
-    u.username,
-    u.email,
-    u.date_of_birth,
-    YEAR(CURDATE()) - YEAR(u.date_of_birth) as age,
-    p.promotion_id,
-    p.title,
-    p.code,
-    p.discount_value,
-    p.discount_type,
-    CONCAT(
-        p.discount_value,
-        IF(p.discount_type = 'percentage', '%', '$')
-    ) as discount_display
-FROM users u
-    LEFT JOIN promotions p ON p.promotion_type = 'birthday'
-    AND p.status = 'active'
-    AND CURDATE() BETWEEN p.start_date AND p.end_date
-WHERE DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
-    AND u.status = 'active';
+INSERT INTO concessions (name, category, description, price, is_available) VALUES
+-- Popcorn
+('Small Popcorn', 'popcorn', 'Fresh buttered popcorn - Small', 4.50, TRUE),
+('Medium Popcorn', 'popcorn', 'Fresh buttered popcorn - Medium', 6.50, TRUE),
+('Large Popcorn', 'popcorn', 'Fresh buttered popcorn - Large', 8.50, TRUE),
+('Extra Large Popcorn', 'popcorn', 'Fresh buttered popcorn - Extra Large', 10.50, TRUE),
+
+-- Drinks
+('Small Soft Drink', 'drink', 'Coca-Cola, Sprite, Fanta - Small', 3.50, TRUE),
+('Medium Soft Drink', 'drink', 'Coca-Cola, Sprite, Fanta - Medium', 4.50, TRUE),
+('Large Soft Drink', 'drink', 'Coca-Cola, Sprite, Fanta - Large', 5.50, TRUE),
+('Bottled Water', 'drink', 'Premium bottled water', 2.50, TRUE),
+('Energy Drink', 'drink', 'Red Bull or Monster', 4.00, TRUE),
+
+-- Combos
+('Classic Combo', 'combo', 'Medium Popcorn + Medium Drink', 9.99, TRUE),
+('Premium Combo', 'combo', 'Large Popcorn + Large Drink + Candy', 13.99, TRUE),
+('Family Combo', 'combo', '2 Large Popcorns + 4 Medium Drinks', 24.99, TRUE),
+('Date Night Combo', 'combo', 'Large Popcorn + 2 Medium Drinks + 2 Candies', 16.99, TRUE),
+
+-- Snacks
+('Nachos with Cheese', 'snack', 'Tortilla chips with warm cheese sauce', 5.50, TRUE),
+('Hot Dog', 'snack', 'All-beef hot dog with condiments', 4.50, TRUE),
+('Pretzel Bites', 'snack', 'Soft pretzel bites with cheese dip', 5.00, TRUE),
+
+-- Candy
+('M&Ms', 'candy', 'Chocolate candy', 3.50, TRUE),
+('Skittles', 'candy', 'Fruit flavored candy', 3.50, TRUE),
+('Twizzlers', 'candy', 'Strawberry licorice', 3.50, TRUE),
+('Sour Patch Kids', 'candy', 'Sour then sweet candy', 3.50, TRUE);
 
 -- ========================================
 -- VIEW: BIRTHDAY PROMOTIONS FOR TODAY
@@ -1680,20 +1723,6 @@ WHERE DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
     AND u.status = 'active'
     AND p.status = 'active'
     AND CURDATE() BETWEEN p.start_date AND p.end_date;
-
--- ========================================
--- QUERY ALL USERS WITH BIRTHDAYS THIS MONTH
--- ========================================
-SELECT u.user_id,
-    u.username,
-    u.email,
-    u.date_of_birth,
-    DAY(u.date_of_birth) as birthday_day,
-    MONTH(u.date_of_birth) as birthday_month
-FROM users u
-WHERE MONTH(u.date_of_birth) = MONTH(CURDATE())
-    AND u.status = 'active'
-ORDER BY DAY(u.date_of_birth);
 
 -- ========================================
 -- PROCEDURE: GET USER BIRTHDAY PROMO
@@ -1750,35 +1779,35 @@ CREATE PROCEDURE apply_birthday_discount(
     OUT p_discount_amount DECIMAL(10, 2),
     OUT has_birthday BOOLEAN
 ) BEGIN
-DECLARE promo_discount_value DECIMAL(10, 2);
-DECLARE promo_discount_type VARCHAR(20);
--- Check if user has birthday today
-SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO has_birthday
-FROM users
-WHERE user_id = p_user_id;
+    DECLARE promo_discount_value DECIMAL(10, 2);
+    DECLARE promo_discount_type VARCHAR(20);
+    -- Check if user has birthday today
+    SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO has_birthday
+    FROM users
+    WHERE user_id = p_user_id;
 
--- Get birthday promotion details
-SELECT p.discount_value,
-    p.discount_type INTO promo_discount_value,
-    promo_discount_type
-FROM promotions p
-WHERE p.promotion_type = 'birthday'
-    AND p.status = 'active'
-    AND CURDATE() BETWEEN p.start_date AND p.end_date
-LIMIT 1;
+    -- Get birthday promotion details
+    SELECT p.discount_value,
+        p.discount_type INTO promo_discount_value,
+        promo_discount_type
+    FROM promotions p
+    WHERE p.promotion_type = 'birthday'
+        AND p.status = 'active'
+        AND CURDATE() BETWEEN p.start_date AND p.end_date
+    LIMIT 1;
 
--- Calculate discount if birthday today
-IF has_birthday AND promo_discount_value IS NOT NULL THEN 
-    IF promo_discount_type = 'percentage' THEN
-        SET p_discount_amount = p_ticket_price * (promo_discount_value / 100);
-    ELSE
-        SET p_discount_amount = promo_discount_value;
-    END IF;
-    SET p_discounted_price = p_ticket_price - p_discount_amount;
-    ELSE
-        SET p_discount_amount = 0;
-        SET p_discounted_price = p_ticket_price;
-    END IF;
+    -- Calculate discount if birthday today
+    IF has_birthday AND promo_discount_value IS NOT NULL THEN 
+        IF promo_discount_type = 'percentage' THEN
+            SET p_discount_amount = p_ticket_price * (promo_discount_value / 100);
+        ELSE
+            SET p_discount_amount = promo_discount_value;
+        END IF;
+        SET p_discounted_price = p_ticket_price - p_discount_amount;
+        ELSE
+            SET p_discount_amount = 0;
+            SET p_discounted_price = p_ticket_price;
+        END IF;
 END $$
 DELIMITER ;
 
@@ -1795,43 +1824,6 @@ BEGIN
     END IF;
 END $$
 DELIMITER ;
-
--- ========================================
--- VERIFICATION QUERIES
--- ========================================
--- Show all active promotions
-SELECT promotion_id,
-    title,
-    description,
-    code,
-    discount_value,
-    discount_type,
-    promotion_type,
-    start_date,
-    end_date,
-    status
-FROM promotions
-WHERE status = 'active'
-ORDER BY promotion_type;
-
--- Show birthday promotion specifically
-SELECT promotion_id,
-    title,
-    code,
-    discount_value,
-    discount_type,
-    start_date,
-    end_date
-FROM promotions
-WHERE promotion_type = 'birthday';
-
--- Count users with birthdays by month
-SELECT MONTH(date_of_birth) as month,
-    COUNT(*) as user_count
-FROM users
-WHERE status = 'active'
-GROUP BY MONTH(date_of_birth)
-ORDER BY month;
 
 -- ========================================
 -- SCHEMA CREATION COMPLETE

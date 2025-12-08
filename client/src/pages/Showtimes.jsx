@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { apiService } from "../services/api";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 function Showtimes() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showtimes, setShowtimes] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Filters
-  const [selectedMovie, setSelectedMovie] = useState("all");
-  const [selectedCinema, setSelectedCinema] = useState("all");
-  const [selectedDate, setSelectedDate] = useState("");
+  // Filters - Get initial values from URL params
+  const [selectedMovie, setSelectedMovie] = useState(searchParams.get("movie") || "all");
+  const [selectedCinema, setSelectedCinema] = useState(searchParams.get("cinema") || "all");
+  const [selectedDate, setSelectedDate] = useState(searchParams.get("date") || "");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +38,16 @@ function Showtimes() {
 
     fetchData();
   }, []);
+
+  // Update URL params when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedMovie !== "all") params.set("movie", selectedMovie);
+    if (selectedCinema !== "all") params.set("cinema", selectedCinema);
+    if (selectedDate) params.set("date", selectedDate);
+    
+    setSearchParams(params, { replace: true });
+  }, [selectedMovie, selectedCinema, selectedDate, setSearchParams]);
 
   // Filter showtimes based on selected criteria
   const filteredShowtimes = showtimes.filter((showtime) => {
@@ -163,6 +174,7 @@ function Showtimes() {
             setSelectedMovie("all");
             setSelectedCinema("all");
             setSelectedDate("");
+            setSearchParams({}, { replace: true });
           }}
         >
           Reset Filters
@@ -216,7 +228,7 @@ function Showtimes() {
                     </div>
 
                     <Link 
-                      to={`/bookings?showtime=${showtime.showtime_id}`} 
+                      to={`/buy-tickets?showtime=${showtime.showtime_id}`} 
                       className="btn-book-showtime"
                     >
                       Book Now

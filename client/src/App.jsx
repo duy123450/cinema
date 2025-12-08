@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import ActorDetail from "./pages/ActorDetail.jsx";
+import BuyTickets from "./pages/BuyTickets.jsx";
 
 function App() {
   return (
@@ -137,6 +138,19 @@ function App() {
               element={
                 <Layout>
                   <Admin />
+                </Layout>
+              }
+            />
+          }
+        />
+
+        <Route
+          path="/buy-tickets"
+          element={
+            <ProtectedRoute
+              element={
+                <Layout>
+                  <BuyTickets />
                 </Layout>
               }
             />

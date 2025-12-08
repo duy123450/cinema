@@ -77,12 +77,9 @@ function Header() {
 
   // Generate avatar URL
   const getAvatarUrl = () => {
-    if (user.avatar) {
-      return `http://localhost/server/uploads/${user.avatar}`;
-    }
-    return `https://ui-avatars.com/api/?name=${
-      user.username || "U"
-    }&background=200&color=fff`;
+    return user.avatar
+      ? `http://localhost/server/uploads/${user.avatar}`
+      : `https://ui-avatars.com/api/?name=${user.username || "U"}&background=200&color=fff`;
   };
 
   // Get notification icon based on type
@@ -226,7 +223,7 @@ function Header() {
               className="menu-item"
               onClick={() => setIsUserDropdownOpen(false)}
             >
-              My Bookings
+              My Tickets
             </Link>
 
             {user.role === "admin" && (

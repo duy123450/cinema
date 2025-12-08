@@ -95,13 +95,27 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
             require_once 'api/showtimes.php';
             break;
 
-        case 'theaters':
         case 'cinemas':
             require_once 'api/cinemas.php';
             break;
 
+        case 'buy-tickets':
+            require_once 'api/buy-tickets.php';
+            break;
+
+        case 'seats':
+            require_once 'api/seats.php';
+            break;
+
         case 'bookings':
             require_once 'api/bookings.php';
+            break;
+
+        case 'concessions':
+            require_once 'api/concessions.php';
+            break;
+        case 'promotions':
+            require_once 'api/promotions.php';
             break;
 
         case 'ping':

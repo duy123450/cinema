@@ -294,6 +294,19 @@ export const apiService = {
         const response = await api.get('/notifications.php');
         return response.data;
     },
+
+    // ===== CONCESSIONS =====
+    getConcessions: async (category = null) => {
+        const url = category ? `/concessions.php?category=${category}` : '/concessions.php';
+        const response = await api.get(url);
+        return response.data;
+    },
+
+    // ===== PROMOTIONS =====
+    getPromotions: async () => {
+        const response = await api.get('/promotions.php');
+        return response.data;
+    },
 };
 
 export default apiService;

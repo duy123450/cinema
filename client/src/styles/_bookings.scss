@@ -1,0 +1,355 @@
+@use "variables" as *;
+
+.bookings-page {
+    padding: $spacing-xl;
+    background: linear-gradient(135deg, $color-gray-7 0%, $color-gray-10 100%);
+    min-height: 80vh;
+}
+
+.bookings-header {
+    text-align: center;
+    margin-bottom: $spacing-xxl;
+
+    h1 {
+        font-size: 2.5rem;
+        color: $color-yellow-70;
+        margin-bottom: $spacing-md;
+        text-shadow: 2px 2px 4px $color-overlay-medium;
+    }
+
+    .bookings-subtitle {
+        color: $color-gray-85;
+        font-size: 1.1rem;
+    }
+}
+
+.success-message-banner {
+    background: linear-gradient(135deg, $color-success 0%, $color-success-light 100%);
+    color: white;
+    padding: $spacing-lg;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-xl;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 15px $color-overlay-success-medium;
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.no-bookings {
+    text-align: center;
+    padding: $spacing-xxl;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    border: 1px dashed $color-overlay-light;
+    max-width: 600px;
+    margin: 0 auto;
+
+    .no-bookings-icon {
+        font-size: 5rem;
+        margin-bottom: $spacing-lg;
+        opacity: 0.5;
+    }
+
+    h2 {
+        color: $color-yellow-70;
+        margin-bottom: $spacing-md;
+        font-size: 2rem;
+    }
+
+    p {
+        color: $color-gray-85;
+        margin-bottom: $spacing-xl;
+        font-size: 1.1rem;
+    }
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.booking-card {
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    border: 1px solid $color-overlay-light;
+    transition: all $transition;
+    box-shadow: 0 4px 15px $color-overlay-medium;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px $color-overlay-heavy;
+        border-color: $color-yellow-70;
+    }
+}
+
+.booking-header {
+    border-bottom: 2px solid $color-overlay-light;
+    padding-bottom: $spacing-lg;
+    margin-bottom: $spacing-lg;
+}
+
+.booking-movie-info {
+    display: flex;
+    gap: $spacing-lg;
+    align-items: flex-start;
+
+    .booking-poster {
+        width: 100px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: $radius-md;
+        box-shadow: 0 4px 10px $color-overlay-medium;
+    }
+
+    .booking-title-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+
+        .booking-movie-title {
+            font-size: 1.8rem;
+            color: $color-yellow-70;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .booking-status {
+            padding: $spacing-sm $spacing-lg;
+            border-radius: $radius-md;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: fit-content;
+            box-shadow: 0 2px 8px $color-overlay-medium;
+
+            &.status-paid {
+                background: $color-success;
+                color: white;
+            }
+
+            &.status-booked {
+                background: $color-blue;
+                color: white;
+            }
+
+            &.status-cancelled {
+                background: $color-red;
+                color: white;
+            }
+
+            &.status-default {
+                background: $color-gray-40;
+                color: white;
+            }
+        }
+    }
+}
+
+.booking-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg;
+}
+
+.booking-detail-item {
+    display: flex;
+    gap: $spacing-md;
+    align-items: flex-start;
+    padding: $spacing-md;
+    background: $color-gray-10;
+    border-radius: $radius-md;
+    border: 1px solid $color-overlay-light;
+    transition: all $transition;
+
+    &:hover {
+        background: $color-gray-15;
+        border-color: $color-yellow-70;
+    }
+
+    &.highlight {
+        background: linear-gradient(135deg, $color-gray-10 0%, $color-gray-15 100%);
+        border: 2px solid $color-yellow-70;
+    }
+
+    .detail-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .detail-content {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+        flex: 1;
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: $color-gray-60;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: $color-gray-85;
+            font-weight: 500;
+
+            &.time {
+                color: $color-blue-70;
+                font-weight: bold;
+            }
+
+            &.seat {
+                color: $color-yellow-70;
+                font-weight: bold;
+                font-size: 1.2rem;
+            }
+
+            &.price {
+                color: $color-yellow-70;
+                font-weight: bold;
+                font-size: 1.3rem;
+            }
+        }
+    }
+}
+
+.booking-actions {
+    display: flex;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+    flex-wrap: wrap;
+
+    .btn-view-movie {
+        flex: 1;
+        background: $color-blue;
+        color: white;
+        padding: $spacing-md $spacing-lg;
+        border-radius: $radius-md;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all $transition;
+        border: none;
+        cursor: pointer;
+        min-width: 150px;
+
+        &:hover {
+            background: $color-blue-light;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px $color-overlay-blue-medium;
+        }
+    }
+
+    .btn-cancel-booking {
+        flex: 1;
+        background: $color-red;
+        color: white;
+        padding: $spacing-md $spacing-lg;
+        border-radius: $radius-md;
+        text-align: center;
+        font-weight: bold;
+        transition: all $transition;
+        border: none;
+        cursor: pointer;
+        min-width: 150px;
+
+        &:hover {
+            background: $color-red-light;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px $color-overlay-red-medium;
+        }
+    }
+}
+
+.booking-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: $spacing-md;
+    border-top: 1px solid $color-overlay-light;
+    font-size: 0.9rem;
+    color: $color-gray-60;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+
+    .booking-id {
+        font-weight: 600;
+        color: $color-gray-70;
+    }
+
+    .booking-date {
+        font-style: italic;
+    }
+}
+
+.error-container {
+    text-align: center;
+    padding: $spacing-xxl;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    border: 1px solid $color-overlay-light;
+    max-width: 600px;
+    margin: 0 auto;
+
+    h2 {
+        color: $color-red;
+        margin-bottom: $spacing-md;
+        font-size: 2rem;
+    }
+
+    p {
+        color: $color-gray-85;
+        margin-bottom: $spacing-xl;
+        font-size: 1.1rem;
+    }
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xxl;
+    gap: $spacing-lg;
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid $color-overlay-light;
+        border-top-color: $color-yellow-70;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    p {
+        color: $color-gray-85;
+        font-size: 1.1rem;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

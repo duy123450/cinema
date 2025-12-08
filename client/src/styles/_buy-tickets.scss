@@ -1,0 +1,430 @@
+@use "variables" as *;
+
+.ticket-booking-page {
+    padding: $spacing-xl;
+    background: linear-gradient(135deg, $color-gray-7 0%, $color-gray-10 100%);
+    min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+// Progress Steps
+.booking-progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: $spacing-xxl;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 25%;
+        right: 25%;
+        height: 2px;
+        background: $color-gray-40;
+        z-index: 0;
+    }
+
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-sm;
+        flex: 1;
+        max-width: 200px;
+        position: relative;
+        z-index: 1;
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: $color-gray-40;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all $transition;
+        }
+
+        span {
+            color: $color-gray-60;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        &.active .step-number {
+            background: $color-yellow-50;
+            color: $color-gray-10;
+            box-shadow: 0 0 20px $color-overlay-yellow-medium;
+        }
+
+        &.completed .step-number {
+            background: $color-success;
+        }
+
+        &.active span {
+            color: $color-yellow-70;
+        }
+    }
+}
+
+// Header
+.booking-header {
+    text-align: center;
+    margin-bottom: $spacing-xxl;
+    padding: $spacing-xl;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    border: 1px solid $color-overlay-light;
+
+    h2 {
+        font-size: 2rem;
+        color: $color-yellow-70;
+        margin: 0 0 $spacing-md 0;
+    }
+
+    .booking-details {
+        display: flex;
+        justify-content: center;
+        gap: $spacing-lg;
+        flex-wrap: wrap;
+        color: $color-gray-85;
+        font-size: 0.95rem;
+    }
+}
+
+// Booking Steps
+.booking-step {
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    padding: $spacing-xxl;
+    border: 1px solid $color-overlay-light;
+    margin-bottom: $spacing-xl;
+
+    h3 {
+        font-size: 1.8rem;
+        color: $color-yellow-70;
+        margin: 0 0 $spacing-xl 0;
+        text-align: center;
+    }
+}
+
+// Seat Selection
+.seat-selection-step {
+    .seat-grid {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        margin-bottom: $spacing-xl;
+        align-items: center;
+    }
+
+    .seat-row {
+        display: flex;
+        gap: $spacing-sm;
+        align-items: center;
+
+        .row-label {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: $color-gray-85;
+        }
+
+        .seat {
+            width: 40px;
+            height: 40px;
+            border: 2px solid $color-gray-40;
+            background: $color-gray-20;
+            color: $color-gray-85;
+            border-radius: $radius-sm;
+            cursor: pointer;
+            transition: all $transition;
+            font-size: 0.85rem;
+            font-weight: 600;
+
+            &:hover {
+                transform: scale(1.1);
+                border-color: $color-yellow-70;
+            }
+
+            &.selected {
+                background: $color-yellow-50;
+                border-color: $color-yellow-50;
+                color: $color-gray-10;
+                box-shadow: 0 0 15px $color-overlay-yellow-medium;
+            }
+
+            &.taken {
+                background: $color-red;
+                border-color: $color-red;
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .seat-legend {
+        display: flex;
+        justify-content: center;
+        gap: $spacing-xl;
+        margin-bottom: $spacing-xl;
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+
+            .seat {
+                width: 30px;
+                height: 30px;
+                border-radius: $radius-sm;
+
+                &.available {
+                    background: $color-gray-20;
+                    border: 2px solid $color-gray-40;
+                }
+
+                &.selected {
+                    background: $color-yellow-50;
+                    border: 2px solid $color-yellow-50;
+                }
+            }
+
+            span {
+                color: $color-gray-85;
+                font-size: 0.9rem;
+            }
+        }
+    }
+}
+
+// Concessions
+.concessions-step {
+    .concessions-categories {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xxl;
+    }
+
+    .category-section {
+        h4 {
+            font-size: 1.3rem;
+            color: $color-yellow-70;
+            margin: 0 0 $spacing-md 0;
+        }
+
+        .concessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: $spacing-md;
+        }
+
+        .concession-card {
+            background: $color-gray-10;
+            border: 1px solid $color-overlay-light;
+            border-radius: $radius-md;
+            padding: $spacing-md;
+            transition: all $transition;
+
+            &:hover {
+                transform: translateY(-3px);
+                border-color: $color-yellow-70;
+                box-shadow: 0 4px 15px $color-overlay-medium;
+            }
+
+            h5 {
+                font-size: 1rem;
+                color: $color-gray-85;
+                margin: 0 0 $spacing-xs 0;
+            }
+
+            .concession-description {
+                font-size: 0.85rem;
+                color: $color-gray-60;
+                margin: 0 0 $spacing-sm 0;
+            }
+
+            .concession-price {
+                font-size: 1.2rem;
+                color: $color-yellow-70;
+                font-weight: bold;
+                margin: 0 0 $spacing-md 0;
+            }
+
+            .btn-add-concession {
+                width: 100%;
+                background: $color-blue;
+                color: white;
+                border: none;
+                padding: $spacing-sm;
+                border-radius: $radius-sm;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all $transition;
+
+                &:hover {
+                    background: $color-blue-light;
+                }
+            }
+        }
+    }
+
+    .selected-concessions {
+        margin-top: $spacing-xxl;
+        padding: $spacing-lg;
+        background: $color-gray-10;
+        border-radius: $radius-md;
+        border: 1px solid $color-overlay-light;
+
+        h4 {
+            font-size: 1.2rem;
+            color: $color-yellow-70;
+            margin: 0 0 $spacing-md 0;
+        }
+
+        .concession-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: $spacing-sm 0;
+            border-bottom: 1px solid $color-overlay-light;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .quantity-controls {
+                display: flex;
+                align-items: center;
+                gap: $spacing-sm;
+
+                button {
+                    width: 30px;
+                    height: 30px;
+                    border: none;
+                    background: $color-yellow-50;
+                    color: $color-gray-10;
+                    border-radius: $radius-sm;
+                    cursor: pointer;
+                    font-weight: bold;
+                    transition: all $transition;
+
+                    &:hover {
+                        background: $color-yellow-60;
+                    }
+                }
+
+                span {
+                    min-width: 30px;
+                    text-align: center;
+                    font-weight: bold;
+                    color: $color-gray-85;
+                }
+            }
+
+            > span:last-child {
+                font-weight: bold;
+                color: $color-yellow-70;
+            }
+        }
+    }
+}
+
+// Confirmation
+.confirmation-step {
+    .booking-summary {
+        background: $color-gray-10;
+        border-radius: $radius-md;
+        padding: $spacing-lg;
+        border: 1px solid $color-overlay-light;
+        margin-bottom: $spacing-xl;
+
+        .summary-section {
+            padding: $spacing-md 0;
+            border-bottom: 1px solid $color-overlay-light;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            h4 {
+                font-size: 1.1rem;
+                color: $color-yellow-70;
+                margin: 0 0 $spacing-md 0;
+            }
+
+            .summary-item {
+                display: flex;
+                justify-content: space-between;
+                padding: $spacing-xs 0;
+                color: $color-gray-85;
+
+                span:last-child {
+                    font-weight: 600;
+                }
+            }
+
+            .promotion-select {
+                width: 100%;
+                padding: $spacing-sm;
+                background: $color-gray-13;
+                color: $color-gray-85;
+                border: 1px solid $color-overlay-light;
+                border-radius: $radius-sm;
+                cursor: pointer;
+
+                &:focus {
+                    outline: none;
+                    border-color: $color-yellow-70;
+                }
+            }
+        }
+
+        .summary-totals {
+            margin-top: $spacing-lg;
+
+            .total-row {
+                display: flex;
+                justify-content: space-between;
+                padding: $spacing-sm 0;
+                font-size: 1rem;
+
+                &.subtotal {
+                    color: $color-gray-85;
+                }
+
+                &.discount {
+                    color: $color-success-light;
+                    font-weight: 600;
+                }
+
+                &.grand-total {
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    color: $color-yellow-70;
+                    padding-top: $spacing-md;
+                    border-top: 2px solid $color-overlay-light;
+                }
+            }
+        }
+    }
+}
+
+// Step Actions
+.step-actions {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-md;
+    margin-top: $spacing-xl;
+
+    button {
+        padding: $spacing-md $spacing-xxl;
+        font-size: 1.1rem;
+        min-width: 200px;
+    }
+}

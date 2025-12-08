@@ -23,22 +23,23 @@ function MovieDetail() {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch movie data, trailers, and cast
         const [movieData, trailersData, castData] = await Promise.all([
           apiService.getMovieById(id),
           apiService.getMovieTrailers(id),
-          apiService.getMovieCast(id)
+          apiService.getMovieCast(id),
         ]);
-        
+
         setMovie(movieData);
         setTrailers(trailersData);
         setCast(castData);
-        
+
         // Set the first featured or official trailer as selected
-        const featured = trailersData.find(t => t.is_featured) || trailersData[0];
+        const featured =
+          trailersData.find((t) => t.is_featured) || trailersData[0];
         setSelectedTrailer(featured);
-        
+
         // Fetch user's rating if logged in
         if (user) {
           const rating = await apiService.getUserMovieRating(id, user.user_id);
@@ -78,30 +79,41 @@ function MovieDetail() {
     }
   };
 
-  const filteredTrailers = trailerType === "all" 
-    ? trailers 
-    : trailers.filter(t => t.trailer_type === trailerType);
+  const filteredTrailers =
+    trailerType === "all"
+      ? trailers
+      : trailers.filter((t) => t.trailer_type === trailerType);
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "now_showing": return "status-now-showing";
-      case "upcoming": return "status-upcoming";
-      case "ended": return "status-ended";
-      default: return "status-default";
+      case "now_showing":
+        return "status-now-showing";
+      case "upcoming":
+        return "status-upcoming";
+      case "ended":
+        return "status-ended";
+      default:
+        return "status-default";
     }
   };
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case "now_showing": return "Now Showing";
-      case "upcoming": return "Coming Soon";
-      case "ended": return "Ended";
-      default: return status;
+      case "now_showing":
+        return "Now Showing";
+      case "upcoming":
+        return "Coming Soon";
+      case "ended":
+        return "Ended";
+      default:
+        return status;
     }
   };
 
   const getYouTubeEmbedUrl = (url) => {
-    const videoId = url.match(/(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([^/&?]+)/)?.[1];
+    const videoId = url.match(
+      /(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([^/&?]+)/
+    )?.[1];
     return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
   };
 
@@ -122,7 +134,9 @@ function MovieDetail() {
         <div className="error-container">
           <h2>Movie Not Found</h2>
           <p>{error || "The movie you're looking for doesn't exist."}</p>
-          <Link to="/movies" className="btn-back">Back to Movies</Link>
+          <Link to="/movies" className="btn-back">
+            Back to Movies
+          </Link>
         </div>
       </div>
     );
@@ -130,13 +144,19 @@ function MovieDetail() {
 
   return (
     <div className="page movie-detail-page">
-      <button onClick={() => navigate(-1)} className="btn-back">← Back</button>
+      <button onClick={() => navigate(-1)} className="btn-back">
+        ← Back
+      </button>
 
       <div className="movie-detail-container">
         {/* Movie Poster Section */}
         <div className="movie-poster-section">
           {movie.poster_url ? (
-            <img src={movie.poster_url} alt={movie.title} className="movie-poster-large" />
+            <img
+              src={movie.poster_url}
+              alt={movie.title}
+              className="movie-poster-large"
+            />
           ) : (
             <div className="poster-placeholder-large">
               <span>🎬</span>
@@ -169,7 +189,9 @@ function MovieDetail() {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
                 <span
                   key={star}
-                  className={`star ${star <= (hoverRating || userRating) ? 'filled' : ''}`}
+                  className={`star ${
+                    star <= (hoverRating || userRating) ? "filled" : ""
+                  }`}
                   onClick={() => handleRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
@@ -177,7 +199,9 @@ function MovieDetail() {
                   ★
                 </span>
               ))}
-              <span className="rating-value">{userRating || hoverRating || 0}/10</span>
+              <span className="rating-value">
+                {userRating || hoverRating || 0}/10
+              </span>
             </div>
             {ratingMessage && <p className="rating-message">{ratingMessage}</p>}
           </div>
@@ -196,7 +220,9 @@ function MovieDetail() {
             {movie.duration_minutes && (
               <div className="meta-item">
                 <span className="meta-label">Duration</span>
-                <span className="meta-value">⏱️ {movie.duration_minutes} minutes</span>
+                <span className="meta-value">
+                  ⏱️ {movie.duration_minutes} minutes
+                </span>
               </div>
             )}
 
@@ -224,7 +250,9 @@ function MovieDetail() {
             {movie.imdb_rating && (
               <div className="meta-item">
                 <span className="meta-label">IMDB Rating</span>
-                <span className="meta-value imdb-score">⭐ {movie.imdb_rating}/10</span>
+                <span className="meta-value imdb-score">
+                  ⭐ {movie.imdb_rating}/10
+                </span>
               </div>
             )}
           </div>
@@ -235,13 +263,17 @@ function MovieDetail() {
               <h3 className="section-title">Cast</h3>
               <div className="cast-grid">
                 {cast.map((member) => (
-                  <Link 
-                    key={member.cast_id} 
+                  <Link
+                    key={member.cast_id}
                     to={`/actors/${member.actor_id}`}
                     className="cast-member"
                   >
                     {member.image_url ? (
-                      <img src={member.image_url} alt={member.name} className="cast-image" />
+                      <img
+                        src={member.image_url}
+                        alt={member.name}
+                        className="cast-image"
+                      />
                     ) : (
                       <div className="cast-image-placeholder">👤</div>
                     )}
@@ -259,30 +291,38 @@ function MovieDetail() {
           {trailers.length > 0 && (
             <div className="trailers-section">
               <h3 className="section-title">Trailers & Videos</h3>
-              
+
               {/* Trailer Type Filter */}
               <div className="trailer-filters">
-                <button 
-                  className={`filter-btn ${trailerType === 'all' ? 'active' : ''}`}
-                  onClick={() => setTrailerType('all')}
+                <button
+                  className={`filter-btn ${
+                    trailerType === "all" ? "active" : ""
+                  }`}
+                  onClick={() => setTrailerType("all")}
                 >
                   All
                 </button>
-                <button 
-                  className={`filter-btn ${trailerType === 'official' ? 'active' : ''}`}
-                  onClick={() => setTrailerType('official')}
+                <button
+                  className={`filter-btn ${
+                    trailerType === "official" ? "active" : ""
+                  }`}
+                  onClick={() => setTrailerType("official")}
                 >
                   Official
                 </button>
-                <button 
-                  className={`filter-btn ${trailerType === 'teaser' ? 'active' : ''}`}
-                  onClick={() => setTrailerType('teaser')}
+                <button
+                  className={`filter-btn ${
+                    trailerType === "teaser" ? "active" : ""
+                  }`}
+                  onClick={() => setTrailerType("teaser")}
                 >
                   Teaser
                 </button>
-                <button 
-                  className={`filter-btn ${trailerType === 'behind_the_scenes' ? 'active' : ''}`}
-                  onClick={() => setTrailerType('behind_the_scenes')}
+                <button
+                  className={`filter-btn ${
+                    trailerType === "behind_the_scenes" ? "active" : ""
+                  }`}
+                  onClick={() => setTrailerType("behind_the_scenes")}
                 >
                   Behind the Scenes
                 </button>
@@ -307,21 +347,31 @@ function MovieDetail() {
               {/* Trailer List */}
               <div className="trailer-list">
                 {filteredTrailers.map((trailer) => (
-                  <div 
+                  <div
                     key={trailer.trailer_id}
-                    className={`trailer-item ${selectedTrailer?.trailer_id === trailer.trailer_id ? 'active' : ''}`}
+                    className={`trailer-item ${
+                      selectedTrailer?.trailer_id === trailer.trailer_id
+                        ? "active"
+                        : ""
+                    }`}
                     onClick={() => setSelectedTrailer(trailer)}
                   >
                     <div className="trailer-thumbnail">
-                      <img 
-                        src={`https://img.youtube.com/vi/${trailer.url.match(/(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([^/&?]+)/)?.[1]}/mqdefault.jpg`}
+                      <img
+                        src={`https://img.youtube.com/vi/${
+                          trailer.url.match(
+                            /(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([^/&?]+)/
+                          )?.[1]
+                        }/mqdefault.jpg`}
                         alt={trailer.title}
                       />
                       <div className="play-icon">▶</div>
                     </div>
                     <div className="trailer-info">
                       <p className="trailer-item-title">{trailer.title}</p>
-                      <p className="trailer-type">{trailer.trailer_type.replace('_', ' ')}</p>
+                      <p className="trailer-type">
+                        {trailer.trailer_type.replace("_", " ")}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -339,8 +389,12 @@ function MovieDetail() {
 
           {/* Action Buttons */}
           <div className="movie-actions">
-            <Link to="/showtimes" className="btn-showtimes">View Showtimes</Link>
-            <Link to="/bookings" className="btn-book-tickets">Book Tickets</Link>
+            <Link to={`/showtimes?movie=${id}`} className="btn-showtimes">
+              View Showtimes
+            </Link>
+            <Link to={`/showtimes?movie=${id}`} className="btn-book-tickets">
+              Book Tickets
+            </Link>
           </div>
         </div>
       </div>
