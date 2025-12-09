@@ -8,7 +8,7 @@
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
-  color: hsl(51, 100%, 70%);
+  color: $color-yellow-70;
 }
 
 .profile-container {
@@ -41,8 +41,8 @@
 }
 
 .user-role {
-  background: hsl(51, 100%, 50%);
-  color: hsl(0, 0%, 10%);
+  background: $color-yellow;
+  color: $color-gray-10;
   padding: 0.3rem 0.6rem;
   border-radius: $radius-sm;
   font-weight: bold;
@@ -54,8 +54,8 @@
   width: 100%;
   padding: 0.5rem 0.8rem;
   font-size: 0.9rem;
-  background: hsl(0, 100%, 50%);
-  color: white;
+  background: $color-red;
+  color: $color-white;
   border: none;
   border-radius: $radius-sm;
   cursor: pointer;
@@ -63,7 +63,7 @@
   margin-top: 0.5rem;
 
   &:hover {
-    background: hsl(0, 100%, 60%);
+    background: $color-yellow-60;
   }
 }
 
@@ -78,7 +78,7 @@
   background: $color-gray-13;
   padding: 1.5rem;
   border-radius: $radius-md;
-  border: 1px solid hsla(0, 0%, 100%, 0.1);
+  border: 1px solid $color-overlay-light;
 
   h2 {
     margin-bottom: 1rem;
@@ -89,7 +89,7 @@
 
 .password-section {
   background: $color-gray-10;
-  border: 1px solid hsla(0, 0%, 100%, 0.15);
+  border: 1px solid $color-overlay-light;
 }
 
 .form-row {
@@ -105,7 +105,7 @@
   label {
     display: block;
     margin-bottom: 0.3rem;
-    color: hsl(0, 0%, 85%);
+    color: $color-gray-85;
     font-weight: bold;
     font-size: 0.9rem;
   }
@@ -113,22 +113,22 @@
   input {
     width: 100%;
     padding: 0.4rem 0.6rem;
-    border: 1px solid hsla(0, 0%, 100%, 0.1);
+    border: 1px solid $color-overlay-light;
     border-radius: $radius-sm;
-    background: hsl(0, 0%, 13%);
-    color: white;
+    background: $color-gray-13;
+    color: $color-white;
     font-size: 0.9rem;
     box-sizing: border-box;
     transition: border-color 0.3s;
     
     &:focus {
       outline: none;
-      border-color: hsl(51, 100%, 70%);
+      border-color: $color-yellow-70;
     }
     
     &.error {
-      border-color: hsl(0, 100%, 50%);
-      background: hsla(0, 100%, 50%, 0.1);
+      border-color: $color-red;
+      background: $color-overlay-red-light;
     }
   }
 }
@@ -152,35 +152,11 @@
 }
 
 .success-message {
-  background: hsl(120, 100%, 25%);
-  color: white;
+  background: $color-green-25;
+  color: $color-white;
 }
 
 .error-message {
-  background: hsl(0, 70%, 40%);
-  color: white;
-}
-
-/* Responsive for smaller screens */
-@media (max-width: 768px) {
-  .profile-container {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0 1rem;
-  }
-  
-  .profile-sidebar {
-    width: 100%;
-  }
-  
-  .form-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .user-avatar-large {
-    width: 60px;
-    height: 60px;
-    font-size: 1.2rem;
-  }
+  background: $color-error;
+  color: $color-white;
 }

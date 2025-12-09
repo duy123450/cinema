@@ -184,22 +184,22 @@
 
             &.status-now-showing {
                 background: $color-overlay-success-medium;
-                color: white;
+                color: $color-white;
             }
 
             &.status-upcoming {
-                background: hsla(51, 100%, 50%, 0.9);
+                background: $color-overlay-yellow-heavy;
                 color: $color-gray-10;
             }
 
             &.status-ended {
-                background: hsla(0, 100%, 50%, 0.9);
-                color: white;
+                background: $color-overlay-red-heavy;
+                color: $color-white;
             }
 
             &.status-default {
                 background: $color-overlay-blue-medium;
-                color: white;
+                color: $color-white;
             }
         }
 
@@ -262,12 +262,12 @@
 
             &.role-supporting {
                 background: $color-blue;
-                color: white;
+                color: $color-white;
             }
 
             &.role-cameo {
                 background: $color-gray-40;
-                color: white;
+                color: $color-white;
             }
         }
     }

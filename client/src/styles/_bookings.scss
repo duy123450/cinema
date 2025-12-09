@@ -25,7 +25,7 @@
 
 .success-message-banner {
     background: linear-gradient(135deg, $color-success 0%, $color-success-light 100%);
-    color: white;
+    color: $color-white;
     padding: $spacing-lg;
     border-radius: $radius-lg;
     margin-bottom: $spacing-xl;
@@ -142,22 +142,22 @@
 
             &.status-paid {
                 background: $color-success;
-                color: white;
+                color: $color-white;
             }
 
             &.status-booked {
                 background: $color-blue;
-                color: white;
+                color: $color-white;
             }
 
             &.status-cancelled {
                 background: $color-red;
-                color: white;
+                color: $color-white;
             }
 
             &.status-default {
                 background: $color-gray-40;
-                color: white;
+                color: $color-white;
             }
         }
     }
@@ -243,7 +243,7 @@
     .btn-view-movie {
         flex: 1;
         background: $color-blue;
-        color: white;
+        color: $color-white;
         padding: $spacing-md $spacing-lg;
         border-radius: $radius-md;
         text-align: center;
@@ -264,7 +264,7 @@
     .btn-cancel-booking {
         flex: 1;
         background: $color-red;
-        color: white;
+        color: $color-white;
         padding: $spacing-md $spacing-lg;
         border-radius: $radius-md;
         text-align: center;

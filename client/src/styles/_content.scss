@@ -2,8 +2,8 @@
 
 .now-playing {
     padding: $spacing-xxl $spacing-xl;
-    background-color: hsla(0, 0%, 7%, 1);
-    color: white;
+    background-color: $color-gray-7;
+    color: $color-white;
 
     h2 {
         text-align: center;
@@ -27,7 +27,7 @@
 
 .card {
     background: $color-gray-13;
-    border: 1px solid hsla(0, 0%, 100%, 0.08);
+    border: 1px solid $color-overlay-light;
     padding: $spacing-lg;
     border-radius: $radius-lg;
     transition:
@@ -36,7 +36,7 @@
 
     &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 20px hsla(0, 0%, 0%, 0.4);
+        box-shadow: 0 8px 20px $color-over-dark-light;
     }
 }
 

@@ -8,7 +8,7 @@
 
 .notification-btn {
   background: $color-blue;
-  color: white;
+  color: $color-white;
   border: none;
   padding: 0.6rem 1rem;
   border-radius: $radius-md;
@@ -27,7 +27,7 @@
   top: -5px;
   right: -5px;
   background: $color-red;
-  color: white;
+  color: $color-white;
   font-size: 0.7rem;
   font-weight: bold;
   padding: 0.2rem 0.4rem;
@@ -83,7 +83,7 @@
 
   .notification-count {
     background: $color-red;
-    color: white;
+    color: $color-white;
     padding: 0.25rem 0.6rem;
     border-radius: 12px;
     font-size: 0.8rem;
@@ -139,7 +139,7 @@
 
 .notification-item {
   padding: $spacing-md;
-  border-bottom: 1px solid hsla(0, 0%, 100%, 0.05);
+  border-bottom: 1px solid $color-overlay-lighter;
   cursor: pointer;
   transition: all $transition;
   display: flex;
@@ -227,7 +227,7 @@
 
   &.notification-booking {
     .notification-icon {
-      background: linear-gradient(135deg, hsl(120, 100%, 30%) 0%, hsl(120, 100%, 40%) 100%);
+      background: linear-gradient(135deg, $color-green-30 0%, $color-green-40 100%);
     }
   }
 
@@ -239,7 +239,7 @@
 
   &.notification-birthday {
     .notification-icon {
-      background: linear-gradient(135deg, hsl(300, 70%, 40%) 0%, hsl(300, 70%, 60%) 100%);
+      background: linear-gradient(135deg, $color-purple-40 0%, $color-purple-60 100%);
     }
   }
 }

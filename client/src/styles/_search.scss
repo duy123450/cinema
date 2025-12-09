@@ -22,8 +22,8 @@
         border-color: $color-yellow-70;
         box-shadow: 
             0 0 0 3px $color-overlay-yellow-light,
-            0 0 15px hsla(51, 100%, 70%, 0.15),
-            0 0 25px hsla(51, 100%, 70%, 0.08);
+            0 0 15px $color-overlay-yellow-lighter,
+            0 0 25px $color-overlay-yellow-ultralight;
     }
 
     .search-icon {
@@ -210,22 +210,22 @@
 
             &.status-now-showing {
                 background: $color-overlay-success-medium;
-                color: white;
+                color: $color-white;
             }
 
             &.status-upcoming {
-                background: hsla(51, 100%, 50%, 0.9);
+                background: $color-overlay-yellow-heavy;
                 color: $color-gray-10;
             }
 
             &.status-ended {
-                background: hsla(0, 100%, 50%, 0.9);
-                color: white;
+                background: $color-overlay-red-heavy;
+                color: $color-white;
             }
 
             &.status-default {
                 background: $color-overlay-blue-medium;
-                color: white;
+                color: $color-white;
             }
         }
     }

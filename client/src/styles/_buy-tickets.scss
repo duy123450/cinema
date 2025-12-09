@@ -42,7 +42,7 @@
             height: 40px;
             border-radius: 50%;
             background: $color-gray-40;
-            color: white;
+            color: $color-white;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -138,9 +138,9 @@
         .seat {
             width: 40px;
             height: 40px;
-            border: 2px solid $color-gray-60;
+            border: 2px solid $color-success-light;
             background: $color-success;  // GREEN - Available
-            color: white;
+            color: $color-white;
             border-radius: $radius-sm;
             cursor: pointer;
             transition: all $transition;
@@ -150,26 +150,27 @@
             align-items: center;
             justify-content: center;
 
-            &:hover:not(.selected) {
+            &:hover:not(.selected):not(.taken) {
                 transform: scale(1.1);
-                background: $color-yellow;  // YELLOW - Choosing
+                background: $color-yellow;  // YELLOW - Hovering to choose
                 border-color: $color-yellow-70;
                 box-shadow: 0 0 15px $color-overlay-yellow-medium;
             }
 
             &.selected {
-                background: $color-red;  // RED - Selected
-                border-color: $color-red-light;
-                color: white;
-                box-shadow: 0 0 15px $color-overlay-red-medium;
+                background: $color-yellow;  // YELLOW - Selected by current user
+                border-color: $color-yellow-70;
+                color: $color-gray-10;
+                box-shadow: 0 0 15px $color-overlay-yellow-medium;
                 transform: scale(1.05);
             }
 
             &.taken {
-                background: $color-gray-50;
-                border-color: $color-gray-50;
+                background: $color-red;  // RED - Already taken by others
+                border-color: $color-red-light;
                 cursor: not-allowed;
-                opacity: 0.5;
+                color: $color-white;
+                box-shadow: 0 0 10px $color-overlay-red-medium;
             }
         }
     }
@@ -293,7 +294,7 @@
             .btn-add-concession {
                 width: 100%;
                 background: $color-blue;
-                color: white;
+                color: $color-white;
                 border: none;
                 padding: $spacing-sm;
                 border-radius: $radius-sm;

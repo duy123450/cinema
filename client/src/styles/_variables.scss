@@ -1,5 +1,10 @@
 // =============================================
-// COLOR SYSTEM - GRAYSCALE
+// COLOR SYSTEM - WHITE
+// =============================================
+$color-white: hsl(0, 0%, 100%);
+
+// =============================================
+// COLOR SYSTEM - GRAY
 // =============================================
 $color-gray-95: hsl(0, 0%, 95%); // Text
 $color-gray-90: hsl(0, 0%, 90%); // Light text
@@ -54,6 +59,19 @@ $color-blue-40: hsl(200, 100%, 40%);
 $color-blue-30: hsl(200, 100%, 30%);
 
 // =============================================
+// COLOR SYSTEM - GREEN
+// =============================================
+$color-green-25: hsl(120, 100%, 25%);
+$color-green-30: hsl(120, 100%, 30%);
+$color-green-40: hsl(120, 100%, 40%);
+
+// =============================================
+// COLOR SYSTEM - PURPLE
+// =============================================
+$color-purple-40: hsl(300, 70%, 40%);
+$color-purple-60: hsl(300, 70%, 60%);
+
+// =============================================
 // COLOR SYSTEM - STATUS COLORS
 // =============================================
 $color-success: hsl(120, 100%, 25%);
@@ -80,11 +98,13 @@ $color-info-dark: hsl(200, 100%, 40%);
 
 // Dark overlays
 $color-overlay-dark: hsla(0, 0%, 0%, 0.3);
+$color-over-dark-light: hsla(0, 0%, 0%, 0.4);
 $color-overlay-medium: hsla(0, 0%, 0%, 0.5);
 $color-overlay-heavy: hsla(0, 0%, 0%, 0.7);
 
 // Light/White overlays
 $color-overlay-light: hsla(0, 0%, 100%, 0.1);
+$color-overlay-lighter: hsla(0, 0%, 100%, 0.05);
 $color-overlay-white-light: hsla(0, 0%, 100%, 0.1);
 $color-overlay-white-medium: hsla(0, 0%, 100%, 0.3);
 $color-overlay-white-heavy: hsla(0, 0%, 100%, 0.4);
@@ -92,7 +112,11 @@ $color-overlay-white-heavy: hsla(0, 0%, 100%, 0.4);
 // Yellow overlays
 $color-overlay-yellow-ultralight: hsla(51, 100%, 70%, 0.08);
 $color-overlay-yellow-light: hsla(51, 100%, 70%, 0.1);
+$color-overlay-yellow-lighter: hsla(51, 100%, 70%, 0.15);
+$color-overlay-yellow-softer: hsla(51, 100%, 70%, 0.2);
 $color-overlay-yellow-medium: hsla(51, 100%, 50%, 0.3);
+$color-overlay-yellow-soft: hsla(51, 100%, 70%, 0.3);
+$color-overlay-yellow-high: hsla(51, 100%, 20%, 0.8);
 $color-overlay-yellow-heavy: hsla(51, 100%, 50%, 0.9);
 
 // Blue overlays
@@ -116,14 +140,14 @@ $color-overlay-success-heavy: hsla(120, 100%, 25%, 0.9);
 // USER MENU COLORS
 // =============================================
 $user-avatar-bg: $color-blue;
-$user-avatar-color: white;
+$user-avatar-color: hsl(0, 0%, 100%);
 $user-menu-bg: $color-gray-10;
 $user-menu-border: $color-overlay-light;
 $user-menu-shadow: $color-overlay-medium;
 $user-menu-hover: $color-overlay-light;
 $logout-btn-color: $color-red;
 $logout-btn-hover-color: $color-red-light;
-$username-color: white;
+$username-color: hsl(0, 0%, 100%);
 $role-color: $color-yellow-70;
 
 // =============================================

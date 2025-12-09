@@ -80,25 +80,25 @@
 
     &.status-now-showing {
         background: $color-overlay-success-medium;
-        color: white;
+        color: $color-white;
         border: 1px solid $color-success-light;
     }
 
     &.status-upcoming {
-        background: hsla(51, 100%, 50%, 0.9);
+        background: $color-overlay-yellow-heavy;
         color: $color-gray-10;
         border: 1px solid $color-yellow-60;
     }
 
     &.status-ended {
-        background: hsla(0, 100%, 50%, 0.9);
-        color: white;
+        background: $color-overlay-red-heavy;
+        color: $color-white;
         border: 1px solid $color-red-light;
     }
 
     &.status-default {
         background: $color-overlay-blue-medium;
-        color: white;
+        color: $color-white;
     }
 }
 
@@ -128,7 +128,7 @@
 .movie-rating-badge {
     .rating-badge {
         background: $color-blue;
-        color: white;
+        color: $color-white;
         padding: $spacing-sm $spacing-lg;
         border-radius: $radius-md;
         font-weight: bold;
@@ -430,12 +430,12 @@
                 transform: translate(-50%, -50%);
                 width: 30px;
                 height: 30px;
-                background: hsla(0, 0%, 0%, 0.7);
+                background: $color-overlay-heavy;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: white;
+                color: $color-white;
                 font-size: 1rem;
                 padding-left: 3px;
             }
@@ -520,7 +520,7 @@
 
     .btn-book-tickets {
         background: $color-blue;
-        color: white;
+        color: $color-white;
         box-shadow: 0 4px 15px $color-overlay-blue-medium;
 
         &:hover {

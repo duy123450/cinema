@@ -2,7 +2,7 @@
 
 .error-message {
     background: $color-error;
-    color: white;
+    color: $color-white;
     padding: 0.75rem;
     border-radius: $radius-sm;
     margin-bottom: $spacing-md;
@@ -36,9 +36,9 @@
 .error-container {
   max-width: 600px;
   padding: 3rem;
-  background: hsl(0, 0%, 13%);
+  background: $color-gray-13;
   border-radius: $radius-lg;
-  border: 1px solid hsla(0, 0%, 100%, 0.1);
+  border: 1px solid $color-overlay-light;
 }
 
 .error-code {

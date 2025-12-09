@@ -121,25 +121,25 @@
 
         &.status-open {
             background: $color-overlay-success-medium;
-            color: white;
+            color: $color-white;
             border: 1px solid $color-success-light;
         }
 
         &.status-closed {
-            background: hsla(0, 100%, 50%, 0.9);
-            color: white;
+            background: $color-overlay-red-heavy;
+            color: $color-white;
             border: 1px solid $color-red-light;
         }
 
         &.status-construction {
-            background: hsla(51, 100%, 50%, 0.9);
+            background: $color-overlay-yellow-heavy;
             color: $color-gray-10;
             border: 1px solid $color-yellow-60;
         }
 
         &.status-default {
             background: $color-overlay-blue-medium;
-            color: white;
+            color: $color-white;
         }
     }
 }
@@ -258,7 +258,7 @@
 
     .amenity-tag {
         background: $color-blue;
-        color: white;
+        color: $color-white;
         padding: $spacing-xs $spacing-sm;
         border-radius: $radius-sm;
         font-size: 0.8rem;

@@ -28,7 +28,7 @@
         background: linear-gradient(
             90deg,
             transparent,
-            hsla(0, 0%, 100%, 0.4),
+            $color-overlay-white-heavy,
             transparent
         );
         transition: left 0.5s;
@@ -61,7 +61,7 @@
 // Secondary Buttons (Navigation)
 .btn-secondary {
     background: $color-red;
-    color: white;
+    color: $color-white;
     padding: 0.6rem 1.3rem;
     border: none;
     border-radius: $radius-md;
@@ -83,7 +83,7 @@
         background: linear-gradient(
             90deg,
             transparent,
-            hsla(0, 0%, 100%, 0.3),
+            $color-overlay-white-medium,
             transparent
         );
         transition: left 0.5s;
@@ -123,7 +123,7 @@
 .btn-book-tickets,
 .btn-view-details {
     background-color: $color-blue;
-    color: white;
+    color: $color-white;
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: $radius-md;
@@ -146,7 +146,7 @@
         background: linear-gradient(
             90deg,
             transparent,
-            hsla(0, 0%, 100%, 0.3),
+            $color-overlay-white-medium,
             transparent
         );
         transition: left 0.5s;
@@ -179,7 +179,7 @@
 // Admin Button
 .btn-admin {
     background: $color-blue;
-    color: white;
+    color: $color-white;
     padding: 0.6rem 1.3rem;
     border: none;
     border-radius: $radius-md;
@@ -201,7 +201,7 @@
         background: linear-gradient(
             90deg,
             transparent,
-            hsla(0, 0%, 100%, 0.3),
+            $color-overlay-white-medium,
             transparent
         );
         transition: left 0.5s;
@@ -245,7 +245,7 @@
         background: linear-gradient(
             90deg,
             transparent,
-            hsla(0, 0%, 100%, 0.4),
+            $color-overlay-white-heavy,
             transparent
         );
         transition: left 0.5s;
@@ -265,7 +265,7 @@
 // Logout Button
 .logout-btn {
     background: $color-red;
-    color: white;
+    color: $color-white;
     border: none;
     padding: $spacing-sm $spacing-md;
     border-radius: $radius-sm;
@@ -287,7 +287,7 @@
         background: linear-gradient(
             90deg,
             transparent,
-            hsla(0, 0%, 100%, 0.3),
+            $color-overlay-white-medium,
             transparent
         );
         transition: left 0.5s;

@@ -27,7 +27,7 @@
     background: $color-overlay-heavy;
     border-radius: $radius-lg;
     padding: $spacing-xl;
-    color: white;
+    color: $color-white;
     text-align: center;
     box-sizing: border-box;
     backdrop-filter: blur(10px);
@@ -43,7 +43,7 @@
     }
 
     &.banner-promo {
-        background: linear-gradient(135deg, $color-overlay-heavy 0%, hsla(51, 100%, 20%, 0.8) 100%);
+        background: linear-gradient(135deg, $color-overlay-heavy 0%, $color-overlay-yellow-high 100%);
         border: 2px solid $color-yellow-70;
         
         h1 {
@@ -99,7 +99,7 @@
 
 .cast-tag {
     background: $color-blue;
-    color: white;
+    color: $color-white;
     padding: $spacing-xs $spacing-sm;
     border-radius: $radius-sm;
     font-size: 0.9rem;
@@ -130,7 +130,7 @@
 
 .rating {
     background: $color-blue;
-    color: white;
+    color: $color-white;
     padding: $spacing-sm $spacing-md;
     border-radius: $radius-sm;
     font-weight: bold;
@@ -145,7 +145,7 @@
 
 .btn-banner {
     background-color: $color-blue;
-    color: white;
+    color: $color-white;
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: $radius-sm;
@@ -205,7 +205,7 @@
     top: 50%;
     transform: translateY(-50%);
     background: $color-overlay-medium;
-    color: white;
+    color: $color-white;
     border: none;
     padding: $spacing-md $spacing-lg;
     font-size: 2rem;
@@ -245,6 +245,6 @@
     transition: background 0.3s;
 
     &.active {
-        background: white;
+        background: $color-white;
     }
 }

@@ -38,7 +38,7 @@
 
 .filter-btn {
     background: $color-blue;
-    color: white;
+    color: $color-white;
     border: 2px solid $color-blue;
     padding: $spacing-sm $spacing-lg;
     border-radius: $radius-md;
@@ -178,25 +178,25 @@
 
     &.status-now-showing {
         background: $color-overlay-success-medium;
-        color: white;
+        color: $color-white;
         border: 1px solid $color-success-light;
     }
 
     &.status-upcoming {
-        background: hsla(51, 100%, 50%, 0.9);
+        background: $color-overlay-yellow-heavy;
         color: $color-gray-10;
         border: 1px solid $color-yellow-60;
     }
 
     &.status-ended {
-        background: hsla(0, 100%, 50%, 0.9);
-        color: white;
+        background: $color-overlay-red-heavy;
+        color: $color-white;
         border: 1px solid $color-red-light;
     }
 
     &.status-default {
         background: $color-overlay-blue-medium;
-        color: white;
+        color: $color-white;
     }
 }
 
@@ -242,7 +242,7 @@
 
     .rating-badge {
         background: $color-blue;
-        color: white;
+        color: $color-white;
         padding: 0.35rem 0.75rem;
         border-radius: $radius-sm;
         font-weight: bold;

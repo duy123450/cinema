@@ -61,8 +61,8 @@
         // Glowing effect
         box-shadow: 
             0 12px 30px $color-overlay-heavy,
-            0 0 30px hsla(51, 100%, 70%, 0.3),
-            0 0 50px hsla(51, 100%, 70%, 0.2);
+            0 0 30px $color-overlay-yellow-soft,
+            0 0 50px $color-overlay-yellow-softer;
 
         .movie-overlay {
             opacity: 1;
@@ -161,7 +161,7 @@
 
     .rating-badge {
         background: $color-blue;
-        color: white;
+        color: $color-white;
         padding: 0.2rem 0.5rem;
         border-radius: $radius-sm;
         font-weight: bold;
@@ -231,8 +231,8 @@
 
         box-shadow: 
             0 8px 20px $color-overlay-medium,
-            0 0 25px hsla(51, 100%, 70%, 0.25),
-            0 0 40px hsla(51, 100%, 70%, 0.15);
+            0 0 25px $color-overlay-yellow-softer,
+            0 0 40px $color-overlay-yellow-light;
     }
 }
 
@@ -290,8 +290,8 @@
 
         box-shadow: 
             0 6px 15px $color-overlay-medium,
-            0 0 20px hsla(200, 100%, 70%, 0.25),
-            0 0 35px hsla(200, 100%, 70%, 0.15);
+            0 0 20px $color-overlay-yellow-softer,
+            0 0 35px $color-overlay-yellow-light;
     }
 }
 
@@ -347,8 +347,8 @@
 
         box-shadow: 
             0 8px 20px $color-overlay-medium,
-            0 0 25px hsla(51, 100%, 70%, 0.25),
-            0 0 40px hsla(51, 100%, 70%, 0.15);
+            0 0 25px $color-overlay-yellow-softer,
+            0 0 40px $color-overlay-yellow-light;
     }
 }
 
@@ -401,8 +401,8 @@
 
         box-shadow: 
             0 8px 20px hsla(0, 0%, 0%, 0.4),
-            0 0 25px hsla(51, 100%, 70%, 0.25),
-            0 0 40px hsla(51, 100%, 70%, 0.15);
+            0 0 25px $color-overlay-yellow-softer,
+            0 0 40px $color-overlay-yellow-light;
     }
 }
 

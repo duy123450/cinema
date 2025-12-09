@@ -39,7 +39,7 @@
         border: 1px solid $color-overlay-light;
         border-radius: $radius-sm;
         background: $color-gray-13;
-        color: white;
+        color: $color-white;
         font-size: 1rem;
         box-sizing: border-box;
         transition: border-color $transition;
@@ -81,7 +81,7 @@
 
 .success-message {
     background: $color-success;
-    color: white;
+    color: $color-white;
     padding: 0.75rem;
     border-radius: $radius-sm;
     margin-bottom: 1rem;
