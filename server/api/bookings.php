@@ -23,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
         }
 
-        // Get bookings with movie and showtime details
+        // FIXED: Removed 's.price' - it doesn't exist in showtimes table
         $query = "SELECT t.ticket_id, t.showtime_id, t.user_id, t.seat_number, t.ticket_type,
                          t.price_paid, t.status, t.created_at,
                          m.movie_id, m.title as movie_title, m.rating, m.poster_url,
-                         s.show_date, s.show_time, s.price,
+                         s.show_date, s.show_time,
                          sc.screen_number, sc.screen_type,
                          c.name as cinema_name, c.address, c.city
                   FROM tickets t
@@ -56,21 +56,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 // CREATE booking (POST)
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $input = json_decode(file_get_contents('php://input'), true);
+        // Get raw input and parse as JSON
+        $raw_input = file_get_contents('php://input');
+        error_log("Raw input received: " . $raw_input);
+        
+        $input = json_decode($raw_input, true);
+        error_log("Decoded input: " . json_encode($input));
 
-        if (!isset($input['showtime_id'], $input['seat_number'], $input['ticket_type'])) {
+        // Validate required fields
+        if (!isset($input['showtime_id']) || !isset($input['seat_number']) || !isset($input['ticket_type'])) {
             http_response_code(400);
             echo json_encode([
                 'success' => false,
-                'message' => 'Required fields: showtime_id, seat_number, ticket_type'
+                'message' => 'Required fields: showtime_id, seat_number, ticket_type',
+                'received' => $input,
+                'raw' => $raw_input
             ]);
             exit();
         }
 
-        // Get showtime details
-        $showtime_query = "SELECT price FROM showtimes WHERE showtime_id = ?";
+        // Sanitize inputs
+        $showtime_id = intval($input['showtime_id']);
+        $seat_number = trim($input['seat_number']);
+        $ticket_type = trim($input['ticket_type']);
+
+        // FIXED: Get showtime details - select the price column correctly
+        $showtime_query = "SELECT s.showtime_id, s.price, s.available_seats 
+                          FROM showtimes s 
+                          WHERE s.showtime_id = ?";
         $showtime_stmt = $conn->prepare($showtime_query);
-        $showtime_stmt->execute([$input['showtime_id']]);
+        $showtime_stmt->execute([$showtime_id]);
         $showtime = $showtime_stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$showtime) {
@@ -86,7 +101,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $seat_query = "SELECT ticket_id FROM tickets 
                        WHERE showtime_id = ? AND seat_number = ? AND status IN ('booked', 'paid')";
         $seat_stmt = $conn->prepare($seat_query);
-        $seat_stmt->execute([$input['showtime_id'], $input['seat_number']]);
+        $seat_stmt->execute([$showtime_id, $seat_number]);
 
         if ($seat_stmt->fetch()) {
             http_response_code(409);
@@ -97,16 +112,26 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
+        // Check if showtime has available seats
+        if ($showtime['available_seats'] <= 0) {
+            http_response_code(409);
+            echo json_encode([
+                'success' => false,
+                'message' => 'No available seats for this showtime'
+            ]);
+            exit();
+        }
+
         // Create ticket
         $query = "INSERT INTO tickets (showtime_id, user_id, seat_number, ticket_type, price_paid, status)
                   VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($query);
         $result = $stmt->execute([
-            $input['showtime_id'],
+            $showtime_id,
             $auth_user['user_id'],
-            $input['seat_number'],
-            $input['ticket_type'],
+            $seat_number,
+            $ticket_type,
             $showtime['price'],
             'booked'
         ]);
@@ -118,7 +143,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_query = "UPDATE showtimes SET available_seats = available_seats - 1 
                             WHERE showtime_id = ?";
             $update_stmt = $conn->prepare($update_query);
-            $update_stmt->execute([$input['showtime_id']]);
+            $update_stmt->execute([$showtime_id]);
 
             http_response_code(201);
             echo json_encode([

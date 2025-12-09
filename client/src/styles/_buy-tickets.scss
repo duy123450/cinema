@@ -113,7 +113,7 @@
     }
 }
 
-// Seat Selection
+// Seats
 .seat-selection-step {
     .seat-grid {
         display: flex;
@@ -138,30 +138,36 @@
         .seat {
             width: 40px;
             height: 40px;
-            border: 2px solid $color-gray-40;
-            background: $color-gray-20;
-            color: $color-gray-85;
+            border: 2px solid $color-gray-60;
+            background: $color-success;  // GREEN - Available
+            color: white;
             border-radius: $radius-sm;
             cursor: pointer;
             transition: all $transition;
             font-size: 0.85rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-            &:hover {
+            &:hover:not(.selected) {
                 transform: scale(1.1);
+                background: $color-yellow;  // YELLOW - Choosing
                 border-color: $color-yellow-70;
-            }
-
-            &.selected {
-                background: $color-yellow-50;
-                border-color: $color-yellow-50;
-                color: $color-gray-10;
                 box-shadow: 0 0 15px $color-overlay-yellow-medium;
             }
 
+            &.selected {
+                background: $color-red;  // RED - Selected
+                border-color: $color-red-light;
+                color: white;
+                box-shadow: 0 0 15px $color-overlay-red-medium;
+                transform: scale(1.05);
+            }
+
             &.taken {
-                background: $color-red;
-                border-color: $color-red;
+                background: $color-gray-50;
+                border-color: $color-gray-50;
                 cursor: not-allowed;
                 opacity: 0.5;
             }
@@ -173,6 +179,10 @@
         justify-content: center;
         gap: $spacing-xl;
         margin-bottom: $spacing-xl;
+        padding: $spacing-lg;
+        background: $color-gray-10;
+        border-radius: $radius-lg;
+        border: 1px solid $color-overlay-light;
 
         .legend-item {
             display: flex;
@@ -183,22 +193,46 @@
                 width: 30px;
                 height: 30px;
                 border-radius: $radius-sm;
+                border: 2px solid;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: default;
 
                 &.available {
-                    background: $color-gray-20;
-                    border: 2px solid $color-gray-40;
+                    background: $color-success;  // GREEN
+                    border-color: $color-success-light;
+                }
+
+                &.choosing {
+                    background: $color-yellow;  // YELLOW
+                    border-color: $color-yellow-70;
                 }
 
                 &.selected {
-                    background: $color-yellow-50;
-                    border: 2px solid $color-yellow-50;
+                    background: $color-red;  // RED
+                    border-color: $color-red-light;
                 }
             }
 
             span {
                 color: $color-gray-85;
                 font-size: 0.9rem;
+                font-weight: 600;
             }
+        }
+    }
+
+    .step-actions {
+        display: flex;
+        justify-content: center;
+        gap: $spacing-md;
+        margin-top: $spacing-xl;
+
+        button {
+            padding: $spacing-md $spacing-xxl;
+            font-size: 1.1rem;
+            min-width: 200px;
         }
     }
 }

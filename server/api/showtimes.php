@@ -9,12 +9,47 @@ $conn->exec("SET time_zone = '+00:00'");
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
-        // Get showtimes with movie and cinema details
+        // FIXED: Add support for getting a single showtime by ID
+        $showtime_id = $_GET['id'] ?? null;
+        
+        if ($showtime_id) {
+            // Get single showtime by ID with all details
+            $query = "SELECT s.showtime_id, s.movie_id, s.screen_id, s.show_date, s.show_time,
+                             s.price, s.available_seats, s.created_at, s.updated_at,
+                             m.title, m.duration_minutes, m.rating, m.poster_url,
+                             c.name as cinema_name, c.address, c.city,
+                             sc.screen_number, sc.screen_type
+                      FROM showtimes s
+                      JOIN movies m ON s.movie_id = m.movie_id
+                      JOIN screens sc ON s.screen_id = sc.screen_id
+                      JOIN cinemas c ON sc.cinema_id = c.cinema_id
+                      WHERE s.showtime_id = ?";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$showtime_id]);
+            $showtime = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$showtime) {
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Showtime not found'
+                ]);
+                exit();
+            }
+            
+            http_response_code(200);
+            echo json_encode($showtime);
+            exit();
+        }
+        
+        // Get multiple showtimes with filters
         $movie_id = $_GET['movie_id'] ?? null;
         $cinema_id = $_GET['cinema_id'] ?? null;
         $date = $_GET['date'] ?? null;
 
-        $query = "SELECT s.*, 
+        $query = "SELECT s.showtime_id, s.movie_id, s.screen_id, s.show_date, s.show_time,
+                         s.price, s.available_seats,
                          m.title, m.duration_minutes, m.rating, m.poster_url,
                          c.name as cinema_name, c.address, c.city,
                          sc.screen_number, sc.screen_type

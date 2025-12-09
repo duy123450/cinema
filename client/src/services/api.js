@@ -137,8 +137,21 @@ export const apiService = {
     },
 
     getShowtimeById: async (showtimeId) => {
-        const response = await api.get(`/showtimes.php?id=${showtimeId}`);
-        return response.data;
+        try {
+            const response = await api.get(`/showtimes.php?id=${showtimeId}`);
+            
+            console.log("getShowtimeById response:", response.data); // DEBUG
+            
+            // Ensure we return an object with showtime_id
+            if (response.data && typeof response.data === 'object') {
+                return response.data;
+            }
+            
+            throw new Error("Invalid showtime data format");
+        } catch (error) {
+            console.error("Error in getShowtimeById:", error);
+            throw error;
+        }
     },
 
     createShowtime: async (showtimeData) => {
