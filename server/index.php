@@ -83,6 +83,10 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
             require_once 'api/user-rating.php';
             break;
 
+        case 'reviews':
+            require_once 'api/reviews.php';
+            break;
+
         case 'actors':
             require_once 'api/actors.php';
             break;

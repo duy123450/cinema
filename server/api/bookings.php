@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
         }
 
-        // FIXED: Removed 's.price' - it doesn't exist in showtimes table
+        // Get all tickets for the user
         $query = "SELECT t.ticket_id, t.showtime_id, t.user_id, t.seat_number, t.ticket_type,
                          t.price_paid, t.status, t.created_at,
                          m.movie_id, m.title as movie_title, m.rating, m.poster_url,
@@ -36,11 +36,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                   JOIN screens sc ON s.screen_id = sc.screen_id
                   JOIN cinemas c ON sc.cinema_id = c.cinema_id
                   WHERE t.user_id = ?
-                  ORDER BY s.show_date DESC, s.show_time DESC";
+                  ORDER BY t.ticket_id DESC";
 
         $stmt = $conn->prepare($query);
         $stmt->execute([$user_id]);
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // For each booking, fetch associated concessions
+        foreach ($bookings as &$booking) {
+            $concessions_query = "SELECT tc.quantity, tc.price_at_purchase,
+                                         c.name, c.category, c.description
+                                  FROM ticket_concessions tc
+                                  JOIN concessions c ON tc.concession_id = c.concession_id
+                                  WHERE tc.ticket_id = ?";
+            
+            $concessions_stmt = $conn->prepare($concessions_query);
+            $concessions_stmt->execute([$booking['ticket_id']]);
+            $concessions = $concessions_stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Format concessions data
+            $formatted_concessions = [];
+            foreach ($concessions as $concession) {
+                $formatted_concessions[] = [
+                    'name' => $concession['name'],
+                    'category' => $concession['category'],
+                    'quantity' => (int)$concession['quantity'],
+                    'price' => (float)$concession['price_at_purchase']
+                ];
+            }
+            
+            $booking['concessions'] = $formatted_concessions;
+        }
 
         http_response_code(200);
         echo json_encode($bookings);
@@ -80,7 +106,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $seat_number = trim($input['seat_number']);
         $ticket_type = trim($input['ticket_type']);
 
-        // FIXED: Get showtime details - select the price column correctly
+        // Get showtime details
         $showtime_query = "SELECT s.showtime_id, s.price, s.available_seats 
                           FROM showtimes s 
                           WHERE s.showtime_id = ?";

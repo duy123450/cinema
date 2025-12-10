@@ -35,12 +35,13 @@ function BuyTickets() {
       setLoading(true);
 
       // Get showtime details and booked seats
-      const [showtimeData, concessionsData, promotionsData, seatsData] = await Promise.all([
-        apiService.getShowtimeById(showtimeId),
-        apiService.getConcessions(),
-        apiService.getPromotions(),
-        apiService.getSeats(showtimeId),
-      ]);
+      const [showtimeData, concessionsData, promotionsData, seatsData] =
+        await Promise.all([
+          apiService.getShowtimeById(showtimeId),
+          apiService.getConcessions(),
+          apiService.getPromotions(),
+          apiService.getSeats(showtimeId),
+        ]);
 
       console.log("Showtime data received:", showtimeData);
 
@@ -60,7 +61,7 @@ function BuyTickets() {
       setShowtime(showtimeData);
       setConcessions(concessionsData);
       setPromotions(promotionsData || []);
-      
+
       // Set booked seats from API response
       if (seatsData && seatsData.success) {
         setBookedSeats(seatsData.bookedSeats || []);
@@ -79,7 +80,7 @@ function BuyTickets() {
     if (bookedSeats.includes(seat)) {
       return;
     }
-    
+
     if (selectedSeats.includes(seat)) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seat));
     } else {
@@ -154,14 +155,8 @@ function BuyTickets() {
       return;
     }
 
-    if (!showtime) {
-      setError("Showtime information is missing");
-      return;
-    }
-
-    if (!showtime.showtime_id) {
+    if (!showtime || !showtime.showtime_id) {
       setError("Showtime ID is missing - cannot proceed with booking");
-      console.error("Invalid showtime object:", showtime);
       return;
     }
 
@@ -169,26 +164,29 @@ function BuyTickets() {
       setLoading(true);
       setError(null);
 
-      const bookingPromises = selectedSeats.map((seat) => {
+      // Create bookings for each seat
+      const bookingPromises = selectedSeats.map(async (seat) => {
         const bookingData = {
           showtime_id: showtime.showtime_id,
           seat_number: seat,
           ticket_type: "adult",
+          concessions: selectedConcessions.map((c) => ({
+            concession_id: c.concession_id,
+            quantity: c.quantity,
+            price: parseFloat(c.price),
+          })),
+          promotion_code: selectedPromotion?.code || null,
         };
-
-        console.log("Sending booking data:", bookingData);
 
         return apiService.createBooking(bookingData);
       });
 
       const results = await Promise.all(bookingPromises);
-
       console.log("All bookings created:", results);
 
       navigate("/bookings?success=true");
     } catch (err) {
       console.error("Error creating booking:", err);
-
       const errorMsg =
         err.response?.data?.message ||
         err.message ||
@@ -198,17 +196,6 @@ function BuyTickets() {
       setLoading(false);
     }
   };
-
-  if (loading && !showtime) {
-    return (
-      <div className="page ticket-booking-page">
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading booking information...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -278,11 +265,13 @@ function BuyTickets() {
                   const seatId = `${row}${num}`;
                   const isSelected = selectedSeats.includes(seatId);
                   const isBooked = bookedSeats.includes(seatId);
-                  
+
                   return (
                     <button
                       key={seatId}
-                      className={`seat ${isBooked ? "taken" : isSelected ? "selected" : ""}`}
+                      className={`seat ${
+                        isBooked ? "taken" : isSelected ? "selected" : ""
+                      }`}
                       onClick={() => handleSeatSelect(seatId)}
                       disabled={isBooked}
                       title={
