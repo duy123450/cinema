@@ -112,6 +112,17 @@ function Bookings() {
     return `${formattedHour}:${minutes} ${ampm}`;
   };
 
+  const getConcessionIcon = (category) => {
+    switch (category) {
+      case 'popcorn': return '🍿';
+      case 'drink': return '🥤';
+      case 'combo': return '🍔';
+      case 'snack': return '🍟';
+      case 'candy': return '🍬';
+      default: return '🍿';
+    }
+  };
+
   if (loading) {
     return (
       <div className="page bookings-page">
@@ -162,119 +173,137 @@ function Bookings() {
       ) : (
         <div className="booking-list">
           {bookings.map((booking) => (
-            <div key={booking.ticket_id} className="booking-card">
-              <div className="booking-header">
-                <div className="booking-movie-info">
-                  {booking.poster_url && (
-                    <img 
-                      src={booking.poster_url} 
-                      alt={booking.movie_title} 
-                      className="booking-poster"
-                    />
-                  )}
-                  <div className="booking-title-section">
-                    <h3 className="booking-movie-title">{booking.movie_title}</h3>
-                    <span className={`booking-status ${getStatusColor(booking.status)}`}>
-                      {getStatusLabel(booking.status)}
-                    </span>
-                  </div>
+  <div key={booking.ticket_id} className="booking-card">
+    <div className="booking-header">
+      <div className="booking-movie-info">
+        {booking.poster_url && (
+          <img 
+            src={booking.poster_url} 
+            alt={booking.movie_title} 
+            className="booking-poster"
+          />
+        )}
+        <div className="booking-title-section">
+          <h3 className="booking-movie-title">{booking.movie_title}</h3>
+          <span className={`booking-status ${getStatusColor(booking.status)}`}>
+            {getStatusLabel(booking.status)}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div className="booking-details">
+      <div className="booking-detail-item">
+        <span className="detail-icon">🏢</span>
+        <div className="detail-content">
+          <span className="detail-label">Cinema</span>
+          <span className="detail-value">{booking.cinema_name}</span>
+        </div>
+      </div>
+
+      <div className="booking-detail-item">
+        <span className="detail-icon">📍</span>
+        <div className="detail-content">
+          <span className="detail-label">Location</span>
+          <span className="detail-value">{booking.city}</span>
+        </div>
+      </div>
+
+      <div className="booking-detail-item">
+        <span className="detail-icon">📺</span>
+        <div className="detail-content">
+          <span className="detail-label">Screen</span>
+          <span className="detail-value">{booking.screen_number}</span>
+        </div>
+      </div>
+
+      <div className="booking-detail-item">
+        <span className="detail-icon">📅</span>
+        <div className="detail-content">
+          <span className="detail-label">Date</span>
+          <span className="detail-value">{formatDate(booking.show_date)}</span>
+        </div>
+      </div>
+
+      <div className="booking-detail-item">
+        <span className="detail-icon">🕐</span>
+        <div className="detail-content">
+          <span className="detail-label">Time</span>
+          <span className="detail-value time">{formatTime(booking.show_time)}</span>
+        </div>
+      </div>
+
+      <div className="booking-detail-item">
+        <span className="detail-icon">💺</span>
+        <div className="detail-content">
+          <span className="detail-label">Seat</span>
+          <span className="detail-value seat">{booking.seat_number}</span>
+        </div>
+      </div>
+
+      <div className="booking-detail-item">
+        <span className="detail-icon">🎫</span>
+        <div className="detail-content">
+          <span className="detail-label">Ticket Type</span>
+          <span className="detail-value">{booking.ticket_type}</span>
+        </div>
+      </div>
+
+      {/* NEW: Show Concessions if they exist */}
+      {booking.concessions && booking.concessions.length > 0 && (
+        <div className="booking-detail-item highlight concessions-item">
+          <span className="detail-icon">🍿</span>
+          <div className="detail-content">
+            <span className="detail-label">Concessions</span>
+            <div className="concessions-list">
+              {booking.concessions.map((item, index) => (
+                <div key={index} className="concession-entry">
+                  <span>{item.quantity}× {item.name}</span>
+                  <span className="concession-price">${(item.price * item.quantity).toFixed(2)}</span>
                 </div>
-              </div>
-
-              <div className="booking-details">
-                <div className="booking-detail-item">
-                  <span className="detail-icon">🏢</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Cinema</span>
-                    <span className="detail-value">{booking.cinema_name}</span>
-                  </div>
-                </div>
-
-                <div className="booking-detail-item">
-                  <span className="detail-icon">📍</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Location</span>
-                    <span className="detail-value">{booking.city}</span>
-                  </div>
-                </div>
-
-                <div className="booking-detail-item">
-                  <span className="detail-icon">📺</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Screen</span>
-                    <span className="detail-value">{booking.screen_number}</span>
-                  </div>
-                </div>
-
-                <div className="booking-detail-item">
-                  <span className="detail-icon">📅</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Date</span>
-                    <span className="detail-value">{formatDate(booking.show_date)}</span>
-                  </div>
-                </div>
-
-                <div className="booking-detail-item">
-                  <span className="detail-icon">🕐</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Time</span>
-                    <span className="detail-value time">{formatTime(booking.show_time)}</span>
-                  </div>
-                </div>
-
-                <div className="booking-detail-item">
-                  <span className="detail-icon">💺</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Seat</span>
-                    <span className="detail-value seat">{booking.seat_number}</span>
-                  </div>
-                </div>
-
-                <div className="booking-detail-item">
-                  <span className="detail-icon">🎫</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Ticket Type</span>
-                    <span className="detail-value">{booking.ticket_type}</span>
-                  </div>
-                </div>
-
-                <div className="booking-detail-item highlight">
-                  <span className="detail-icon">💰</span>
-                  <div className="detail-content">
-                    <span className="detail-label">Price Paid</span>
-                    <span className="detail-value price">${booking.price_paid}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="booking-actions">
-                <Link 
-                  to={`/movies/${booking.movie_id || ''}`} 
-                  className="btn-view-movie"
-                >
-                  View Movie
-                </Link>
-                
-                {booking.status !== 'cancelled' && (
-                  <button 
-                    onClick={() => handleCancelBooking(booking.ticket_id)}
-                    className="btn-cancel-booking"
-                  >
-                    Cancel Booking
-                  </button>
-                )}
-              </div>
-
-              <div className="booking-footer">
-                <span className="booking-id">Booking ID: #{booking.ticket_id}</span>
-                <span className="booking-date">
-                  Booked on {new Date(booking.created_at).toLocaleDateString()}
-                </span>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       )}
+
+      <div className="booking-detail-item highlight">
+        <span className="detail-icon">💰</span>
+        <div className="detail-content">
+          <span className="detail-label">Total Paid</span>
+          <span className="detail-value price">${booking.price_paid}</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="booking-actions">
+      <Link 
+        to={`/movies/${booking.movie_id || ''}`} 
+        className="btn-view-movie"
+      >
+        View Movie
+      </Link>
+      
+      {booking.status !== 'cancelled' && (
+        <button 
+          onClick={() => handleCancelBooking(booking.ticket_id)}
+          className="btn-cancel-booking"
+        >
+          Cancel Booking
+        </button>
+      )}
+    </div>
+
+    <div className="booking-footer">
+      <span className="booking-id">Booking ID: #{booking.ticket_id}</span>
+      <span className="booking-date">
+        Booked on {new Date(booking.created_at).toLocaleDateString()}
+      </span>
+    </div>
+  </div>
+))}
+      </div>
+        )}
     </div>
   );
 }

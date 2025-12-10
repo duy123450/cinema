@@ -171,6 +171,7 @@
                 cursor: not-allowed;
                 color: $color-white;
                 box-shadow: 0 0 10px $color-overlay-red-medium;
+                opacity: 0.8;
             }
         }
     }
@@ -323,48 +324,66 @@
         }
 
         .concession-item {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 160px 120px;
             align-items: center;
-            padding: $spacing-sm 0;
+            gap: $spacing-lg;
+            padding: $spacing-md 0;
             border-bottom: 1px solid $color-overlay-light;
 
             &:last-child {
                 border-bottom: none;
             }
 
+            > span:first-child {
+                color: $color-gray-85;
+                font-weight: 500;
+            }
+
             .quantity-controls {
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 gap: $spacing-sm;
+                width: 160px;
 
                 button {
-                    width: 30px;
-                    height: 30px;
+                    width: 40px;
+                    height: 40px;
                     border: none;
                     background: $color-yellow-50;
                     color: $color-gray-10;
                     border-radius: $radius-sm;
                     cursor: pointer;
                     font-weight: bold;
+                    font-size: 1.3rem;
                     transition: all $transition;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
 
                     &:hover {
                         background: $color-yellow-60;
+                        transform: scale(1.05);
                     }
                 }
 
                 span {
-                    min-width: 30px;
+                    width: 40px;
                     text-align: center;
                     font-weight: bold;
+                    font-size: 1.2rem;
                     color: $color-gray-85;
+                    flex-shrink: 0;
                 }
             }
 
             > span:last-child {
                 font-weight: bold;
                 color: $color-yellow-70;
+                text-align: right;
+                font-size: 1.2rem;
             }
         }
     }

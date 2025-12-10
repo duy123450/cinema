@@ -17,6 +17,9 @@ function MovieDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [ratingMessage, setRatingMessage] = useState("");
+  const [reviews, setReviews] = useState([]);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchMovieDetail = async () => {
@@ -34,6 +37,9 @@ function MovieDetail() {
         setMovie(movieData);
         setTrailers(trailersData);
         setCast(castData);
+
+        // Fetch movie reviews
+        fetchReviews();
 
         // Set the first featured or official trailer as selected
         const featured =
@@ -60,6 +66,15 @@ function MovieDetail() {
     }
   }, [id, user]);
 
+  const fetchReviews = async () => {
+    try {
+      const reviewsData = await apiService.getMovieReviews(id);
+      setReviews(reviewsData);
+    } catch (err) {
+      console.error("Error fetching reviews:", err);
+    }
+  };
+
   const handleRating = async (rating) => {
     if (!user) {
       setRatingMessage("Please login to rate this movie");
@@ -72,10 +87,52 @@ function MovieDetail() {
       setUserRating(rating);
       setRatingMessage("Rating saved successfully!");
       setTimeout(() => setRatingMessage(""), 3000);
+      
+      // Refresh reviews after rating
+      fetchReviews();
     } catch (err) {
       console.error("Error saving rating:", err);
       setRatingMessage("Failed to save rating");
       setTimeout(() => setRatingMessage(""), 3000);
+    }
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    
+    if (!user) {
+      setRatingMessage("Please login to submit a review");
+      setTimeout(() => setRatingMessage(""), 3000);
+      return;
+    }
+
+    if (!userRating) {
+      setRatingMessage("Please rate the movie first");
+      setTimeout(() => setRatingMessage(""), 3000);
+      return;
+    }
+
+    if (!reviewComment.trim()) {
+      setRatingMessage("Please write a comment");
+      setTimeout(() => setRatingMessage(""), 3000);
+      return;
+    }
+
+    try {
+      setReviewSubmitting(true);
+      await apiService.submitReview(id, user.user_id, userRating, reviewComment);
+      setReviewComment("");
+      setRatingMessage("Review submitted successfully!");
+      setTimeout(() => setRatingMessage(""), 3000);
+      
+      // Refresh reviews
+      fetchReviews();
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      setRatingMessage("Failed to submit review");
+      setTimeout(() => setRatingMessage(""), 3000);
+    } finally {
+      setReviewSubmitting(false);
     }
   };
 
@@ -386,6 +443,85 @@ function MovieDetail() {
               <p className="movie-description-full">{movie.description}</p>
             </div>
           )}
+
+          {/* Reviews Section */}
+          <div className="reviews-section">
+            <h3 className="section-title">User Reviews ({reviews.length})</h3>
+
+            {/* Submit Review Form */}
+            {user && (
+              <div className="submit-review-form">
+                <h4>Write Your Review</h4>
+                <form onSubmit={handleSubmitReview}>
+                  <textarea
+                    className="review-textarea"
+                    placeholder="Share your thoughts about this movie..."
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    rows="4"
+                    disabled={reviewSubmitting}
+                  />
+                  <button 
+                    type="submit" 
+                    className="btn-submit-review"
+                    disabled={reviewSubmitting || !userRating}
+                  >
+                    {reviewSubmitting ? "Submitting..." : "Submit Review"}
+                  </button>
+                  {!userRating && (
+                    <p className="review-hint">Please rate the movie above before submitting your review</p>
+                  )}
+                </form>
+              </div>
+            )}
+
+            {/* Reviews List */}
+            {reviews.length > 0 ? (
+              <div className="reviews-list">
+                {reviews.map((review) => (
+                  <div key={review.review_id} className="review-card">
+                    <div className="review-header">
+                      <div className="review-user-info">
+                        <div className="review-avatar">
+                          {review.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="review-username">{review.username}</p>
+                          <p className="review-date">
+                            {new Date(review.created_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="review-rating">
+                        <div className="review-stars">
+                          {[...Array(10)].map((_, i) => (
+                            <span key={i} className={`star ${i < review.rating * 2 ? 'filled' : ''}`}>
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <span className="review-rating-value">{review.rating * 2}/10</span>
+                      </div>
+                    </div>
+                    {review.comment && (
+                      <p className="review-comment">{review.comment}</p>
+                    )}
+                    {review.is_verified_purchase && (
+                      <span className="verified-badge">✓ Verified Ticket Holder</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-reviews">
+                <p>No reviews yet. Be the first to review this movie!</p>
+              </div>
+            )}
+          </div>
 
           {/* Action Buttons */}
           <div className="movie-actions">

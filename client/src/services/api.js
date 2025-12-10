@@ -103,6 +103,22 @@ export const apiService = {
         return response.data;
     },
 
+    // ===== MOVIE REVIEWS =====
+    getMovieReviews: async (movieId) => {
+        const response = await api.get(`/reviews.php?movie_id=${movieId}`);
+        return response.data;
+    },
+
+    submitReview: async (movieId, userId, rating, comment) => {
+        const response = await api.post('/reviews.php', {
+            movie_id: movieId,
+            user_id: userId,
+            rating: rating,
+            comment: comment
+        });
+        return response.data;
+    },
+
     // ===== ACTORS =====
     getActors: async () => {
         const response = await api.get('/actors.php');
@@ -139,14 +155,14 @@ export const apiService = {
     getShowtimeById: async (showtimeId) => {
         try {
             const response = await api.get(`/showtimes.php?id=${showtimeId}`);
-            
+
             console.log("getShowtimeById response:", response.data); // DEBUG
-            
+
             // Ensure we return an object with showtime_id
             if (response.data && typeof response.data === 'object') {
                 return response.data;
             }
-            
+
             throw new Error("Invalid showtime data format");
         } catch (error) {
             console.error("Error in getShowtimeById:", error);
@@ -312,6 +328,12 @@ export const apiService = {
     getConcessions: async (category = null) => {
         const url = category ? `/concessions.php?category=${category}` : '/concessions.php';
         const response = await api.get(url);
+        return response.data;
+    },
+
+    // ===== SEATS =====
+    getSeats: async (showtimeId) => {
+        const response = await api.get(`/seats.php?showtime_id=${showtimeId}`);
         return response.data;
     },
 

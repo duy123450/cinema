@@ -234,6 +234,73 @@
     }
 }
 
+.booking-concessions {
+    background: $color-gray-15;
+    padding: $spacing-lg;
+    border-radius: $radius-md;
+    border: 1px solid $color-overlay-light;
+    margin-top: $spacing-md;
+
+    .concessions-title {
+        font-size: 1rem;
+        color: $color-yellow-70;
+        margin: 0 0 $spacing-md 0;
+        font-weight: bold;
+    }
+
+    .concessions-list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    .concession-item {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        padding: $spacing-sm $spacing-md;
+        background: $color-gray-10;
+        border-radius: $radius-sm;
+        border: 1px solid $color-overlay-light;
+        transition: all $transition;
+
+        &:hover {
+            background: $color-gray-13;
+            border-color: $color-yellow-70;
+        }
+
+        .concession-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .concession-details {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+
+            .concession-name {
+                color: $color-gray-85;
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+
+            .concession-quantity {
+                color: $color-blue-70;
+                font-weight: bold;
+                font-size: 0.9rem;
+            }
+        }
+
+        .concession-price {
+            color: $color-yellow-70;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+    }
+}
+
 .booking-actions {
     display: flex;
     gap: $spacing-md;

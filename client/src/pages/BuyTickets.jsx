@@ -12,6 +12,7 @@ function BuyTickets() {
   const [step, setStep] = useState(1);
   const [showtime, setShowtime] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [bookedSeats, setBookedSeats] = useState([]);
   const [concessions, setConcessions] = useState([]);
   const [selectedConcessions, setSelectedConcessions] = useState([]);
   const [promotions, setPromotions] = useState([]);
@@ -33,10 +34,15 @@ function BuyTickets() {
     try {
       setLoading(true);
 
-      // FIXED: Get showtime details first
-      const showtimeData = await apiService.getShowtimeById(showtimeId);
+      // Get showtime details and booked seats
+      const [showtimeData, concessionsData, promotionsData, seatsData] = await Promise.all([
+        apiService.getShowtimeById(showtimeId),
+        apiService.getConcessions(),
+        apiService.getPromotions(),
+        apiService.getSeats(showtimeId),
+      ]);
 
-      console.log("Showtime data received:", showtimeData); // DEBUG
+      console.log("Showtime data received:", showtimeData);
 
       if (!showtimeData) {
         setError("Showtime not found");
@@ -44,7 +50,6 @@ function BuyTickets() {
         return;
       }
 
-      // Ensure we have the showtime_id
       if (!showtimeData.showtime_id) {
         console.error("Showtime data missing showtime_id:", showtimeData);
         setError("Invalid showtime data");
@@ -52,14 +57,14 @@ function BuyTickets() {
         return;
       }
 
-      const [concessionsData, promotionsData] = await Promise.all([
-        apiService.getConcessions(),
-        apiService.getPromotions(),
-      ]);
-
       setShowtime(showtimeData);
       setConcessions(concessionsData);
       setPromotions(promotionsData || []);
+      
+      // Set booked seats from API response
+      if (seatsData && seatsData.success) {
+        setBookedSeats(seatsData.bookedSeats || []);
+      }
     } catch (err) {
       console.error("Error fetching booking data:", err);
       setError("Failed to load booking information: " + err.message);
@@ -70,6 +75,11 @@ function BuyTickets() {
 
   // Seat selection handlers
   const handleSeatSelect = (seat) => {
+    // Don't allow selecting already booked seats
+    if (bookedSeats.includes(seat)) {
+      return;
+    }
+    
     if (selectedSeats.includes(seat)) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seat));
     } else {
@@ -125,7 +135,6 @@ function BuyTickets() {
   );
   const subtotal = ticketTotal + concessionsTotal;
 
-  // Ensure discountAmount is always a number
   let discountAmount = 0;
   if (selectedPromotion) {
     if (selectedPromotion.discount_type === "percentage") {
@@ -145,11 +154,6 @@ function BuyTickets() {
       return;
     }
 
-    // DEBUG: Check showtime object
-    console.log("Full showtime object:", showtime);
-    console.log("Showtime ID value:", showtime?.showtime_id);
-    console.log("Selected seats:", selectedSeats);
-
     if (!showtime) {
       setError("Showtime information is missing");
       return;
@@ -165,7 +169,6 @@ function BuyTickets() {
       setLoading(true);
       setError(null);
 
-      // Create bookings for each seat
       const bookingPromises = selectedSeats.map((seat) => {
         const bookingData = {
           showtime_id: showtime.showtime_id,
@@ -173,7 +176,7 @@ function BuyTickets() {
           ticket_type: "adult",
         };
 
-        console.log("Sending booking data:", bookingData); // DEBUG
+        console.log("Sending booking data:", bookingData);
 
         return apiService.createBooking(bookingData);
       });
@@ -182,7 +185,6 @@ function BuyTickets() {
 
       console.log("All bookings created:", results);
 
-      // Navigate to bookings page with success message
       navigate("/bookings?success=true");
     } catch (err) {
       console.error("Error creating booking:", err);
@@ -275,13 +277,18 @@ function BuyTickets() {
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
                   const seatId = `${row}${num}`;
                   const isSelected = selectedSeats.includes(seatId);
+                  const isBooked = bookedSeats.includes(seatId);
+                  
                   return (
                     <button
                       key={seatId}
-                      className={`seat ${isSelected ? "selected" : ""}`}
+                      className={`seat ${isBooked ? "taken" : isSelected ? "selected" : ""}`}
                       onClick={() => handleSeatSelect(seatId)}
+                      disabled={isBooked}
                       title={
-                        isSelected
+                        isBooked
+                          ? `Seat ${seatId} - Already Taken`
+                          : isSelected
                           ? `Seat ${seatId} - Selected`
                           : `Seat ${seatId} - Available`
                       }
@@ -301,11 +308,11 @@ function BuyTickets() {
             </div>
             <div className="legend-item">
               <div className="seat choosing"></div>
-              <span>Hovering (Yellow)</span>
+              <span>Your Selection (Yellow)</span>
             </div>
             <div className="legend-item">
               <div className="seat selected"></div>
-              <span>Selected (Red)</span>
+              <span>Already Taken (Red)</span>
             </div>
           </div>
 
