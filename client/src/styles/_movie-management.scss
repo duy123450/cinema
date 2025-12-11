@@ -391,7 +391,7 @@
 
         &:hover {
             background: $color-blue;
-            color: white;
+            color: $color-white;
             transform: translateY(-2px);
         }
     }
@@ -403,7 +403,7 @@
 
         &:hover {
             background: $color-red;
-            color: white;
+            color: $color-white;
             transform: translateY(-2px);
         }
     }
@@ -449,7 +449,7 @@
 
                 .btn-confirm-delete {
                     background: $color-red;
-                    color: white;
+                    color: $color-white;
                     border: none;
                     padding: $spacing-md $spacing-lg;
                     border-radius: $radius-md;
