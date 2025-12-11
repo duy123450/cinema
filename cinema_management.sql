@@ -4,6 +4,7 @@
 DROP DATABASE IF EXISTS cinema_management;
 CREATE DATABASE cinema_management;
 USE cinema_management;
+
 -- ========================================
 -- USERS TABLE
 -- ========================================
@@ -24,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- MOVIES TABLE
 -- ========================================
@@ -45,6 +47,7 @@ CREATE TABLE IF NOT EXISTS movies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- CINEMAS TABLE
 -- ========================================
@@ -67,6 +70,7 @@ CREATE TABLE IF NOT EXISTS cinemas (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- SCREENS TABLE
 -- ========================================
@@ -81,6 +85,7 @@ CREATE TABLE IF NOT EXISTS screens (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (cinema_id) REFERENCES cinemas(cinema_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- SHOWTIMES TABLE
 -- ========================================
@@ -97,6 +102,7 @@ CREATE TABLE IF NOT EXISTS showtimes (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (screen_id) REFERENCES screens(screen_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- TICKETS TABLE
 -- ========================================
@@ -113,6 +119,7 @@ CREATE TABLE IF NOT EXISTS tickets (
     FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- PAYMENTS TABLE
 -- ========================================
@@ -135,6 +142,7 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- REVIEWS TABLE
 -- ========================================
@@ -152,6 +160,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- PROMOTIONS TABLE
 -- ========================================
@@ -169,6 +178,7 @@ CREATE TABLE IF NOT EXISTS promotions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- BOOKMARKS TABLE
 -- ========================================
@@ -181,6 +191,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     UNIQUE KEY unique_bookmark (user_id, movie_id)
 );
+
 -- ========================================
 -- SEATS TABLE
 -- ========================================
@@ -195,6 +206,7 @@ CREATE TABLE IF NOT EXISTS seats (
     FOREIGN KEY (screen_id) REFERENCES screens(screen_id) ON DELETE CASCADE,
     UNIQUE KEY unique_seat (screen_id, seat_label)
 );
+
 -- ========================================
 -- ACTORS TABLE
 -- ========================================
@@ -205,6 +217,7 @@ CREATE TABLE IF NOT EXISTS actors (
     image_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- MOVIE_CAST TABLE (Junction Table)
 -- ========================================
@@ -220,6 +233,7 @@ CREATE TABLE IF NOT EXISTS movie_cast (
     FOREIGN KEY (actor_id) REFERENCES actors(actor_id) ON DELETE CASCADE,
     UNIQUE KEY unique_cast (movie_id, actor_id, character_name)
 );
+
 -- ========================================
 -- MOVIE_TRAILERS TABLE
 -- ========================================
@@ -241,6 +255,7 @@ CREATE TABLE IF NOT EXISTS movie_trailers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- CONCESSIONS TABLE
 -- ========================================
@@ -255,6 +270,7 @@ CREATE TABLE IF NOT EXISTS concessions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- ========================================
 -- TICKET_CONCESSIONS TABLE (Junction Table)
 -- ========================================
@@ -268,6 +284,7 @@ CREATE TABLE IF NOT EXISTS ticket_concessions (
     FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
     FOREIGN KEY (concession_id) REFERENCES concessions(concession_id) ON DELETE CASCADE
 );
+
 -- ========================================
 -- CREATE INDEXES FOR BETTER PERFORMANCE
 -- ========================================
@@ -296,6 +313,7 @@ CREATE INDEX idx_concessions_category ON concessions(category);
 CREATE INDEX idx_concessions_available ON concessions(is_available);
 CREATE INDEX idx_ticket_concessions_ticket ON ticket_concessions(ticket_id);
 CREATE INDEX idx_ticket_concessions_concession ON ticket_concessions(concession_id);
+
 -- ========================================
 -- USERS DATA
 -- ========================================
@@ -395,6 +413,7 @@ VALUES (
         'active',
         'default-avatar.png'
     );
+
 -- ========================================
 -- CINEMAS DATA
 -- ========================================
@@ -462,6 +481,7 @@ VALUES (
         -87.6298,
         'open'
     );
+
 -- ========================================
 -- SCREENS DATA
 -- ========================================
@@ -490,6 +510,7 @@ VALUES -- Downtown Cinema (cinema_id = 1)
     (3, 'Screen 3', 180, 'dolby_atmos', 'active'),
     (3, 'Screen 4', 160, '3d', 'active'),
     (3, 'Screen 5', 100, '4dx', 'active');
+
 -- ========================================
 -- ACTORS DATA
 -- ========================================
@@ -780,6 +801,7 @@ VALUES -- Tensura Movie 2
         'Japanese actress, known for voicing Akari Shinohara in 5 Centimeters Per Second.',
         NULL
     );
+
 -- ========================================
 -- MOVIES DATA
 -- ========================================
@@ -798,7 +820,8 @@ INSERT INTO movies (
         poster_url,
         status
     )
-VALUES -- 1. That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea
+VALUES 
+    -- 1. That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea
     (
         'That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea',
         'Tensei Shitara Slime Datta Ken Movie: Guren no Kizuna-hen',
@@ -1088,6 +1111,7 @@ VALUES -- 1. That Time I Got Reincarnated as a Slime the Movie: Tears of the Azu
         'https://media.themoviedb.org/t/p/w300_and_h450_face/7NhKe7yaadEmS0w6LVQdBdTgeux.jpg',
         'now_showing'
     );
+
 -- ========================================
 -- MOVIE_CAST DATA
 -- ========================================
@@ -1173,6 +1197,7 @@ VALUES -- 1. Tensura Movie 2
     -- 18. 5 Centimeters Per Second
     (18, 51, 'Takaki Tono', 'lead', 1),
     (18, 52, 'Akari Shinohara', 'lead', 2);
+
 -- ========================================
 -- MOVIE_TRAILERS DATA
 -- ========================================
@@ -1445,6 +1470,7 @@ VALUES -- That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure 
         TRUE,
         1500000
     );
+
 -- ========================================
 -- SHOWTIMES DATA
 -- ========================================
@@ -1471,6 +1497,7 @@ VALUES -- Tensura Movie 2 at Downtown Cinema
     (9, 3, '2025-12-05', '15:00', 10.99, 160),
     (9, 3, '2025-12-05', '17:00', 10.99, 175),
     (9, 3, '2025-12-05', '19:00', 12.99, 140);
+
 -- ========================================
 -- SEATS DATA
 -- ========================================
@@ -1515,6 +1542,7 @@ FROM screens s
         UNION
         SELECT 7
     ) n;
+
 -- ========================================
 -- TICKETS DATA
 -- ========================================
@@ -1536,6 +1564,7 @@ VALUES (1, 2, 'A1', 'adult', 12.99, 'paid'),
     (4, 2, 'D4', 'adult', 12.99, 'paid'),
     (4, 3, 'D5', 'student', 9.99, 'paid'),
     (5, 4, 'E1', 'adult', 12.99, 'cancelled');
+
 -- ========================================
 -- PAYMENTS DATA
 -- ========================================
@@ -1627,6 +1656,7 @@ VALUES (
         'failed',
         'TRX_20251204_006'
     );
+
 -- ========================================
 -- REVIEWS DATA
 -- ========================================
@@ -1707,6 +1737,7 @@ VALUES (
         'Epic scale and incredible visuals. Slightly long but worth it.',
         TRUE
     );
+
 -- ========================================
 -- PROMOTIONS DATA
 -- ========================================
@@ -1798,6 +1829,7 @@ VALUES (
         'inactive',
         'seasonal'
     );
+
 -- ========================================
 -- BOOKMARKS DATA
 -- ========================================
@@ -1818,8 +1850,9 @@ VALUES (2, 1),
     (7, 4),
     (7, 5),
     (7, 10);
+
 -- ========================================
--- SAMPLE CONCESSIONS DATA
+-- CONCESSIONS DATA
 -- ========================================
 INSERT INTO concessions (name, category, description, price, is_available)
 VALUES -- Popcorn
@@ -1961,6 +1994,7 @@ VALUES -- Popcorn
         3.50,
         TRUE
     );
+
 -- ========================================
 -- VIEW: BIRTHDAY PROMOTIONS FOR TODAY
 -- ========================================
@@ -1986,6 +2020,7 @@ WHERE DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
     AND u.status = 'active'
     AND p.status = 'active'
     AND CURDATE() BETWEEN p.start_date AND p.end_date;
+
 -- ========================================
 -- PROCEDURE: GET USER BIRTHDAY PROMO
 -- ========================================
@@ -2017,6 +2052,7 @@ BEGIN
     WHERE u.user_id = p_user_id;
 END $$ 
 DELIMITER ;
+
 -- ========================================
 -- PROCEDURE: CHECK IF USER HAS BIRTHDAY TODAY
 -- ========================================
@@ -2028,6 +2064,7 @@ BEGIN
     WHERE user_id = p_user_id;
 END $$ 
 DELIMITER ;
+
 -- ========================================
 -- PROCEDURE: APPLY BIRTHDAY DISCOUNT TO TICKET
 -- ========================================
@@ -2068,6 +2105,7 @@ CREATE PROCEDURE apply_birthday_discount(
     END IF;
 END $$ 
 DELIMITER ;
+
 -- ========================================
 -- TRIGGER: AUTO-CREATE BIRTHDAY PROMO DAILY
 -- ========================================
@@ -2079,6 +2117,7 @@ SET NEW.end_date = CURDATE();
 END IF;
 END $$ 
 DELIMITER ;
+
 -- ========================================
 -- SCHEMA CREATION COMPLETE
 -- ========================================
