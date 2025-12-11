@@ -119,6 +119,49 @@
             letter-spacing: 0.5px;
         }
     }
+
+    // Color variants
+    &.stat-card-yellow {
+        border-left-color: $color-yellow;
+        .stat-icon {
+            background-color: hsla(51, 100%, 50%, 0.2);
+        }
+    }
+
+    &.stat-card-blue {
+        border-left-color: $color-blue;
+        .stat-icon {
+            background-color: hsla(200, 100%, 50%, 0.2);
+        }
+    }
+
+    &.stat-card-green {
+        border-left-color: $color-success;
+        .stat-icon {
+            background-color: hsla(120, 100%, 25%, 0.2);
+        }
+    }
+
+    &.stat-card-red {
+        border-left-color: $color-red;
+        .stat-icon {
+            background-color: hsla(0, 100%, 50%, 0.2);
+        }
+    }
+
+    &.stat-card-purple {
+        border-left-color: #9370DB;
+        .stat-icon {
+            background-color: hsla(249, 53%, 66%, 0.2);
+        }
+    }
+
+    &.stat-card-pink {
+        border-left-color: #FF69B4;
+        .stat-icon {
+            background-color: hsla(330, 100%, 71%, 0.2);
+        }
+    }
 }
 
 // Quick Actions
@@ -143,7 +186,7 @@
 
 .quick-action-btn {
     background: $color-gray-10;
-    border: 2px solid;
+    border: 2px solid $color-overlay-light;
     padding: $spacing-lg;
     border-radius: $radius-md;
     cursor: pointer;
@@ -169,6 +212,47 @@
         color: $color-gray-85;
         font-weight: bold;
         font-size: 0.95rem;
+    }
+
+    // Color variants
+    &.action-yellow {
+        border-color: $color-yellow;
+        .action-icon {
+            color: $color-yellow;
+        }
+        &:hover {
+            border-color: $color-yellow-70;
+        }
+    }
+
+    &.action-blue {
+        border-color: $color-blue;
+        .action-icon {
+            color: $color-blue;
+        }
+        &:hover {
+            border-color: $color-blue-70;
+        }
+    }
+
+    &.action-green {
+        border-color: $color-success;
+        .action-icon {
+            color: $color-success;
+        }
+        &:hover {
+            border-color: $color-success-light;
+        }
+    }
+
+    &.action-red {
+        border-color: $color-red;
+        .action-icon {
+            color: $color-red;
+        }
+        &:hover {
+            border-color: $color-red-light;
+        }
     }
 }
 
@@ -348,6 +432,30 @@
     p {
         color: $color-gray-85;
         font-size: 1.1rem;
+    }
+}
+
+.error-container {
+    text-align: center;
+    padding: $spacing-xxl;
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    border: 1px solid $color-overlay-light;
+
+    h2 {
+        color: $color-red;
+        margin-bottom: $spacing-md;
+        font-size: 2rem;
+    }
+
+    p {
+        color: $color-gray-85;
+        margin-bottom: $spacing-xl;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        margin: 0;
     }
 }
 
