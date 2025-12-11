@@ -4,7 +4,6 @@
 DROP DATABASE IF EXISTS cinema_management;
 CREATE DATABASE cinema_management;
 USE cinema_management;
-
 -- ========================================
 -- USERS TABLE
 -- ========================================
@@ -25,7 +24,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
 -- ========================================
 -- MOVIES TABLE
 -- ========================================
@@ -36,6 +34,7 @@ CREATE TABLE IF NOT EXISTS movies (
     description TEXT,
     duration_minutes INT NOT NULL,
     release_date DATE,
+    end_date DATE,
     director VARCHAR(100),
     genre VARCHAR(100),
     language VARCHAR(50) DEFAULT 'English',
@@ -46,7 +45,6 @@ CREATE TABLE IF NOT EXISTS movies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
 -- ========================================
 -- CINEMAS TABLE
 -- ========================================
@@ -69,7 +67,6 @@ CREATE TABLE IF NOT EXISTS cinemas (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
 -- ========================================
 -- SCREENS TABLE
 -- ========================================
@@ -84,7 +81,6 @@ CREATE TABLE IF NOT EXISTS screens (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (cinema_id) REFERENCES cinemas(cinema_id) ON DELETE CASCADE
 );
-
 -- ========================================
 -- SHOWTIMES TABLE
 -- ========================================
@@ -101,7 +97,6 @@ CREATE TABLE IF NOT EXISTS showtimes (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (screen_id) REFERENCES screens(screen_id) ON DELETE CASCADE
 );
-
 -- ========================================
 -- TICKETS TABLE
 -- ========================================
@@ -118,7 +113,6 @@ CREATE TABLE IF NOT EXISTS tickets (
     FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
 -- ========================================
 -- PAYMENTS TABLE
 -- ========================================
@@ -141,7 +135,6 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
 -- ========================================
 -- REVIEWS TABLE
 -- ========================================
@@ -159,7 +152,6 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
 -- ========================================
 -- PROMOTIONS TABLE
 -- ========================================
@@ -177,7 +169,6 @@ CREATE TABLE IF NOT EXISTS promotions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
 -- ========================================
 -- BOOKMARKS TABLE
 -- ========================================
@@ -190,7 +181,6 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     UNIQUE KEY unique_bookmark (user_id, movie_id)
 );
-
 -- ========================================
 -- SEATS TABLE
 -- ========================================
@@ -205,7 +195,6 @@ CREATE TABLE IF NOT EXISTS seats (
     FOREIGN KEY (screen_id) REFERENCES screens(screen_id) ON DELETE CASCADE,
     UNIQUE KEY unique_seat (screen_id, seat_label)
 );
-
 -- ========================================
 -- ACTORS TABLE
 -- ========================================
@@ -216,7 +205,6 @@ CREATE TABLE IF NOT EXISTS actors (
     image_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 -- ========================================
 -- MOVIE_CAST TABLE (Junction Table)
 -- ========================================
@@ -232,7 +220,6 @@ CREATE TABLE IF NOT EXISTS movie_cast (
     FOREIGN KEY (actor_id) REFERENCES actors(actor_id) ON DELETE CASCADE,
     UNIQUE KEY unique_cast (movie_id, actor_id, character_name)
 );
-
 -- ========================================
 -- MOVIE_TRAILERS TABLE
 -- ========================================
@@ -254,7 +241,6 @@ CREATE TABLE IF NOT EXISTS movie_trailers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
 );
-
 -- ========================================
 -- CONCESSIONS TABLE
 -- ========================================
@@ -269,7 +255,6 @@ CREATE TABLE IF NOT EXISTS concessions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
 -- ========================================
 -- TICKET_CONCESSIONS TABLE (Junction Table)
 -- ========================================
@@ -283,15 +268,16 @@ CREATE TABLE IF NOT EXISTS ticket_concessions (
     FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE,
     FOREIGN KEY (concession_id) REFERENCES concessions(concession_id) ON DELETE CASCADE
 );
-
 -- ========================================
 -- CREATE INDEXES FOR BETTER PERFORMANCE
 -- ========================================
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_role ON users(role);
-CREATE INDEX idx_movies_status ON movies(status);
 CREATE INDEX idx_movies_release_date ON movies(release_date);
+CREATE INDEX idx_movies_end_date ON movies(end_date);
+CREATE INDEX idx_movies_status_release_date ON movies(status, release_date);
+CREATE INDEX idx_movies_status_end_date ON movies(status, end_date);
 CREATE INDEX idx_screens_cinema ON screens(cinema_id);
 CREATE INDEX idx_showtimes_movie ON showtimes(movie_id);
 CREATE INDEX idx_showtimes_screen ON showtimes(screen_id);
@@ -310,7 +296,6 @@ CREATE INDEX idx_concessions_category ON concessions(category);
 CREATE INDEX idx_concessions_available ON concessions(is_available);
 CREATE INDEX idx_ticket_concessions_ticket ON ticket_concessions(ticket_id);
 CREATE INDEX idx_ticket_concessions_concession ON ticket_concessions(concession_id);
-
 -- ========================================
 -- USERS DATA
 -- ========================================
@@ -410,7 +395,6 @@ VALUES (
         'active',
         'default-avatar.png'
     );
-
 -- ========================================
 -- CINEMAS DATA
 -- ========================================
@@ -478,7 +462,6 @@ VALUES (
         -87.6298,
         'open'
     );
-
 -- ========================================
 -- SCREENS DATA
 -- ========================================
@@ -507,7 +490,6 @@ VALUES -- Downtown Cinema (cinema_id = 1)
     (3, 'Screen 3', 180, 'dolby_atmos', 'active'),
     (3, 'Screen 4', 160, '3d', 'active'),
     (3, 'Screen 5', 100, '4dx', 'active');
-
 -- ========================================
 -- ACTORS DATA
 -- ========================================
@@ -637,7 +619,7 @@ VALUES -- Tensura Movie 2
         'Singer and key figure in the Red storyline.',
         NULL
     ),
-        -- Harry Potter (2001)
+    -- Harry Potter (2001)
     (
         'Daniel Radcliffe',
         'British actor best known for portraying Harry Potter.',
@@ -722,8 +704,82 @@ VALUES -- Tensura Movie 2
         'Laurence Fishburne',
         'Actor known for Bowery King and Morpheus roles.',
         'https://media.themoviedb.org/t/p/w300_and_h450_face/6uW9aYI2jUwBfQeWGk8Z88twyl5.jpg'
+    ),
+    -- Oppenheimer Cast
+    (
+        'Cillian Murphy',
+        'Irish actor, known for his roles in Batman Begins and as J. Robert Oppenheimer.',
+        NULL
+    ),
+    (
+        'Emily Blunt',
+        'British actress, known for her roles in Edge of Tomorrow and as Kitty Oppenheimer.',
+        NULL
+    ),
+    -- Barbie Cast
+    (
+        'Margot Robbie',
+        'Australian actress and producer, known for her roles in The Wolf of Wall Street and as Barbie.',
+        NULL
+    ),
+    (
+        'Ryan Gosling',
+        'Canadian actor, known for his roles in La La Land and as Ken in Barbie.',
+        NULL
+    ),
+    -- Vua Của Các Vua (King of Kings)
+    (
+        'Jang Seong-ho',
+        'Director and screenwriter for "Vua Của Các Vua" (King of Kings).',
+        NULL
+    ),
+    (
+        'Charles Dickens (Character)',
+        'The renowned novelist who tells the story of Jesus to his son, Walter.',
+        NULL
+    ),
+    (
+        'Walter Dickens (Character)',
+        'Charles Dickens'' son, who experiences the story of Jesus through his imagination.',
+        NULL
+    ),
+    -- Zootopia 2 Crew/Cast
+    (
+        'Byron Howard',
+        'American animator, director, producer, screenwriter, and voice actor. Known for directing Zootopia and Zootopia 2.',
+        NULL
+    ),
+    (
+        'Ginnifer Goodwin',
+        'American actress, known for voicing Judy Hopps in Zootopia.',
+        NULL
+    ),
+    (
+        'Jason Bateman',
+        'American actor, known for voicing Nick Wilde in Zootopia.',
+        NULL
+    ),
+    (
+        'Idris Elba',
+        'British actor, known for voicing Chief Bogo in Zootopia.',
+        NULL
+    ),
+    -- 5 Centimeters Per Second Crew/Cast
+    (
+        'Makoto Shinkai',
+        'Japanese animator, filmmaker, author, and director of 5 Centimeters Per Second.',
+        NULL
+    ),
+    (
+        'Kenji Mizuhashi',
+        'Japanese actor, known for voicing Takaki Tono in 5 Centimeters Per Second.',
+        NULL
+    ),
+    (
+        'Yoshimi Kondo',
+        'Japanese actress, known for voicing Akari Shinohara in 5 Centimeters Per Second.',
+        NULL
     );
-
 -- ========================================
 -- MOVIES DATA
 -- ========================================
@@ -733,6 +789,7 @@ INSERT INTO movies (
         description,
         duration_minutes,
         release_date,
+        end_date,
         director,
         genre,
         language,
@@ -741,19 +798,19 @@ INSERT INTO movies (
         poster_url,
         status
     )
-VALUES 
-    -- 1. That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea
+VALUES -- 1. That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea
     (
-        'That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea', -- Updated title
-        'Tensei Shitara Slime Datta Ken Movie: Guren no Kizuna-hen', -- Updated original title
-        'After concluding the opening ceremony of the Demon Kingdom Federation Tempest, Rimuru and his companions are invited by the Celestial Emperor Hermesia of the great elven nation - the Magi Dynasty Salion - to visit her private resort island. As the group enjoys their brief vacation, a mysterious woman named Yura appears. A new incident unfolds against the backdrop of the boundless azure sea.', -- Updated description
+        'That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea',
+        'Tensei Shitara Slime Datta Ken Movie: Guren no Kizuna-hen',
+        'After concluding the opening ceremony of the Demon Kingdom Federation Tempest, Rimuru and his companions are invited by the Celestial Emperor Hermesia of the great elven nation - the Magi Dynasty Salion - to visit her private resort island. As the group enjoys their brief vacation, a mysterious woman named Yura appears. A new incident unfolds against the backdrop of the boundless azure sea.',
         120,
         '2026-02-27',
+        '2026-04-24',
         'Yasuhito Kikuchi',
         'Animation/Fantasy',
         'Japanese',
-        'NR',
-        8.5,
+        'PG-13',
+        6.6,
         'https://media.themoviedb.org/t/p/w300_and_h450_face/q2CqzdaaxHrpH1SKlqjKOBKCUEm.jpg',
         'upcoming'
     ),
@@ -764,13 +821,14 @@ VALUES
         'Miles Morales ventures across the Spider-Verse in an epic animated adventure.',
         140,
         '2023-06-02',
+        '2023-09-01',
         'Joaquim Dos Santos, Justin K. Thompson, Kemp Powers',
         'Animation/Action',
         'English',
         'PG',
-        8.9,
+        8.6,
         'https://media.themoviedb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg',
-        'now_showing'
+        'ended'
     ),
     -- 3. Dune: Part Two
     (
@@ -779,43 +837,46 @@ VALUES
         'Paul Atreides travels to the dangerous planet Arrakis to fulfill a dangerous prophecy.',
         166,
         '2024-03-01',
+        '2024-05-24',
         'Denis Villeneuve',
         'Sci-Fi/Drama',
         'English',
         'PG-13',
-        8.7,
+        8.3,
         'https://media.themoviedb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg',
-        'now_showing'
+        'ended'
     ),
     -- 4. Avengers: Endgame
     (
         'Avengers: Endgame',
         'Avengers: Endgame',
-        'The Earth''s mightiest heroes reunite for one final stand against cosmic forces.', 
+        'The Earth''s mightiest heroes reunite for one final stand against cosmic forces.',
         150,
-        '2026-05-01',
+        '2019-04-26',
+        '2019-07-19',
         'Russo Brothers',
         'Action/Adventure',
         'English',
         'PG-13',
-        9.0,
+        8.4,
         'https://media.themoviedb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 5. Frozen II
     (
         'Frozen II',
         'Frozen II',
-        'Elsa and Anna embark on a magical journey beyond Arendelle''s borders.', 
+        'Elsa and Anna embark on a magical journey beyond Arendelle''s borders.',
         120,
-        '2026-11-20',
+        '2019-11-22',
+        '2020-01-17',
         'Chris Buck',
         'Animation/Fantasy',
         'English',
         'PG',
-        8.3,
+        6.8,
         'https://media.themoviedb.org/t/p/w500/pjeMs3yqRmFL3giJy4PMXWZTTPa.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 6. The Batman (2022)
     (
@@ -823,14 +884,15 @@ VALUES
         'The Batman',
         'The Dark Knight rises again to face a new threat to Gotham City.',
         155,
-        '2025-10-01',
+        '2022-03-04',
+        '2022-05-27',
         'Matt Reeves',
         'Action/Crime',
         'English',
         'PG-13',
-        8.8,
+        7.8,
         'https://media.themoviedb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 7. One Piece Film: Red
     (
@@ -838,29 +900,31 @@ VALUES
         'One Piece Film: Red',
         'A new adventure emerges in the world of pirates.',
         125,
-        '2026-01-15',
+        '2022-08-06',
+        '2022-09-30',
         'Goro Taniguchi',
         'Animation/Adventure',
         'Japanese',
-        'PG',
-        8.6,
+        'PG-13',
+        7.4,
         'https://media.themoviedb.org/t/p/w300_and_h450_face/m80kPdrmmtEh9wlLroCp0bwUGH0.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 8. Harry Potter and the Sorcerer's Stone
     (
-        'Harry Potter and the Sorcerer''s Stone', 
-        'Harry Potter and the Sorcerer''s Stone', 
+        'Harry Potter and the Sorcerer''s Stone',
+        'Harry Potter and the Sorcerer''s Stone',
         'A young wizard begins his magical journey at Hogwarts School of Witchcraft and Wizardry.',
         180,
-        '2027-07-10',
+        '2001-11-16',
+        '2002-02-08',
         'Chris Columbus',
         'Fantasy/Adventure',
         'English',
-        'PG-13',
-        8.2,
+        'PG',
+        7.6,
         'https://media.themoviedb.org/t/p/w500/c54HpQmuwXjHq2C9wmoACjxoom3.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 9. Sonic the Hedgehog 2
     (
@@ -868,14 +932,15 @@ VALUES
         'Sonic the Hedgehog 2',
         'The blue speedster returns for a high-octane adventure.',
         115,
-        '2025-12-01',
+        '2022-04-08',
+        '2022-06-17',
         'Jeff Fowler',
         'Action/Adventure',
         'English',
         'PG',
-        7.9,
+        6.5,
         'https://media.themoviedb.org/t/p/w300_and_h450_face/3eh7j7zVOc4ZRtOrduYnaWD9mYJ.jpg',
-        'now_showing'
+        'ended'
     ),
     -- 10. Godzilla x Kong: The New Empire
     (
@@ -883,14 +948,15 @@ VALUES
         'Godzilla x Kong: The New Empire',
         'Two titans battle in an epic showdown.',
         160,
-        '2026-03-01',
+        '2024-03-29',
+        '2024-05-24',
         'Adam Wingard',
         'Action/Sci-Fi',
         'English',
         'PG-13',
-        8.4,
+        6.3,
         'https://media.themoviedb.org/t/p/w300_and_h450_face/lTpnAtn1hWXDLxEmkD28l6UyPlF.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 11. The Super Mario Bros. Movie
     (
@@ -898,14 +964,15 @@ VALUES
         'The Super Mario Bros. Movie',
         'Mario and friends embark on a wild adventure in the Mushroom Kingdom.',
         110,
-        '2026-06-15',
+        '2023-04-05',
+        '2023-07-05',
         'Aaron Horvath',
         'Animation/Comedy',
         'English',
         'PG',
-        8.1,
+        7.0,
         'https://media.themoviedb.org/t/p/w500/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 12. Avatar: The Way of Water
     (
@@ -913,14 +980,15 @@ VALUES
         'Avatar: The Way of Water',
         'Return to the world of Pandora for a new chapter of discovery and conflict.',
         180,
-        '2027-12-20',
+        '2022-12-16',
+        '2023-03-24',
         'James Cameron',
         'Sci-Fi/Adventure',
         'English',
         'PG-13',
-        8.8,
+        7.6,
         'https://media.themoviedb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 13. John Wick: Chapter 4
     (
@@ -928,14 +996,15 @@ VALUES
         'John Wick: Chapter 4',
         'The legendary assassin embarks on his next mission.',
         145,
-        '2026-09-01',
+        '2023-03-24',
+        '2023-06-09',
         'Chad Stahelski',
         'Action/Thriller',
         'English',
         'R',
-        8.5,
+        7.7,
         'https://media.themoviedb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
-        'upcoming'
+        'ended'
     ),
     -- 14. Oppenheimer
     (
@@ -944,13 +1013,14 @@ VALUES
         'The story of J. Robert Oppenheimer, the theoretical physicist whose landmark work as the director of the Manhattan Project created the first atomic bomb.',
         180,
         '2023-07-21',
+        '2023-10-13',
         'Christopher Nolan',
         'Biography/Drama/Thriller',
         'English',
         'R',
         8.4,
         'https://media.themoviedb.org/t/p/w300_and_h450_face/ecYTEmn3JBZyWbqwzjmBFfGvi3U.jpg',
-        'now_showing'
+        'ended'
     ),
     -- 15. Barbie
     (
@@ -959,15 +1029,65 @@ VALUES
         'Barbie suffers an existential crisis and travels to the real world to find true happiness.',
         114,
         '2023-07-21',
+        '2023-10-13',
         'Greta Gerwig',
         'Comedy/Fantasy/Adventure',
         'English',
         'PG-13',
-        7.0,
+        6.9,
         'https://media.themoviedb.org/t/p/w300_and_h450_face/mqNkQhaXxsH8SLNmJnG5oGz4meR.jpg',
+        'ended'
+    ),
+    -- 16. Vua của các vua (NEW MOVIE - Fictional Upcoming Release)
+    (
+        'Vua Của Các Vua',
+        'King of Kings',
+        'Trong một đêm yên bình, Charles Dickens kể cho con trai mình - cậu bé Walter - nghe câu chuyện vĩ đại nhất mọi thời đại. Nhưng câu chuyện ấy không chỉ dừng lại ở lời kể. Với trí tưởng tượng bay bổng, Walter bước vào thế giới của Chúa Giê-su – tận mắt chứng kiến những phép màu, cảm nhận nỗi đau của Ngài, và học được bài học sâu sắc nhất về tình yêu và sự hy sinh. Một câu chuyện về đức tin, sự cảm thông, và hành trình trưởng thành bắt đầu... từ chính trái tim của một người cha.',
+        102,
+        -- 1h 42m
+        '2025-12-12',
+        '2026-02-06',
+        -- ~8 weeks run
+        'Jang Seong-ho',
+        'Phim Hoạt Hình, Phim Gia Đình, Phim Tưởng, Phim Chính Kịch, Phim Phiêu Lưu',
+        'Vietnamese',
+        'PG-13',
+        8.5,
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/jZB7mY36lcgaAdfnD3pSEsRWrp4.jpg',
+        'upcoming'
+    ),
+    -- 17. Zootopia 2
+    (
+        'Zootopia 2',
+        'Zootopia 2',
+        'Judy Hopps and Nick Wilde return to solve a new, complex case that threatens the peace of their urban world.',
+        115,
+        '2025-11-28',
+        '2026-01-09',
+        'Byron Howard',
+        'Animation/Adventure/Comedy',
+        'English',
+        'PG',
+        8.0,
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/5wXpOF9WPUKliIzNBdAqwAStLHU.jpg', 
+        'now_showing'
+    ),
+    -- 18. 5 Centimeters Per Second
+    (
+        '5 Centimeters Per Second',
+        'Byōsoku Go Senchimētoru',
+        'An episodic look at the relationship between Takaki Tono and Akari Shinohara, separated by time and distance.',
+        63,
+        '2025-12-05',
+        '2026-01-20',
+        'Makoto Shinkai',
+        'Animation/Romance/Drama',
+        'Japanese',
+        'PG-13',
+        7.6,
+        'https://media.themoviedb.org/t/p/w300_and_h450_face/7NhKe7yaadEmS0w6LVQdBdTgeux.jpg',
         'now_showing'
     );
-
 -- ========================================
 -- MOVIE_CAST DATA
 -- ========================================
@@ -1035,15 +1155,24 @@ VALUES -- 1. Tensura Movie 2
     -- 13. John Wick: Chapter 4
     (13, 40, 'John Wick', 'lead', 1),
     (13, 41, 'Caine', 'supporting', 2),
-    (
-        13,
-        42,
-        'Marquis Vincent de Gramont',
-        'supporting',
-        3
-    ),
-    (13, 43, 'Bowery King', 'supporting', 4);
-
+    (13, 42, 'Marquis Vincent de Gramont', 'supporting', 3),
+    (13, 43, 'Bowery King', 'supporting', 4),
+    -- 14. Oppenheimer
+    (14, 53, 'J. Robert Oppenheimer', 'lead', 1),
+    (14, 54, 'Kitty Oppenheimer', 'lead', 2),
+    -- 15. Barbie
+    (15, 55, 'Barbie', 'lead', 1),
+    (15, 56, 'Ken', 'lead', 2),
+    -- 16. Vua Của Các Vua (King of Kings)
+    (16, 46, 'Charles Dickens', 'lead', 1),
+    (16, 47, 'Walter', 'lead', 2),
+    -- 17. Zootopia 2
+    (17, 48, 'Judy Hopps', 'lead', 1),
+    (17, 49, 'Nick Wilde', 'lead', 2),
+    (17, 50, 'Chief Bogo', 'supporting', 3),
+    -- 18. 5 Centimeters Per Second
+    (18, 51, 'Takaki Tono', 'lead', 1),
+    (18, 52, 'Akari Shinohara', 'lead', 2);
 -- ========================================
 -- MOVIE_TRAILERS DATA
 -- ========================================
@@ -1057,8 +1186,7 @@ INSERT INTO movie_trailers (
         is_featured,
         views
     )
-VALUES 
--- That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea trailers (Movie ID 1)
+VALUES -- That Time I Got Reincarnated as a Slime the Movie: Tears of the Azure Sea trailers (Movie ID 1)
     (
         1,
         'Azure Sea - Official Trailer',
@@ -1089,7 +1217,7 @@ VALUES
         FALSE,
         420000
     ),
--- Spider-Verse trailers (Movie ID 2)
+    -- Spider-Verse trailers (Movie ID 2)
     (
         2,
         'Spider-Verse - Official Trailer',
@@ -1110,7 +1238,7 @@ VALUES
         FALSE,
         1100000
     ),
--- Dune: Part Two trailers (Movie ID 3)
+    -- Dune: Part Two trailers (Movie ID 3)
     (
         3,
         'Dune Part 2 - Official Trailer',
@@ -1141,7 +1269,7 @@ VALUES
         FALSE,
         780000
     ),
--- Avengers: Endgame (Movie ID 4)
+    -- Avengers: Endgame (Movie ID 4)
     (
         4,
         'Avengers: Endgame - Official Trailer',
@@ -1152,7 +1280,7 @@ VALUES
         TRUE,
         90000000
     ),
--- Frozen II (Movie ID 5)
+    -- Frozen II (Movie ID 5)
     (
         5,
         'Frozen 2 | Official Trailer 2',
@@ -1163,7 +1291,7 @@ VALUES
         TRUE,
         42000000
     ),
--- The Batman (Movie ID 6)
+    -- The Batman (Movie ID 6)
     (
         6,
         'The Batman - Final Trailer',
@@ -1174,7 +1302,7 @@ VALUES
         TRUE,
         15000000
     ),
--- One Piece Film: Red (Movie ID 7)
+    -- One Piece Film: Red (Movie ID 7)
     (
         7,
         'One Piece Film: Red Trailer #1',
@@ -1185,10 +1313,11 @@ VALUES
         TRUE,
         8000000
     ),
--- Harry Potter and the Sorcerer's Stone (Movie ID 8)
+    -- Harry Potter and the Sorcerer's Stone (Movie ID 8)
     (
         8,
-        'Harry Potter and the Sorcerer''s Stone (2001) Official Trailer', -- Corrected escape for 's
+        'Harry Potter and the Sorcerer''s Stone (2001) Official Trailer',
+        -- Corrected escape for 's
         'https://www.youtube.com/watch?v=VyHV0BRtdxo',
         130,
         'official',
@@ -1196,7 +1325,7 @@ VALUES
         TRUE,
         18000000
     ),
--- Sonic the Hedgehog 2 trailers (Movie ID 9)
+    -- Sonic the Hedgehog 2 trailers (Movie ID 9)
     (
         9,
         'Sonic the Hedgehog 2 - Official Trailer',
@@ -1217,7 +1346,7 @@ VALUES
         FALSE,
         1200000
     ),
--- Godzilla x Kong: The New Empire (Movie ID 10)
+    -- Godzilla x Kong: The New Empire (Movie ID 10)
     (
         10,
         'GODZILLA X KONG: The New Empire Trailer 3',
@@ -1228,7 +1357,7 @@ VALUES
         TRUE,
         28000000
     ),
--- The Super Mario Bros. Movie (Movie ID 11)
+    -- The Super Mario Bros. Movie (Movie ID 11)
     (
         11,
         'THE SUPER MARIO BROS. MOVIE Super Bowl Trailer',
@@ -1239,7 +1368,7 @@ VALUES
         TRUE,
         55000000
     ),
--- Avatar: The Way of Water (Movie ID 12)
+    -- Avatar: The Way of Water (Movie ID 12)
     (
         12,
         'Avatar: The Way of Water | Official Trailer',
@@ -1250,7 +1379,7 @@ VALUES
         TRUE,
         45000000
     ),
--- John Wick: Chapter 4 (Movie ID 13)
+    -- John Wick: Chapter 4 (Movie ID 13)
     (
         13,
         'John Wick: Chapter 4 (2023) Final Trailer',
@@ -1261,7 +1390,7 @@ VALUES
         TRUE,
         12000000
     ),
--- Oppenheimer trailers (Movie ID 14)
+    -- Oppenheimer trailers (Movie ID 14)
     (
         14,
         'Oppenheimer - Official Trailer',
@@ -1272,7 +1401,7 @@ VALUES
         TRUE,
         74000000
     ),
--- Barbie trailers (Movie ID 15)
+    -- Barbie trailers (Movie ID 15)
     (
         15,
         'Barbie - Official Trailer',
@@ -1282,8 +1411,40 @@ VALUES
         'English',
         TRUE,
         61000000
+    ),
+    -- Vua Của Các Vua trailers (Movie ID 16)
+    (
+        16,
+        'Vua Của Các Vua - Official Trailer',
+        'https://youtu.be/0kCRLxU4M8Y?si=bDFatgEfaYJ66h-s',
+        100,
+        'official',
+        'Vietnamese',
+        TRUE,
+        150000
+    ),
+    -- Zootopia 2 (Movie ID 17)
+    (
+        17,
+        'Zootopia 2 - Official Trailer',
+        'https://youtu.be/BjkIOU5PhyQ?si=4duso2W7u_KrEmAs',
+        90,
+        'teaser',
+        'English',
+        TRUE,
+        5000000
+    ),
+    -- 5 Centimeters Per Second (Movie ID 18)
+    (
+        18,
+        '5 Centimeters Per Second - Anniversary Trailer',
+        'https://youtu.be/PjAcCzgg3pw?si=r-Q1aT3wEL7cQQCb',
+        120,
+        'official',
+        'Japanese',
+        TRUE,
+        1500000
     );
-
 -- ========================================
 -- SHOWTIMES DATA
 -- ========================================
@@ -1310,7 +1471,6 @@ VALUES -- Tensura Movie 2 at Downtown Cinema
     (9, 3, '2025-12-05', '15:00', 10.99, 160),
     (9, 3, '2025-12-05', '17:00', 10.99, 175),
     (9, 3, '2025-12-05', '19:00', 12.99, 140);
-
 -- ========================================
 -- SEATS DATA
 -- ========================================
@@ -1322,26 +1482,26 @@ SELECT s.screen_id,
     CONCAT(r.row_label, n.num)
 FROM screens s
     CROSS JOIN (
-        SELECT 'A'
+        SELECT 'A' AS row_label
         UNION
-        SELECT 'B'
+        SELECT 'B' AS row_label
         UNION
-        SELECT 'C'
+        SELECT 'C' AS row_label
         UNION
-        SELECT 'D'
+        SELECT 'D' AS row_label
         UNION
-        SELECT 'E'
+        SELECT 'E' AS row_label
         UNION
-        SELECT 'F'
+        SELECT 'F' AS row_label
         UNION
-        SELECT 'G'
+        SELECT 'G' AS row_label
         UNION
-        SELECT 'H'
+        SELECT 'H' AS row_label
         UNION
-        SELECT 'I'
+        SELECT 'I' AS row_label
     ) r
     CROSS JOIN (
-        SELECT 1 num
+        SELECT 1 AS num
         UNION
         SELECT 2
         UNION
@@ -1355,7 +1515,6 @@ FROM screens s
         UNION
         SELECT 7
     ) n;
-
 -- ========================================
 -- TICKETS DATA
 -- ========================================
@@ -1377,7 +1536,6 @@ VALUES (1, 2, 'A1', 'adult', 12.99, 'paid'),
     (4, 2, 'D4', 'adult', 12.99, 'paid'),
     (4, 3, 'D5', 'student', 9.99, 'paid'),
     (5, 4, 'E1', 'adult', 12.99, 'cancelled');
-
 -- ========================================
 -- PAYMENTS DATA
 -- ========================================
@@ -1469,7 +1627,6 @@ VALUES (
         'failed',
         'TRX_20251204_006'
     );
-
 -- ========================================
 -- REVIEWS DATA
 -- ========================================
@@ -1550,7 +1707,6 @@ VALUES (
         'Epic scale and incredible visuals. Slightly long but worth it.',
         TRUE
     );
-
 -- ========================================
 -- PROMOTIONS DATA
 -- ========================================
@@ -1642,7 +1798,6 @@ VALUES (
         'inactive',
         'seasonal'
     );
-
 -- ========================================
 -- BOOKMARKS DATA
 -- ========================================
@@ -1663,41 +1818,149 @@ VALUES (2, 1),
     (7, 4),
     (7, 5),
     (7, 10);
-
 -- ========================================
 -- SAMPLE CONCESSIONS DATA
 -- ========================================
-INSERT INTO concessions (name, category, description, price, is_available) VALUES
--- Popcorn
-('Small Popcorn', 'popcorn', 'Fresh buttered popcorn - Small', 4.50, TRUE),
-('Medium Popcorn', 'popcorn', 'Fresh buttered popcorn - Medium', 6.50, TRUE),
-('Large Popcorn', 'popcorn', 'Fresh buttered popcorn - Large', 8.50, TRUE),
-('Extra Large Popcorn', 'popcorn', 'Fresh buttered popcorn - Extra Large', 10.50, TRUE),
-
--- Drinks
-('Small Soft Drink', 'drink', 'Coca-Cola, Sprite, Fanta - Small', 3.50, TRUE),
-('Medium Soft Drink', 'drink', 'Coca-Cola, Sprite, Fanta - Medium', 4.50, TRUE),
-('Large Soft Drink', 'drink', 'Coca-Cola, Sprite, Fanta - Large', 5.50, TRUE),
-('Bottled Water', 'drink', 'Premium bottled water', 2.50, TRUE),
-('Energy Drink', 'drink', 'Red Bull or Monster', 4.00, TRUE),
-
--- Combos
-('Classic Combo', 'combo', 'Medium Popcorn + Medium Drink', 9.99, TRUE),
-('Premium Combo', 'combo', 'Large Popcorn + Large Drink + Candy', 13.99, TRUE),
-('Family Combo', 'combo', '2 Large Popcorns + 4 Medium Drinks', 24.99, TRUE),
-('Date Night Combo', 'combo', 'Large Popcorn + 2 Medium Drinks + 2 Candies', 16.99, TRUE),
-
--- Snacks
-('Nachos with Cheese', 'snack', 'Tortilla chips with warm cheese sauce', 5.50, TRUE),
-('Hot Dog', 'snack', 'All-beef hot dog with condiments', 4.50, TRUE),
-('Pretzel Bites', 'snack', 'Soft pretzel bites with cheese dip', 5.00, TRUE),
-
--- Candy
-('M&Ms', 'candy', 'Chocolate candy', 3.50, TRUE),
-('Skittles', 'candy', 'Fruit flavored candy', 3.50, TRUE),
-('Twizzlers', 'candy', 'Strawberry licorice', 3.50, TRUE),
-('Sour Patch Kids', 'candy', 'Sour then sweet candy', 3.50, TRUE);
-
+INSERT INTO concessions (name, category, description, price, is_available)
+VALUES -- Popcorn
+    (
+        'Small Popcorn',
+        'popcorn',
+        'Fresh buttered popcorn - Small',
+        4.50,
+        TRUE
+    ),
+    (
+        'Medium Popcorn',
+        'popcorn',
+        'Fresh buttered popcorn - Medium',
+        6.50,
+        TRUE
+    ),
+    (
+        'Large Popcorn',
+        'popcorn',
+        'Fresh buttered popcorn - Large',
+        8.50,
+        TRUE
+    ),
+    (
+        'Extra Large Popcorn',
+        'popcorn',
+        'Fresh buttered popcorn - Extra Large',
+        10.50,
+        TRUE
+    ),
+    -- Drinks
+    (
+        'Small Soft Drink',
+        'drink',
+        'Coca-Cola, Sprite, Fanta - Small',
+        3.50,
+        TRUE
+    ),
+    (
+        'Medium Soft Drink',
+        'drink',
+        'Coca-Cola, Sprite, Fanta - Medium',
+        4.50,
+        TRUE
+    ),
+    (
+        'Large Soft Drink',
+        'drink',
+        'Coca-Cola, Sprite, Fanta - Large',
+        5.50,
+        TRUE
+    ),
+    (
+        'Bottled Water',
+        'drink',
+        'Premium bottled water',
+        2.50,
+        TRUE
+    ),
+    (
+        'Energy Drink',
+        'drink',
+        'Red Bull or Monster',
+        4.00,
+        TRUE
+    ),
+    -- Combos
+    (
+        'Classic Combo',
+        'combo',
+        'Medium Popcorn + Medium Drink',
+        9.99,
+        TRUE
+    ),
+    (
+        'Premium Combo',
+        'combo',
+        'Large Popcorn + Large Drink + Candy',
+        13.99,
+        TRUE
+    ),
+    (
+        'Family Combo',
+        'combo',
+        '2 Large Popcorns + 4 Medium Drinks',
+        24.99,
+        TRUE
+    ),
+    (
+        'Date Night Combo',
+        'combo',
+        'Large Popcorn + 2 Medium Drinks + 2 Candies',
+        16.99,
+        TRUE
+    ),
+    -- Snacks
+    (
+        'Nachos with Cheese',
+        'snack',
+        'Tortilla chips with warm cheese sauce',
+        5.50,
+        TRUE
+    ),
+    (
+        'Hot Dog',
+        'snack',
+        'All-beef hot dog with condiments',
+        4.50,
+        TRUE
+    ),
+    (
+        'Pretzel Bites',
+        'snack',
+        'Soft pretzel bites with cheese dip',
+        5.00,
+        TRUE
+    ),
+    -- Candy
+    ('M&Ms', 'candy', 'Chocolate candy', 3.50, TRUE),
+    (
+        'Skittles',
+        'candy',
+        'Fruit flavored candy',
+        3.50,
+        TRUE
+    ),
+    (
+        'Twizzlers',
+        'candy',
+        'Strawberry licorice',
+        3.50,
+        TRUE
+    ),
+    (
+        'Sour Patch Kids',
+        'candy',
+        'Sour then sweet candy',
+        3.50,
+        TRUE
+    );
 -- ========================================
 -- VIEW: BIRTHDAY PROMOTIONS FOR TODAY
 -- ========================================
@@ -1723,12 +1986,11 @@ WHERE DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
     AND u.status = 'active'
     AND p.status = 'active'
     AND CURDATE() BETWEEN p.start_date AND p.end_date;
-
 -- ========================================
 -- PROCEDURE: GET USER BIRTHDAY PROMO
 -- ========================================
-DELIMITER $$
-CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT)
+DELIMITER $$ 
+CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT) 
 BEGIN
     SELECT u.user_id,
         u.username,
@@ -1749,29 +2011,27 @@ BEGIN
             IF(p.discount_type = 'percentage', '%', '$')
         ) as discount_display
     FROM users u
-        LEFT JOIN promotions p ON p.promotion_type = 'birthday'
-        AND p.status = 'active'
-        AND CURDATE() BETWEEN p.start_date AND p.end_date
+    LEFT JOIN promotions p ON p.promotion_type = 'birthday'
+    AND p.status = 'active'
+    AND CURDATE() BETWEEN p.start_date AND p.end_date
     WHERE u.user_id = p_user_id;
 END $$ 
 DELIMITER ;
-
 -- ========================================
 -- PROCEDURE: CHECK IF USER HAS BIRTHDAY TODAY
 -- ========================================
-DELIMITER $$
-CREATE PROCEDURE check_user_birthday(IN p_user_id INT, OUT is_birthday BOOLEAN)
+DELIMITER $$ 
+CREATE PROCEDURE check_user_birthday(IN p_user_id INT, OUT is_birthday BOOLEAN) 
 BEGIN
     SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO is_birthday
     FROM users
     WHERE user_id = p_user_id;
-END $$
+END $$ 
 DELIMITER ;
-
 -- ========================================
 -- PROCEDURE: APPLY BIRTHDAY DISCOUNT TO TICKET
 -- ========================================
-DELIMITER $$
+DELIMITER $$ 
 CREATE PROCEDURE apply_birthday_discount(
     IN p_user_id INT,
     IN p_ticket_price DECIMAL(10, 2),
@@ -1785,17 +2045,15 @@ CREATE PROCEDURE apply_birthday_discount(
     SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO has_birthday
     FROM users
     WHERE user_id = p_user_id;
-
     -- Get birthday promotion details
     SELECT p.discount_value,
-        p.discount_type INTO promo_discount_value,
-        promo_discount_type
+           p.discount_type INTO promo_discount_value,
+           promo_discount_type
     FROM promotions p
     WHERE p.promotion_type = 'birthday'
-        AND p.status = 'active'
-        AND CURDATE() BETWEEN p.start_date AND p.end_date
+          AND p.status = 'active'
+          AND CURDATE() BETWEEN p.start_date AND p.end_date
     LIMIT 1;
-
     -- Calculate discount if birthday today
     IF has_birthday AND promo_discount_value IS NOT NULL THEN 
         IF promo_discount_type = 'percentage' THEN
@@ -1804,27 +2062,23 @@ CREATE PROCEDURE apply_birthday_discount(
             SET p_discount_amount = promo_discount_value;
         END IF;
         SET p_discounted_price = p_ticket_price - p_discount_amount;
-        ELSE
-            SET p_discount_amount = 0;
-            SET p_discounted_price = p_ticket_price;
-        END IF;
-END $$
+    ELSE
+        SET p_discount_amount = 0;
+        SET p_discounted_price = p_ticket_price;
+    END IF;
+END $$ 
 DELIMITER ;
-
 -- ========================================
 -- TRIGGER: AUTO-CREATE BIRTHDAY PROMO DAILY
 -- ========================================
-DELIMITER $$
+DELIMITER $$ 
 CREATE TRIGGER create_daily_birthday_promotion BEFORE
-INSERT ON promotions FOR EACH ROW 
-BEGIN 
-    IF NEW.promotion_type = 'birthday' THEN
-        SET NEW.start_date = CURDATE();
-        SET NEW.end_date = CURDATE();
-    END IF;
-END $$
+INSERT ON promotions FOR EACH ROW BEGIN IF NEW.promotion_type = 'birthday' THEN
+SET NEW.start_date = CURDATE();
+SET NEW.end_date = CURDATE();
+END IF;
+END $$ 
 DELIMITER ;
-
 -- ========================================
 -- SCHEMA CREATION COMPLETE
 -- ========================================

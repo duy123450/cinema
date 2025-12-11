@@ -6,7 +6,13 @@ function BannerSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
+  const truncate = (text, max = 60) => {
+    if (!text && text !== 0) return "";
+    const str = String(text);
+    return str.length > max ? str.slice(0, max) + "..." : str;
+  };
   useEffect(() => {
     const fetchBanners = async () => {
       try {
@@ -16,19 +22,22 @@ function BannerSlider() {
       } catch (error) {
         console.error("Error fetching banners:", error);
         // Fallback to default banner if API fails
-        setBanners([{
-          id: 'default',
-          type: 'movie',
-          title: 'WELCOME TO CINEMA',
-          tagline: 'YOUR PREMIER DESTINATION FOR MOVIES',
-          cast: ['Action', 'Drama', 'Comedy', 'Thriller'],
-          showtimes: 'NOW SHOWING',
-          release: 'BOOK YOUR TICKETS TODAY',
-          rating: 'All Genres Available',
-          image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=2000&q=80',
-          buttonLabel: 'View Movies',
-          buttonLink: '/movies'
-        }]);
+        setBanners([
+          {
+            id: "default",
+            type: "movie",
+            title: "WELCOME TO CINEMA",
+            tagline: "YOUR PREMIER DESTINATION FOR MOVIES",
+            cast: ["Action", "Drama", "Comedy", "Thriller"],
+            showtimes: "NOW SHOWING",
+            release: "BOOK YOUR TICKETS TODAY",
+            rating: "All Genres Available",
+            image:
+              "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=2000&q=80",
+            buttonLabel: "View Movies",
+            buttonLink: "/movies",
+          },
+        ]);
       } finally {
         setLoading(false);
       }
@@ -60,6 +69,10 @@ function BannerSlider() {
     setCurrentIndex(index);
   };
 
+  useEffect(() => {
+    setExpanded(false);
+  }, [currentIndex]);
+
   if (loading) {
     return (
       <div className="banner-slider">
@@ -84,15 +97,25 @@ function BannerSlider() {
         className="banner-image"
       />
 
-      <div className={`banner-card ${currentBanner.type === 'promotion' ? 'banner-promo' : ''}`}>
-        {currentBanner.type === 'promotion' && (
-          <div className="promo-badge">
-            🎁 SPECIAL OFFER
-          </div>
+      <div
+        className={`banner-card ${
+          currentBanner.type === "promotion" ? "banner-promo" : ""
+        }`}
+      >
+        {currentBanner.type === "promotion" && (
+          <div className="promo-badge">🎁 SPECIAL OFFER</div>
         )}
-        
+
         <h1>{currentBanner.title}</h1>
-        <p className="tagline">{currentBanner.tagline}</p>
+        <p
+          className="tagline clickable"
+          title={currentBanner.tagline}
+          onClick={() => setExpanded((s) => !s)}
+        >
+          {expanded
+            ? currentBanner.tagline
+            : truncate(currentBanner.tagline, 60)}
+        </p>
 
         <div className="cast-tags">
           {currentBanner.cast.map((item, index) => (

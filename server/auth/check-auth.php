@@ -13,7 +13,7 @@ function checkAuth()
 
     $conn = connectDB();
     $user_id = $_SESSION['user']['user_id'];
-    $sql = "SELECT user_id, status FROM users WHERE user_id = ?";
+    $sql = "SELECT user_id, role, status FROM users WHERE user_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -2,18 +2,20 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
 import { apiService } from "../services/api";
+import MovieManagement from "../components/MovieManagement";
+import ShowtimeManagement from "../components/ShowtimeManagement";
 
 function Admin() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState({
     totalMovies: 0,
     totalUsers: 0,
     totalBookings: 0,
     totalRevenue: 0,
     activeShowtimes: 0,
-    activeCinemas: 0
+    activeCinemas: 0,
   });
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,8 +23,8 @@ function Admin() {
 
   // Redirect if not admin
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/');
+    if (!user || user.role !== "admin") {
+      navigate("/");
     }
   }, [user, navigate]);
 
@@ -35,22 +37,22 @@ function Admin() {
 
         // Use the new admin stats API
         const data = await apiService.getAdminStats();
-        
+
         if (data.success) {
           setStats(data.stats);
           setRecentActivity(data.recentActivity || []);
         } else {
-          setError(data.message || 'Failed to load stats');
+          setError(data.message || "Failed to load stats");
         }
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error("Error fetching stats:", error);
         // Fallback to fetching data separately if admin-stats API fails
         try {
           const [movies, showtimes, cinemas, bookings] = await Promise.all([
             apiService.getMovies(),
             apiService.getShowtimes(),
             apiService.getCinemas(),
-            apiService.getBookings()
+            apiService.getBookings(),
           ]);
 
           const totalRevenue = bookings.reduce((sum, booking) => {
@@ -63,29 +65,29 @@ function Admin() {
             totalBookings: bookings.length,
             totalRevenue: totalRevenue,
             activeShowtimes: showtimes.length,
-            activeCinemas: cinemas.filter(c => c.status === 'open').length
+            activeCinemas: cinemas.filter((c) => c.status === "open").length,
           });
 
           const activity = bookings
             .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
             .slice(0, 5)
-            .map(booking => ({
-              icon: '🎟️',
+            .map((booking) => ({
+              icon: "🎟️",
               title: `New booking for ${booking.movie_title}`,
-              time: getTimeAgo(booking.created_at)
+              time: getTimeAgo(booking.created_at),
             }));
 
           setRecentActivity(activity);
         } catch (fallbackError) {
-          console.error('Fallback error:', fallbackError);
-          setError('Failed to load dashboard data');
+          console.error("Fallback error:", fallbackError);
+          setError("Failed to load dashboard data");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    if (user && user.role === 'admin') {
+    if (user && user.role === "admin") {
       fetchStats();
     }
   }, [user]);
@@ -98,17 +100,17 @@ function Admin() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60)
+      return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
   };
 
   const StatCard = ({ icon, label, value, color }) => (
     <div className={`stat-card stat-card-${color}`}>
-      <div className="stat-icon">
-        {icon}
-      </div>
+      <div className="stat-icon">{icon}</div>
       <div className="stat-content">
         <h3 className="stat-value">{value}</h3>
         <p className="stat-label">{label}</p>
@@ -140,7 +142,10 @@ function Admin() {
         <div className="error-container">
           <h2>Error Loading Dashboard</h2>
           <p>{error}</p>
-          <button onClick={() => window.location.reload()} className="btn-primary">
+          <button
+            onClick={() => window.location.reload()}
+            className="btn-primary"
+          >
             Retry
           </button>
         </div>
@@ -157,39 +162,39 @@ function Admin() {
 
       <div className="admin-tabs">
         <button
-          className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
+          className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
+          onClick={() => setActiveTab("overview")}
         >
           📊 Overview
         </button>
         <button
-          className={`tab-btn ${activeTab === 'movies' ? 'active' : ''}`}
-          onClick={() => setActiveTab('movies')}
+          className={`tab-btn ${activeTab === "movies" ? "active" : ""}`}
+          onClick={() => setActiveTab("movies")}
         >
           🎥 Movies
         </button>
         <button
-          className={`tab-btn ${activeTab === 'showtimes' ? 'active' : ''}`}
-          onClick={() => setActiveTab('showtimes')}
+          className={`tab-btn ${activeTab === "showtimes" ? "active" : ""}`}
+          onClick={() => setActiveTab("showtimes")}
         >
           🕐 Showtimes
         </button>
         <button
-          className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
-          onClick={() => setActiveTab('users')}
+          className={`tab-btn ${activeTab === "users" ? "active" : ""}`}
+          onClick={() => setActiveTab("users")}
         >
           👥 Users
         </button>
         <button
-          className={`tab-btn ${activeTab === 'bookings' ? 'active' : ''}`}
-          onClick={() => setActiveTab('bookings')}
+          className={`tab-btn ${activeTab === "bookings" ? "active" : ""}`}
+          onClick={() => setActiveTab("bookings")}
         >
           🎟️ Bookings
         </button>
       </div>
 
       <div className="admin-content">
-        {activeTab === 'overview' && (
+        {activeTab === "overview" && (
           <div className="overview-tab">
             <div className="stats-grid">
               <StatCard
@@ -236,25 +241,25 @@ function Admin() {
                 <QuickAction
                   icon="➕"
                   label="Add New Movie"
-                  onClick={() => setActiveTab('movies')}
+                  onClick={() => setActiveTab("movies")}
                   colorClass="action-yellow"
                 />
                 <QuickAction
                   icon="📅"
                   label="Schedule Showtime"
-                  onClick={() => setActiveTab('showtimes')}
+                  onClick={() => setActiveTab("showtimes")}
                   colorClass="action-blue"
                 />
                 <QuickAction
                   icon="👤"
                   label="Manage Users"
-                  onClick={() => setActiveTab('users')}
+                  onClick={() => setActiveTab("users")}
                   colorClass="action-green"
                 />
                 <QuickAction
                   icon="📊"
                   label="View Reports"
-                  onClick={() => alert('Reports feature coming soon!')}
+                  onClick={() => alert("Reports feature coming soon!")}
                   colorClass="action-red"
                 />
               </div>
@@ -287,59 +292,18 @@ function Admin() {
           </div>
         )}
 
-        {activeTab === 'movies' && (
-          <div className="management-tab">
-            <div className="tab-header">
-              <h2>🎥 Movie Management</h2>
-              <button className="btn-add" onClick={() => navigate('/movies')}>
-                ➕ Go to Movies
-              </button>
-            </div>
-            <div className="info-card">
-              <h3>📝 Features Available:</h3>
-              <ul className="feature-list">
-                <li>✅ Add new movies with details (title, description, duration, etc.)</li>
-                <li>✅ Upload movie posters</li>
-                <li>✅ Set movie status (Upcoming, Now Showing, Ended)</li>
-                <li>✅ Edit existing movie information</li>
-                <li>✅ Delete movies from the system</li>
-                <li>✅ Manage movie cast and crew</li>
-                <li>✅ Add movie trailers and media</li>
-              </ul>
-              <p className="info-note">💡 Currently managing {stats.totalMovies} movies in the system.</p>
-            </div>
-          </div>
-        )}
+        {activeTab === "movies" && <MovieManagement />}
 
-        {activeTab === 'showtimes' && (
-          <div className="management-tab">
-            <div className="tab-header">
-              <h2>🕐 Showtime Management</h2>
-              <button className="btn-add" onClick={() => navigate('/showtimes')}>
-                ➕ Go to Showtimes
-              </button>
-            </div>
-            <div className="info-card">
-              <h3>📝 Features Available:</h3>
-              <ul className="feature-list">
-                <li>✅ Schedule new showtimes for movies</li>
-                <li>✅ Assign movies to specific screens</li>
-                <li>✅ Set date and time for screenings</li>
-                <li>✅ Configure ticket pricing</li>
-                <li>✅ Manage seat availability</li>
-                <li>✅ Edit or cancel scheduled showtimes</li>
-                <li>✅ View showtime calendar</li>
-              </ul>
-              <p className="info-note">💡 Currently {stats.activeShowtimes} active showtimes scheduled.</p>
-            </div>
-          </div>
-        )}
+        {activeTab === "showtimes" && <ShowtimeManagement />}
 
-        {activeTab === 'users' && (
+        {activeTab === "users" && (
           <div className="management-tab">
             <div className="tab-header">
               <h2>👥 User Management</h2>
-              <button className="btn-add" onClick={() => alert('User management features coming soon!')}>
+              <button
+                className="btn-add"
+                onClick={() => alert("User management features coming soon!")}
+              >
                 🔍 Search Users
               </button>
             </div>
@@ -354,16 +318,18 @@ function Admin() {
                 <li>✅ Reset user passwords</li>
                 <li>✅ Export user data</li>
               </ul>
-              <p className="info-note">💡 Total registered users: {stats.totalUsers}</p>
+              <p className="info-note">
+                💡 Total registered users: {stats.totalUsers}
+              </p>
             </div>
           </div>
         )}
 
-        {activeTab === 'bookings' && (
+        {activeTab === "bookings" && (
           <div className="management-tab">
             <div className="tab-header">
               <h2>🎟️ Booking Management</h2>
-              <button className="btn-add" onClick={() => navigate('/bookings')}>
+              <button className="btn-add" onClick={() => navigate("/bookings")}>
                 🔍 View All Bookings
               </button>
             </div>
@@ -378,7 +344,10 @@ function Admin() {
                 <li>✅ View booking analytics</li>
                 <li>✅ Export booking reports</li>
               </ul>
-              <p className="info-note">💡 Total bookings: {stats.totalBookings} | Revenue: ${parseFloat(stats.totalRevenue || 0).toFixed(2)}</p>
+              <p className="info-note">
+                💡 Total bookings: {stats.totalBookings} | Revenue: $
+                {parseFloat(stats.totalRevenue || 0).toFixed(2)}
+              </p>
             </div>
           </div>
         )}

@@ -1,0 +1,626 @@
+@use "variables" as *;
+
+.movie-management {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+    animation: fadeIn 0.3s ease-in;
+
+    // Message alerts
+    .message {
+        padding: $spacing-lg;
+        border-radius: $radius-md;
+        text-align: center;
+        font-weight: bold;
+        animation: slideDown 0.3s ease-out;
+
+        &.success {
+            background: $color-success-overlay-20;
+            color: $color-success-solid;
+            border: 1px solid $color-success-solid;
+        }
+
+        &.error {
+            background: $color-error-overlay-20;
+            color: $color-error-solid;
+            border: 1px solid $color-error-solid;
+        }
+    }
+
+    // Header section
+    .mm-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-lg;
+        background: $color-gray-13;
+        border-radius: $radius-lg;
+        border: 1px solid $color-overlay-light;
+        flex-wrap: wrap;
+        gap: $spacing-md;
+
+        h2 {
+            font-size: 1.8rem;
+            color: $color-yellow-70;
+            margin: 0;
+        }
+
+        .btn-add-movie {
+            background: $color-yellow-50;
+            color: $color-gray-10;
+            border: none;
+            padding: $spacing-md $spacing-lg;
+            border-radius: $radius-md;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: all $transition;
+            white-space: nowrap;
+
+            &:hover {
+                background: $color-yellow;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px $color-warning-overlay-40;
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+
+    // Form section
+    .movie-form {
+        background: $color-gray-13;
+        border-radius: $radius-lg;
+        padding: $spacing-xl;
+        border: 2px solid $color-yellow-50;
+        animation: slideDown 0.3s ease-out;
+
+        .form-header {
+            margin-bottom: $spacing-lg;
+            padding-bottom: $spacing-lg;
+            border-bottom: 2px solid $color-overlay-light;
+
+            h3 {
+                font-size: 1.3rem;
+                color: $color-yellow-70;
+                margin: 0;
+            }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: $spacing-lg;
+            margin-bottom: $spacing-xl;
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: $spacing-xs;
+
+                &.full-width {
+                    grid-column: 1 / -1;
+                }
+
+                label {
+                    color: $color-gray-85;
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                }
+
+                input,
+                select,
+                textarea {
+                    background: $color-gray-10;
+                    color: $color-gray-90;
+                    border: 1px solid $color-overlay-light;
+                    padding: $spacing-md;
+                    border-radius: $radius-md;
+                    font-size: 0.95rem;
+                    transition: all $transition;
+
+                    &:focus {
+                        outline: none;
+                        border-color: $color-yellow-70;
+                        box-shadow: 0 0 0 3px $color-warning-overlay-10;
+                    }
+
+                    &::placeholder {
+                        color: $color-gray-50;
+                    }
+                }
+
+                textarea {
+                    resize: vertical;
+                    font-family: inherit;
+                }
+            }
+        }
+
+        .form-actions {
+            display: flex;
+            gap: $spacing-md;
+            justify-content: flex-end;
+            padding-top: $spacing-lg;
+            border-top: 1px solid $color-overlay-light;
+
+            .btn-submit {
+                background: $color-yellow-50;
+                color: $color-gray-10;
+                border: none;
+                padding: $spacing-md $spacing-xl;
+                border-radius: $radius-md;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: 0.95rem;
+                transition: all $transition;
+
+                &:hover {
+                    background: $color-yellow;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 15px $color-warning-overlay-40;
+                }
+
+                &:active {
+                    transform: translateY(0);
+                }
+            }
+
+            .btn-cancel {
+                background: $color-gray-20;
+                color: $color-gray-85;
+                border: 1px solid $color-overlay-light;
+                padding: $spacing-md $spacing-xl;
+                border-radius: $radius-md;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all $transition;
+
+                &:hover {
+                    background: $color-gray-25;
+                    border-color: $color-gray-70;
+                }
+            }
+        }
+    }
+
+    // Controls section
+    .mm-controls {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-lg;
+
+        .search-box {
+            input {
+                width: 100%;
+                background: $color-gray-13;
+                color: $color-gray-90;
+                border: 1px solid $color-overlay-light;
+                padding: $spacing-md $spacing-lg;
+                border-radius: $radius-lg;
+                font-size: 1rem;
+                transition: all $transition;
+
+                &:focus {
+                    outline: none;
+                    border-color: $color-yellow-70;
+                    box-shadow: 0 0 0 3px $color-warning-overlay-10;
+                }
+
+                &::placeholder {
+                    color: $color-gray-50;
+                }
+            }
+        }
+
+        .status-filters {
+            display: flex;
+            gap: $spacing-md;
+            flex-wrap: wrap;
+
+            .filter-btn {
+                background: $color-gray-13;
+                color: $color-gray-85;
+                border: 1px solid $color-overlay-light;
+                padding: $spacing-sm $spacing-md;
+                border-radius: $radius-md;
+                cursor: pointer;
+                font-size: 0.9rem;
+                font-weight: 600;
+                transition: all $transition;
+
+                &:hover {
+                    border-color: $color-yellow-70;
+                    color: $color-yellow-70;
+                }
+
+                &.active {
+                    background: $color-yellow-50;
+                    color: $color-gray-10;
+                    border-color: $color-yellow-50;
+                    box-shadow: 0 2px 8px $color-warning-overlay-30;
+                }
+            }
+        }
+    }
+
+    // Movies list section
+    .movies-list {
+        background: $color-gray-13;
+        border-radius: $radius-lg;
+        border: 1px solid $color-overlay-light;
+        overflow: hidden;
+
+        .empty-state {
+            padding: $spacing-xxl;
+            text-align: center;
+            color: $color-gray-60;
+
+            p {
+                font-size: 1.5rem;
+                margin: 0 0 $spacing-md 0;
+            }
+
+            small {
+                color: $color-gray-50;
+            }
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+
+            .movies-table {
+                width: 100%;
+                border-collapse: collapse;
+
+                thead {
+                    background: $color-gray-20;
+                    border-bottom: 2px solid $color-overlay-light;
+
+                    th {
+                        padding: $spacing-lg;
+                        text-align: left;
+                        color: $color-yellow-70;
+                        font-weight: bold;
+                        font-size: 0.95rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                }
+
+                tbody {
+                    tr {
+                        border-bottom: 1px solid $color-overlay-light;
+                        transition: all $transition;
+
+                        &:hover {
+                            background: $color-gray-15;
+                        }
+
+                        &:last-child {
+                            border-bottom: none;
+                        }
+
+                        td {
+                            padding: $spacing-lg;
+                            color: $color-gray-85;
+
+                            &.title-cell {
+                                .movie-title {
+                                    margin: 0 0 $spacing-xs 0;
+                                    font-weight: 600;
+                                    color: $color-gray-90;
+                                    font-size: 0.95rem;
+                                }
+
+                                .original-title {
+                                    margin: 0;
+                                    color: $color-gray-60;
+                                    font-size: 0.85rem;
+                                    font-style: italic;
+                                }
+                            }
+
+                            .status-badge {
+                                display: inline-block;
+                                padding: $spacing-xs $spacing-md;
+                                border-radius: $radius-md;
+                                font-size: 0.75rem;
+                                font-weight: bold;
+                                text-transform: uppercase;
+                                letter-spacing: 0.3px;
+
+                                &.status-upcoming {
+                                    background: $color-blue-google-overlay-20;
+                                    color: $color-blue;
+                                }
+
+                                &.status-now_showing {
+                                    background: $color-green-google-overlay-20;
+                                    color: $color-success;
+                                }
+
+                                &.status-ended {
+                                    background: $color-error-overlay-20;
+                                    color: $color-red;
+                                }
+                            }
+
+                            .rating-badge {
+                                display: inline-block;
+                                padding: $spacing-xs $spacing-md;
+                                background: $color-warning-overlay-20;
+                                color: $color-yellow-70;
+                                border-radius: $radius-md;
+                                font-size: 0.9rem;
+                                font-weight: bold;
+                            }
+
+                            &.actions-cell {
+                                display: flex;
+                                gap: $spacing-md;
+                                padding: $spacing-md;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Action buttons
+    .btn-edit,
+    .btn-delete {
+        padding: $spacing-sm $spacing-md;
+        border: none;
+        border-radius: $radius-md;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: bold;
+        transition: all $transition;
+        white-space: nowrap;
+    }
+
+    .btn-edit {
+        background: $color-blue-google-overlay-20;
+        color: $color-blue;
+        border: 1px solid $color-blue;
+
+        &:hover {
+            background: $color-blue;
+            color: white;
+            transform: translateY(-2px);
+        }
+    }
+
+    .btn-delete {
+        background: $color-error-overlay-20;
+        color: $color-red;
+        border: 1px solid $color-red;
+
+        &:hover {
+            background: $color-red;
+            color: white;
+            transform: translateY(-2px);
+        }
+    }
+
+    // Modal overlay and content
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: $color-overlay-heavy;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: fadeIn 0.2s ease-in;
+
+        .modal-content {
+            background: $color-gray-13;
+            border-radius: $radius-lg;
+            padding: $spacing-xl;
+            max-width: 400px;
+            border: 2px solid $color-red;
+            animation: scaleIn 0.3s ease-out;
+
+            h3 {
+                font-size: 1.3rem;
+                color: $color-red;
+                margin: 0 0 $spacing-md 0;
+            }
+
+            p {
+                color: $color-gray-85;
+                margin: 0 0 $spacing-lg 0;
+                font-size: 0.95rem;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: $spacing-md;
+                justify-content: flex-end;
+
+                .btn-confirm-delete {
+                    background: $color-red;
+                    color: white;
+                    border: none;
+                    padding: $spacing-md $spacing-lg;
+                    border-radius: $radius-md;
+                    cursor: pointer;
+                    font-weight: bold;
+                    transition: all $transition;
+
+                    &:hover {
+                        background: darken($color-red, 10%);
+                        transform: translateY(-2px);
+                    }
+                }
+
+                .btn-cancel-delete {
+                    background: $color-gray-20;
+                    color: $color-gray-85;
+                    border: 1px solid $color-overlay-light;
+                    padding: $spacing-md $spacing-lg;
+                    border-radius: $radius-md;
+                    cursor: pointer;
+                    font-weight: bold;
+                    transition: all $transition;
+
+                    &:hover {
+                        background: $color-gray-25;
+                        border-color: $color-gray-70;
+                    }
+                }
+            }
+        }
+    }
+
+    // Loading state
+    .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: $spacing-xxl;
+        gap: $spacing-lg;
+        background: $color-gray-13;
+        border-radius: $radius-lg;
+        border: 1px solid $color-overlay-light;
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid $color-overlay-light;
+            border-top-color: $color-yellow-70;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        p {
+            color: $color-gray-85;
+            font-size: 1rem;
+        }
+    }
+}
+
+// Animations
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .movie-management {
+        .mm-header {
+            flex-direction: column;
+            text-align: center;
+
+            h2 {
+                width: 100%;
+            }
+
+            .btn-add-movie {
+                width: 100%;
+            }
+        }
+
+        .movie-form {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mm-controls {
+            .status-filters {
+                flex-direction: column;
+
+                .filter-btn {
+                    width: 100%;
+                }
+            }
+        }
+
+        .movies-list {
+            .table-wrapper {
+                .movies-table {
+                    thead {
+                        display: none;
+                    }
+
+                    tbody {
+                        tr {
+                            display: block;
+                            margin-bottom: $spacing-lg;
+                            border: 1px solid $color-overlay-light;
+                            border-radius: $radius-md;
+                            padding: $spacing-lg;
+
+                            td {
+                                display: flex;
+                                justify-content: space-between;
+                                padding: $spacing-sm 0;
+                                border: none;
+                                padding-bottom: $spacing-md;
+
+                                &:before {
+                                    content: attr(data-label);
+                                    font-weight: bold;
+                                    color: $color-yellow-70;
+                                    min-width: 120px;
+                                }
+
+                                &.actions-cell {
+                                    flex-direction: column;
+                                    gap: $spacing-sm;
+
+                                    button {
+                                        width: 100%;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

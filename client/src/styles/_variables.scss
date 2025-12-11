@@ -131,6 +131,28 @@ $color-overlay-red-light: hsla(0, 100%, 50%, 0.1);
 $color-overlay-red-medium: hsla(0, 100%, 50%, 0.3);
 $color-overlay-red-heavy: hsla(0, 100%, 50%, 0.9);
 
+// Additional commonly-used solid & overlay colors (converted from rgb/hex)
+$color-success-solid: hsl(134, 61%, 41%); // #28a745
+$color-success-overlay-20: hsla(134, 61%, 41%, 0.2);
+
+$color-error-solid: hsl(354, 71%, 53%); // #dc3545
+$color-error-overlay-20: hsla(354, 71%, 53%, 0.2);
+
+$color-blue-google: hsl(217, 89%, 61%); // rgb(66,133,244)
+$color-blue-google-overlay-20: hsla(217, 89%, 61%, 0.2);
+
+$color-green-google: hsl(136, 53%, 43%); // rgb(52,168,83)
+$color-green-google-overlay-20: hsla(136, 53%, 43%, 0.2);
+
+$color-warning-solid: hsl(51, 100%, 50%); // #ffc107 approx
+$color-warning-overlay-40: hsla(51, 100%, 50%, 0.4);
+$color-warning-overlay-30: hsla(51, 100%, 50%, 0.3);
+$color-warning-overlay-20: hsla(51, 100%, 50%, 0.2);
+$color-warning-overlay-10: hsla(51, 100%, 50%, 0.1);
+
+// Convenience gray value (used in movie-management)
+$color-gray-25: hsl(0, 0%, 25%);
+
 // Success overlays
 $color-overlay-success-light: hsla(120, 100%, 50%, 0.1);
 $color-overlay-success-medium: hsla(120, 100%, 25%, 0.3);
