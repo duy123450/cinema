@@ -342,6 +342,12 @@ export const apiService = {
         const response = await api.get('/promotions.php');
         return response.data;
     },
+
+    // ===== ADMIN =====
+    getAdminStats: async () => {
+        const response = await api.get('/admin-stats.php');
+        return response.data;
+    },
 };
 
 export default apiService;
