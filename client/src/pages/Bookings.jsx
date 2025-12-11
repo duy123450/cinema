@@ -149,9 +149,9 @@ function Bookings() {
   return (
     <div className="page bookings-page">
       <div className="bookings-header">
-        <h1>My Bookings</h1>
+        <h1>My Tickets</h1>
         <p className="bookings-subtitle">
-          {bookings.length} {bookings.length === 1 ? "booking" : "bookings"} found
+          {bookings.length} {bookings.length === 1 ? "ticket" : "tickets"} found
         </p>
       </div>
 
@@ -252,7 +252,7 @@ function Bookings() {
       {/* NEW: Show Concessions if they exist */}
       {booking.concessions && booking.concessions.length > 0 && (
         <div className="booking-detail-item highlight concessions-item">
-          <span className="detail-icon">🍿</span>
+          <span className="detail-icon">{getConcessionIcon}</span>
           <div className="detail-content">
             <span className="detail-label">Concessions</span>
             <div className="concessions-list">

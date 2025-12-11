@@ -36,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                   JOIN screens sc ON s.screen_id = sc.screen_id
                   JOIN cinemas c ON sc.cinema_id = c.cinema_id
                   WHERE t.user_id = ?
-                  ORDER BY t.ticket_id DESC";
+                  ORDER BY t.ticket_id DESC
+                  LIMIT 10";
 
         $stmt = $conn->prepare($query);
         $stmt->execute([$user_id]);
@@ -45,10 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // For each booking, fetch associated concessions
         foreach ($bookings as &$booking) {
             $concessions_query = "SELECT tc.quantity, tc.price_at_purchase,
-                                         c.name, c.category, c.description
+                                         c.concession_id, c.name, c.category, c.description
                                   FROM ticket_concessions tc
                                   JOIN concessions c ON tc.concession_id = c.concession_id
-                                  WHERE tc.ticket_id = ?";
+                                  WHERE tc.ticket_id = ?
+                                  ORDER BY c.category, c.name";
             
             $concessions_stmt = $conn->prepare($concessions_query);
             $concessions_stmt->execute([$booking['ticket_id']]);
@@ -58,15 +60,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $formatted_concessions = [];
             foreach ($concessions as $concession) {
                 $formatted_concessions[] = [
+                    'concession_id' => (int)$concession['concession_id'],
                     'name' => $concession['name'],
                     'category' => $concession['category'],
+                    'description' => $concession['description'],
                     'quantity' => (int)$concession['quantity'],
                     'price' => (float)$concession['price_at_purchase']
                 ];
             }
             
+            // Add concessions to booking - this is the key part
             $booking['concessions'] = $formatted_concessions;
         }
+        
+        // Unset reference
+        unset($booking);
 
         http_response_code(200);
         echo json_encode($bookings);
@@ -105,6 +113,8 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $showtime_id = intval($input['showtime_id']);
         $seat_number = trim($input['seat_number']);
         $ticket_type = trim($input['ticket_type']);
+        $concessions = $input['concessions'] ?? [];
+        $promotion_code = $input['promotion_code'] ?? null;
 
         // Get showtime details
         $showtime_query = "SELECT s.showtime_id, s.price, s.available_seats 
@@ -148,22 +158,76 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
-        // Create ticket
-        $query = "INSERT INTO tickets (showtime_id, user_id, seat_number, ticket_type, price_paid, status)
-                  VALUES (?, ?, ?, ?, ?, ?)";
+        // Calculate total price
+        $ticket_price = (float)$showtime['price'];
+        $concessions_total = 0;
+        
+        foreach ($concessions as $concession) {
+            $concessions_total += (float)$concession['price'] * (int)$concession['quantity'];
+        }
+        
+        $total_price = $ticket_price + $concessions_total;
+        
+        // Apply promotion if provided
+        if ($promotion_code) {
+            $promo_query = "SELECT discount_type, discount_value 
+                           FROM promotions 
+                           WHERE code = ? 
+                           AND status = 'active' 
+                           AND CURDATE() BETWEEN start_date AND end_date";
+            $promo_stmt = $conn->prepare($promo_query);
+            $promo_stmt->execute([$promotion_code]);
+            $promo = $promo_stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($promo) {
+                if ($promo['discount_type'] === 'percentage') {
+                    $total_price -= ($total_price * (float)$promo['discount_value'] / 100);
+                } else {
+                    $total_price -= (float)$promo['discount_value'];
+                }
+                $total_price = max(0, $total_price); // Ensure price doesn't go negative
+            }
+        }
 
-        $stmt = $conn->prepare($query);
-        $result = $stmt->execute([
-            $showtime_id,
-            $auth_user['user_id'],
-            $seat_number,
-            $ticket_type,
-            $showtime['price'],
-            'booked'
-        ]);
+        // Begin transaction
+        $conn->beginTransaction();
 
-        if ($result) {
+        try {
+            // Create ticket
+            $query = "INSERT INTO tickets (showtime_id, user_id, seat_number, ticket_type, price_paid, status)
+                      VALUES (?, ?, ?, ?, ?, ?)";
+
+            $stmt = $conn->prepare($query);
+            $result = $stmt->execute([
+                $showtime_id,
+                $auth_user['user_id'],
+                $seat_number,
+                $ticket_type,
+                $total_price,
+                'paid' // Set as paid since we're processing payment
+            ]);
+
+            if (!$result) {
+                throw new Exception('Failed to create ticket');
+            }
+
             $ticket_id = $conn->lastInsertId();
+
+            // Add concessions if any
+            if (!empty($concessions)) {
+                $concession_query = "INSERT INTO ticket_concessions (ticket_id, concession_id, quantity, price_at_purchase)
+                                    VALUES (?, ?, ?, ?)";
+                $concession_stmt = $conn->prepare($concession_query);
+                
+                foreach ($concessions as $concession) {
+                    $concession_stmt->execute([
+                        $ticket_id,
+                        (int)$concession['concession_id'],
+                        (int)$concession['quantity'],
+                        (float)$concession['price']
+                    ]);
+                }
+            }
 
             // Decrease available seats
             $update_query = "UPDATE showtimes SET available_seats = available_seats - 1 
@@ -171,18 +235,20 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt = $conn->prepare($update_query);
             $update_stmt->execute([$showtime_id]);
 
+            // Commit transaction
+            $conn->commit();
+
             http_response_code(201);
             echo json_encode([
                 'success' => true,
                 'message' => 'Booking created successfully',
-                'ticket_id' => $ticket_id
+                'ticket_id' => $ticket_id,
+                'total_paid' => $total_price
             ]);
-        } else {
-            http_response_code(500);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Failed to create booking'
-            ]);
+        } catch (Exception $e) {
+            // Rollback transaction on error
+            $conn->rollBack();
+            throw $e;
         }
     } catch (Exception $e) {
         http_response_code(500);

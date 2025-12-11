@@ -149,53 +149,70 @@ function BuyTickets() {
   const total = subtotal - discountAmount;
 
   // Handle booking submission
-  const handleConfirmBooking = async () => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+  // Replace the handleConfirmBooking function in BuyTickets.jsx (around line 165-199)
 
-    if (!showtime || !showtime.showtime_id) {
-      setError("Showtime ID is missing - cannot proceed with booking");
-      return;
-    }
+const handleConfirmBooking = async () => {
+  if (!user) {
+    navigate("/login");
+    return;
+  }
 
-    try {
-      setLoading(true);
-      setError(null);
+  if (!showtime || !showtime.showtime_id) {
+    setError("Showtime ID is missing - cannot proceed with booking");
+    return;
+  }
 
-      // Create bookings for each seat
-      const bookingPromises = selectedSeats.map(async (seat) => {
-        const bookingData = {
-          showtime_id: showtime.showtime_id,
-          seat_number: seat,
-          ticket_type: "adult",
-          concessions: selectedConcessions.map((c) => ({
-            concession_id: c.concession_id,
-            quantity: c.quantity,
-            price: parseFloat(c.price),
-          })),
-          promotion_code: selectedPromotion?.code || null,
-        };
+  if (selectedSeats.length === 0) {
+    setError("Please select at least one seat");
+    return;
+  }
 
-        return apiService.createBooking(bookingData);
-      });
+  try {
+    setLoading(true);
+    setError(null);
 
-      const results = await Promise.all(bookingPromises);
-      console.log("All bookings created:", results);
+    console.log("Creating bookings for seats:", selectedSeats);
+    console.log("Selected concessions:", selectedConcessions);
+    console.log("Promotion:", selectedPromotion);
 
-      navigate("/bookings?success=true");
-    } catch (err) {
-      console.error("Error creating booking:", err);
-      const errorMsg =
-        err.response?.data?.message ||
-        err.message ||
-        "Failed to complete booking";
-      setError(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Create bookings for each seat
+    const bookingPromises = selectedSeats.map(async (seat, index) => {
+      const bookingData = {
+        showtime_id: showtime.showtime_id,
+        seat_number: seat,
+        ticket_type: "adult",
+        // ONLY attach concessions to the FIRST ticket to avoid duplicates
+        // Each subsequent ticket will have an empty concessions array
+        concessions: index === 0 && selectedConcessions.length > 0 
+          ? selectedConcessions.map((c) => ({
+              concession_id: c.concession_id,
+              quantity: c.quantity,
+              price: parseFloat(c.price),
+            })) 
+          : [],
+        promotion_code: selectedPromotion?.code || null,
+      };
+
+      console.log(`Booking data for seat ${seat}:`, bookingData);
+      return apiService.createBooking(bookingData);
+    });
+
+    const results = await Promise.all(bookingPromises);
+    console.log("All bookings created successfully:", results);
+
+    // Navigate to bookings page with success message
+    navigate("/bookings?success=true");
+  } catch (err) {
+    console.error("Error creating booking:", err);
+    const errorMsg =
+      err.response?.data?.message ||
+      err.message ||
+      "Failed to complete booking";
+    setError(errorMsg);
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (error) {
     return (
