@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "variables" as *;
 
 .movie-management {
@@ -457,7 +458,7 @@
                     transition: all $transition;
 
                     &:hover {
-                        background: darken($color-red, 10%);
+                        background: color.adjust($color-red, $lightness: -10%);
                         transform: translateY(-2px);
                     }
                 }

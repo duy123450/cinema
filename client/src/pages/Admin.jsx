@@ -4,6 +4,7 @@ import AuthContext from "../contexts/AuthContext";
 import { apiService } from "../services/api";
 import MovieManagement from "../components/MovieManagement";
 import ShowtimeManagement from "../components/ShowtimeManagement";
+import UserManagement from "../components/UserManagement";
 
 function Admin() {
   const { user } = useContext(AuthContext);
@@ -296,34 +297,7 @@ function Admin() {
 
         {activeTab === "showtimes" && <ShowtimeManagement />}
 
-        {activeTab === "users" && (
-          <div className="management-tab">
-            <div className="tab-header">
-              <h2>👥 User Management</h2>
-              <button
-                className="btn-add"
-                onClick={() => alert("User management features coming soon!")}
-              >
-                🔍 Search Users
-              </button>
-            </div>
-            <div className="info-card">
-              <h3>📝 Features Available:</h3>
-              <ul className="feature-list">
-                <li>✅ View all registered users</li>
-                <li>✅ Search users by name, email, or username</li>
-                <li>✅ Change user roles (Customer, Staff, Admin)</li>
-                <li>✅ Suspend or activate user accounts</li>
-                <li>✅ View user booking history</li>
-                <li>✅ Reset user passwords</li>
-                <li>✅ Export user data</li>
-              </ul>
-              <p className="info-note">
-                💡 Total registered users: {stats.totalUsers}
-              </p>
-            </div>
-          </div>
-        )}
+        {activeTab === "users" && <UserManagement />}
 
         {activeTab === "bookings" && (
           <div className="management-tab">
