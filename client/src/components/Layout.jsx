@@ -11,15 +11,12 @@ function Layout({ children }) {
         await apiService.ping();
         // Session is still active
       } catch (error) {
-        // Session expired, but we don't redirect here
-        // Redirect will happen on next API call via interceptor
         console.error("Session keep-alive failed:", error);
       }
     }, 300000); // Every 5 minutes (300,000 ms)
-
     // Cleanup interval on unmount
     return () => clearInterval(keepAlive);
-  }, []); // Empty dependency array = runs once on mount
+  });
 
   return (
     <>
