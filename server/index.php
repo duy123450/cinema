@@ -67,6 +67,10 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
             require_once 'api/notification.php';
             break;
 
+        case 'admin-stats':
+            require_once 'api/admin-stats.php';
+            break;
+
         case 'movies':
             require_once 'api/movies.php';
             break;
