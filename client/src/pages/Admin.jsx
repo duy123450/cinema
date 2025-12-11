@@ -5,6 +5,7 @@ import { apiService } from "../services/api";
 import MovieManagement from "../components/MovieManagement";
 import ShowtimeManagement from "../components/ShowtimeManagement";
 import UserManagement from "../components/UserManagement";
+import BookingManagement from "../components/BookingManagement";
 
 function Admin() {
   const { user } = useContext(AuthContext);
@@ -299,32 +300,7 @@ function Admin() {
 
         {activeTab === "users" && <UserManagement />}
 
-        {activeTab === "bookings" && (
-          <div className="management-tab">
-            <div className="tab-header">
-              <h2>🎟️ Booking Management</h2>
-              <button className="btn-add" onClick={() => navigate("/bookings")}>
-                🔍 View All Bookings
-              </button>
-            </div>
-            <div className="info-card">
-              <h3>📝 Features Available:</h3>
-              <ul className="feature-list">
-                <li>✅ View all ticket bookings</li>
-                <li>✅ Filter by date, movie, or user</li>
-                <li>✅ See booking status (Paid, Booked, Cancelled)</li>
-                <li>✅ Cancel bookings if needed</li>
-                <li>✅ Refund processed payments</li>
-                <li>✅ View booking analytics</li>
-                <li>✅ Export booking reports</li>
-              </ul>
-              <p className="info-note">
-                💡 Total bookings: {stats.totalBookings} | Revenue: $
-                {parseFloat(stats.totalRevenue || 0).toFixed(2)}
-              </p>
-            </div>
-          </div>
-        )}
+        {activeTab === "bookings" && <BookingManagement />}
       </div>
     </div>
   );
