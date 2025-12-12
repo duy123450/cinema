@@ -1,11 +1,11 @@
-import { useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiService } from "../services/api";
 import AuthContext from "../contexts/AuthContext";
 import PasswordInput from "../components/PasswordInput";
 
 function Register() {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
@@ -15,82 +15,147 @@ function Register() {
     phone: "",
     date_of_birth: "",
   });
-  const [avatar, setAvatar] = useState(null);
-  const [preview, setPreview] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const { login } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const validate = () => {
-    const e = {};
-    if (!form.username || form.username.length < 3) e.username = "Min 3 chars";
-    if (!form.email || !/\S+@\S+\.\S+/.test(form.email))
-      e.email = "Invalid email";
-    if (!form.password || form.password.length < 6) e.password = "Min 6 chars";
-    if (form.password !== form.confirmPassword) e.confirmPassword = "Mismatch";
-    if (form.phone && !/^\+?\d{10,15}$/.test(form.phone))
-      e.phone = "Invalid phone";
-    if (form.date_of_birth) {
-      const age =
-        new Date().getFullYear() - new Date(form.date_of_birth).getFullYear();
-      if (age < 13) e.date_of_birth = "Min 13 years";
+    const newErrors = {};
+
+    if (!formData.username) {
+      newErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
     }
-    return e;
-  };
 
-  const handle = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-    if (errors[name]) setErrors((e) => ({ ...e, [name]: "" }));
-  };
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
 
-  const handleFile = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.match("image.*")) return setErrors({ avatar: "Image only" });
-    if (file.size > 2 * 1024 * 1024) return setErrors({ avatar: "Max 2MB" });
-    setAvatar(file);
-    setPreview(URL.createObjectURL(file));
-    setErrors((p) => ({ ...p, avatar: "" }));
-  };
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
 
-  const submit = async (e) => {
-    e.preventDefault();
-    const newErr = validate();
-    if (Object.keys(newErr).length) return setErrors(newErr);
-    setErrors({});
-    setLoading(true);
-    try {
-      const fd = new FormData();
-      fd.append("user_data", JSON.stringify(form));
-      if (avatar) fd.append("avatar", avatar);
-      const res = await apiService.registerUser(fd);
-      if (res.success) {
-        login(res.user);
-        navigate("/");
-      } else {
-        setErrors({ general: res.message || "Failed" });
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (formData.phone && !/^\+?\d{10,15}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must be 10-15 digits (optional +)";
+    }
+
+    if (formData.date_of_birth) {
+      const dob = new Date(formData.date_of_birth);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+      if (age < 13) {
+        newErrors.date_of_birth = "You must be at least 13 years old";
       }
-    } catch (err) {
-      setErrors({ general: err.response?.data?.message || "Network error" });
+    }
+
+    return newErrors;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.match("image.*")) {
+        setErrors({
+          avatar: "Please upload an image file (jpg, png, gif)",
+        });
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        setErrors({ avatar: "File size must be less than 2MB" });
+        return;
+      }
+
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+      setErrors((prev) => ({ ...prev, avatar: "" }));
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    setIsLoading(true);
+
+    try {
+      const formDataWithAvatar = new FormData();
+      formDataWithAvatar.append("user_data", JSON.stringify(formData));
+
+      if (avatarFile) {
+        formDataWithAvatar.append("avatar", avatarFile);
+      }
+
+      const response = await apiService.registerUser(formDataWithAvatar);
+
+      if (response.success) {
+        login(response.user);
+        navigate("/", {
+          state: { message: "Registration successful! Welcome!" },
+        });
+      } else {
+        setErrors({ general: response.message || "Registration failed" });
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      let errorMessage = "Network error. Please try again.";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      setErrors({ general: errorMessage });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <h2>Create Account</h2>
+        <h2>Create New Account</h2>
+
         {errors.general && (
           <div className="error-message">{errors.general}</div>
         )}
-        <form onSubmit={submit}>
+
+        <form onSubmit={handleRegister}>
+          {/* Avatar Upload */}
           <div className="avatar-upload-section">
             <div className="avatar-preview">
-              {preview ? (
-                <img src={preview} alt="Preview" />
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Preview" />
               ) : (
                 <div className="avatar-placeholder">Avatar</div>
               )}
@@ -99,11 +164,11 @@ function Register() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleFile}
-                disabled={loading}
+                onChange={handleFileChange}
+                disabled={isLoading}
                 style={{ display: "none" }}
               />
-              Upload Avatar
+              Upload Avatar (Optional)
             </label>
             {errors.avatar && (
               <span className="error-text">{errors.avatar}</span>
@@ -112,36 +177,41 @@ function Register() {
 
           <div className="form-row">
             <div className="form-group">
-              <label>First Name</label>
+              <label htmlFor="first_name">First Name</label>
               <input
                 type="text"
+                id="first_name"
                 name="first_name"
-                value={form.first_name}
-                onChange={handle}
-                disabled={loading}
+                value={formData.first_name}
+                onChange={handleInputChange}
+                disabled={isLoading}
               />
             </div>
+
             <div className="form-group">
-              <label>Last Name</label>
+              <label htmlFor="last_name">Last Name</label>
               <input
                 type="text"
+                id="last_name"
                 name="last_name"
-                value={form.last_name}
-                onChange={handle}
-                disabled={loading}
+                value={formData.last_name}
+                onChange={handleInputChange}
+                disabled={isLoading}
               />
             </div>
           </div>
 
           <div className="form-group">
-            <label>Username</label>
+            <label htmlFor="username">Username</label>
             <input
               type="text"
+              id="username"
               name="username"
-              value={form.username}
-              onChange={handle}
+              value={formData.username}
+              onChange={handleInputChange}
+              required
+              disabled={isLoading}
               className={errors.username ? "error" : ""}
-              disabled={loading}
             />
             {errors.username && (
               <span className="error-text">{errors.username}</span>
@@ -149,43 +219,48 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
+              id="email"
               name="email"
-              value={form.email}
-              onChange={handle}
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              disabled={isLoading}
               className={errors.email ? "error" : ""}
-              disabled={loading}
             />
             {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label>Phone</label>
+              <label htmlFor="phone">Phone Number</label>
               <input
                 type="tel"
+                id="phone"
                 name="phone"
-                value={form.phone}
-                onChange={handle}
-                placeholder="Optional"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="+84 123 456 789 (Optional)"
+                disabled={isLoading}
                 className={errors.phone ? "error" : ""}
-                disabled={loading}
               />
               {errors.phone && (
                 <span className="error-text">{errors.phone}</span>
               )}
             </div>
+
             <div className="form-group">
-              <label>Date of Birth</label>
+              <label htmlFor="date_of_birth">Date of Birth</label>
               <input
                 type="date"
+                id="date_of_birth"
                 name="date_of_birth"
-                value={form.date_of_birth}
-                onChange={handle}
+                value={formData.date_of_birth}
+                onChange={handleInputChange}
+                disabled={isLoading}
                 className={errors.date_of_birth ? "error" : ""}
-                disabled={loading}
               />
               {errors.date_of_birth && (
                 <span className="error-text">{errors.date_of_birth}</span>
@@ -193,29 +268,37 @@ function Register() {
             </div>
           </div>
 
+          {/* Password Input with Eye Icon */}
           <PasswordInput
+            id="password"
             name="password"
-            value={form.password}
-            onChange={handle}
+            value={formData.password}
+            onChange={handleInputChange}
             label="Password"
             error={errors.password}
-            disabled={loading}
-          />
-          <PasswordInput
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handle}
-            label="Confirm Password"
-            error={errors.confirmPassword}
-            disabled={loading}
+            disabled={isLoading}
+            required
           />
 
-          <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? "Creating..." : "Register"}
+          {/* Confirm Password Input with Eye Icon */}
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            label="Confirm Password"
+            error={errors.confirmPassword}
+            disabled={isLoading}
+            required
+          />
+
+          <button type="submit" className="btn-submit" disabled={isLoading}>
+            {isLoading ? "Creating Account..." : "Register"}
           </button>
         </form>
+
         <p className="auth-switch">
-          Have an account?{" "}
+          Already have an account?{" "}
           <Link to="/login" className="switch-link">
             Login
           </Link>

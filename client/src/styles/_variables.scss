@@ -203,6 +203,19 @@ $radius-lg: 12px;
 // TRANSITIONS & ANIMATIONS
 // =============================================
 $transition: 0.3s;
+$transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: 0.2s ease;
+$transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+// =============================================
+// BREAKPOINTS
+// =============================================
+$breakpoint-xs: 480px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-xxl: 1536px;
 
 // =============================================
 // FONTS

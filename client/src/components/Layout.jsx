@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
 import { apiService } from "../services/api";
