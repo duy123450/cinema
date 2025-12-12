@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import "./styles/_theme-variables.css";
 import Index from "./pages/Index.jsx";
 import Movies from "./pages/Movies.jsx";
 import MovieDetail from "./pages/MovieDetail.jsx";
@@ -19,155 +21,157 @@ import BuyTickets from "./pages/BuyTickets.jsx";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <Index />
-            </Layout>
-          }
-        />
-        <Route
-          path="/movies"
-          element={
-            <Layout>
-              <Movies />
-            </Layout>
-          }
-        />
-        <Route
-          path="/movies/:id"
-          element={
-            <Layout>
-              <MovieDetail />
-            </Layout>
-          }
-        />
-        <Route
-          path="/actors/:id"
-          element={
-            <Layout>
-              <ActorDetail />
-            </Layout>
-          }
-        />
-        <Route
-          path="/showtimes"
-          element={
-            <Layout>
-              <Showtimes />
-            </Layout>
-          }
-        />
-        <Route
-          path="/cinemas"
-          element={
-            <Layout>
-              <Cinemas />
-            </Layout>
-          }
-        />
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            path="/"
+            element={
+              <Layout>
+                <Index />
+              </Layout>
+            }
+          />
+          <Route
+            path="/movies"
+            element={
+              <Layout>
+                <Movies />
+              </Layout>
+            }
+          />
+          <Route
+            path="/movies/:id"
+            element={
+              <Layout>
+                <MovieDetail />
+              </Layout>
+            }
+          />
+          <Route
+            path="/actors/:id"
+            element={
+              <Layout>
+                <ActorDetail />
+              </Layout>
+            }
+          />
+          <Route
+            path="/showtimes"
+            element={
+              <Layout>
+                <Showtimes />
+              </Layout>
+            }
+          />
+          <Route
+            path="/cinemas"
+            element={
+              <Layout>
+                <Cinemas />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/login"
-          element={
-            <Layout>
-              <Login />
-            </Layout>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <Layout>
-              <Register />
-            </Layout>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <Layout>
-              <ForgotPassword />
-            </Layout>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <Layout>
-              <ResetPassword />
-            </Layout>
-          }
-        />
+          <Route
+            path="/login"
+            element={
+              <Layout>
+                <Login />
+              </Layout>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <Layout>
+                <Register />
+              </Layout>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <Layout>
+                <ForgotPassword />
+              </Layout>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <Layout>
+                <ResetPassword />
+              </Layout>
+            }
+          />
 
-        {/* Protected Routes */}
-        <Route
-          path="/bookings"
-          element={
-            <ProtectedRoute
-              element={
-                <Layout>
-                  <Bookings />
-                </Layout>
-              }
-            />
-          }
-        />
+          {/* Protected Routes */}
+          <Route
+            path="/bookings"
+            element={
+              <ProtectedRoute
+                element={
+                  <Layout>
+                    <Bookings />
+                  </Layout>
+                }
+              />
+            }
+          />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute
-              element={
-                <Layout>
-                  <Profile />
-                </Layout>
-              }
-            />
-          }
-        />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute
+                element={
+                  <Layout>
+                    <Profile />
+                  </Layout>
+                }
+              />
+            }
+          />
 
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute
-              element={
-                <Layout>
-                  <Admin />
-                </Layout>
-              }
-            />
-          }
-        />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute
+                element={
+                  <Layout>
+                    <Admin />
+                  </Layout>
+                }
+              />
+            }
+          />
 
-        <Route
-          path="/buy-tickets"
-          element={
-            <ProtectedRoute
-              element={
-                <Layout>
-                  <BuyTickets />
-                </Layout>
-              }
-            />
-          }
-        />
+          <Route
+            path="/buy-tickets"
+            element={
+              <ProtectedRoute
+                element={
+                  <Layout>
+                    <BuyTickets />
+                  </Layout>
+                }
+              />
+            }
+          />
 
-        {/* 404 Page Not Found */}
-        <Route
-          path="*"
-          element={
-            <Layout>
-              <PageNotFound />
-            </Layout>
-          }
-        />
-      </Routes>
-    </Router>
+          {/* 404 Page Not Found */}
+          <Route
+            path="*"
+            element={
+              <Layout>
+                <PageNotFound />
+              </Layout>
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

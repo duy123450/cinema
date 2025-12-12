@@ -2,6 +2,7 @@ import React, { useContext, useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
 import SearchBar from "./SearchBar";
+import ThemeToggle from "./ThemeToggle";
 import useClickOutside from "../hooks/useClickOutside";
 import { apiService } from "../services/api";
 
@@ -33,7 +34,7 @@ function Header() {
 
   const fetchNotifications = async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
       const data = await apiService.getNotifications();
@@ -79,30 +80,44 @@ function Header() {
   const getAvatarUrl = () => {
     return user.avatar
       ? `http://localhost/server/uploads/${user.avatar}`
-      : `https://ui-avatars.com/api/?name=${user.username || "U"}&background=200&color=fff`;
+      : `https://ui-avatars.com/api/?name=${
+          user.username || "U"
+        }&background=200&color=fff`;
   };
 
   // Get notification icon based on type
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'movie': return '🎬';
-      case 'promotion': return '🎁';
-      case 'booking': return '🎟️';
-      case 'reminder': return '⏰';
-      case 'birthday': return '🎂';
-      default: return '🔔';
+      case "movie":
+        return "🎬";
+      case "promotion":
+        return "🎁";
+      case "booking":
+        return "🎟️";
+      case "reminder":
+        return "⏰";
+      case "birthday":
+        return "🎂";
+      default:
+        return "🔔";
     }
   };
 
   // Get notification color based on type
   const getNotificationColor = (type) => {
     switch (type) {
-      case 'movie': return 'notification-movie';
-      case 'promotion': return 'notification-promotion';
-      case 'booking': return 'notification-booking';
-      case 'reminder': return 'notification-reminder';
-      case 'birthday': return 'notification-birthday';
-      default: return 'notification-default';
+      case "movie":
+        return "notification-movie";
+      case "promotion":
+        return "notification-promotion";
+      case "booking":
+        return "notification-booking";
+      case "reminder":
+        return "notification-reminder";
+      case "birthday":
+        return "notification-birthday";
+      default:
+        return "notification-default";
     }
   };
 
@@ -132,7 +147,7 @@ function Header() {
               <span className="notification-count">{notificationCount}</span>
             )}
           </div>
-          
+
           <div className="notification-list">
             {loading ? (
               <div className="notification-loading">
@@ -143,7 +158,9 @@ function Header() {
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`notification-item ${getNotificationColor(notification.type)}`}
+                  className={`notification-item ${getNotificationColor(
+                    notification.type
+                  )}`}
                   onClick={() => handleNotificationClick(notification)}
                   role="button"
                   tabIndex={0}
@@ -153,8 +170,12 @@ function Header() {
                   </div>
                   <div className="notification-content">
                     <p className="notification-title">{notification.title}</p>
-                    <p className="notification-message">{notification.message}</p>
-                    <span className="notification-time">{notification.time}</span>
+                    <p className="notification-message">
+                      {notification.message}
+                    </p>
+                    <span className="notification-time">
+                      {notification.time}
+                    </span>
                   </div>
                   {notification.image && (
                     <div className="notification-image">
@@ -170,14 +191,14 @@ function Header() {
               </div>
             )}
           </div>
-          
+
           {notifications.length > 0 && (
             <div className="notification-footer">
-              <button 
+              <button
                 className="view-all-btn"
                 onClick={() => {
                   setIsNotificationOpen(false);
-                  navigate('/notifications');
+                  navigate("/notifications");
                 }}
               >
                 View All Notifications
@@ -301,6 +322,7 @@ function Header() {
       <div className="header-right">
         <SearchBar />
         <div className="header-buttons">
+          <ThemeToggle />
           {notificationMenu}
           {userMenu}
         </div>

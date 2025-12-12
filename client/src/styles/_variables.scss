@@ -1,39 +1,39 @@
 // =============================================
 // COLOR SYSTEM - WHITE
 // =============================================
-$color-white: hsl(0, 0%, 100%);
+$color-white: var(--color-white, hsl(0, 0%, 100%));
 
 // =============================================
 // COLOR SYSTEM - GRAY
 // =============================================
-$color-gray-95: hsl(0, 0%, 95%); // Text
-$color-gray-90: hsl(0, 0%, 90%); // Light text
-$color-gray-85: hsl(0, 0%, 85%); // Secondary text
-$color-gray-80: hsl(0, 0%, 80%); // Border light
-$color-gray-75: hsl(0, 0%, 75%); // Light muted text
-$color-gray-70: hsl(0, 0%, 70%); // Muted text
-$color-gray-60: hsl(0, 0%, 60%); // Disabled text
-$color-gray-50: hsl(0, 0%, 50%); // Medium gray
-$color-gray-40: hsl(0, 0%, 40%); // Dark gray
-$color-gray-30: hsl(0, 0%, 30%); // Darker gray
-$color-gray-20: hsl(0, 0%, 20%); // Very dark gray
-$color-gray-15: hsl(0, 0%, 15%); // Almost black
-$color-gray-13: hsl(0, 0%, 13%); // Card background
-$color-gray-10: hsl(0, 0%, 10%); // Dark background
-$color-gray-7: hsl(0, 0%, 7%); // Main background
+$color-gray-95: var(--color-text-primary, hsl(0, 0%, 95%)); // Text
+$color-gray-90: var(--color-text-secondary, hsl(0, 0%, 90%)); // Light text
+$color-gray-85: var(--color-text-tertiary, hsl(0, 0%, 85%)); // Secondary text
+$color-gray-80: var(--color-border, hsl(0, 0%, 80%)); // Border light
+$color-gray-75: var(--color-text-tertiary, hsl(0, 0%, 75%)); // Light muted text
+$color-gray-70: var(--color-text-tertiary, hsl(0, 0%, 70%)); // Muted text
+$color-gray-60: var(--color-text-muted, hsl(0, 0%, 60%)); // Disabled text
+$color-gray-50: var(--color-text-disabled, hsl(0, 0%, 50%)); // Medium gray
+$color-gray-40: var(--color-border, hsl(0, 0%, 40%)); // Dark gray
+$color-gray-30: var(--color-border, hsl(0, 0%, 30%)); // Darker gray
+$color-gray-20: var(--color-border, hsl(0, 0%, 20%)); // Very dark gray
+$color-gray-15: var(--color-bg-card, hsl(0, 0%, 15%)); // Almost black
+$color-gray-13: var(--color-bg-card, hsl(0, 0%, 13%)); // Card background
+$color-gray-10: var(--color-bg-secondary, hsl(0, 0%, 10%)); // Dark background
+$color-gray-7: var(--color-bg-primary, hsl(0, 0%, 7%)); // Main background
 
 // =============================================
 // COLOR SYSTEM - PRIMARY ACCENT (YELLOW)
 // =============================================
-$color-yellow: hsl(51, 100%, 50%);
-$color-yellow-light: hsl(51, 100%, 60%);
-$color-yellow-50: hsl(51, 100%, 50%);
-$color-yellow-55: hsl(51, 100%, 55%);
-$color-yellow-60: hsl(51, 100%, 60%);
-$color-yellow-65: hsl(51, 100%, 65%);
-$color-yellow-70: hsl(51, 100%, 70%);
-$color-yellow-40: hsl(51, 100%, 40%);
-$color-yellow-30: hsl(51, 100%, 30%);
+$color-yellow: var(--color-primary, hsl(51, 100%, 50%));
+$color-yellow-light: var(--color-primary-light, hsl(51, 100%, 60%));
+$color-yellow-50: var(--color-primary, hsl(51, 100%, 50%));
+$color-yellow-55: var(--color-primary, hsl(51, 100%, 55%));
+$color-yellow-60: var(--color-primary-dark, hsl(51, 100%, 60%));
+$color-yellow-65: var(--color-primary, hsl(51, 100%, 65%));
+$color-yellow-70: var(--color-primary, hsl(51, 100%, 70%));
+$color-yellow-40: var(--color-primary-dark, hsl(51, 100%, 40%));
+$color-yellow-30: var(--color-primary-dark, hsl(51, 100%, 30%));
 
 // =============================================
 // COLOR SYSTEM - RED
@@ -49,15 +49,15 @@ $color-red-30: hsl(0, 100%, 30%);
 // =============================================
 // COLOR SYSTEM - BLUE
 // =============================================
-$color-blue: hsl(200, 100%, 50%);
-$color-blue-light: hsl(200, 100%, 60%);
-$color-blue-50: hsl(200, 100%, 50%);
-$color-blue-55: hsl(200, 100%, 55%);
-$color-blue-60: hsl(200, 100%, 60%);
-$color-blue-65: hsl(200, 100%, 65%);
-$color-blue-70: hsl(200, 100%, 70%);
-$color-blue-40: hsl(200, 100%, 40%);
-$color-blue-30: hsl(200, 100%, 30%);
+$color-blue: var(--color-info, hsl(200, 100%, 50%));
+$color-blue-light: var(--color-info-light, hsl(200, 100%, 60%));
+$color-blue-50: var(--color-info, hsl(200, 100%, 50%));
+$color-blue-55: var(--color-info, hsl(200, 100%, 55%));
+$color-blue-60: var(--color-info-light, hsl(200, 100%, 60%));
+$color-blue-65: var(--color-info-light, hsl(200, 100%, 65%));
+$color-blue-70: var(--color-info-light, hsl(200, 100%, 70%));
+$color-blue-40: var(--color-info, hsl(200, 100%, 40%));
+$color-blue-30: var(--color-info, hsl(200, 100%, 30%));
 
 // =============================================
 // COLOR SYSTEM - GREEN

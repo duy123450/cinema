@@ -1,4 +1,4 @@
-@use 'variables' as *;
+@use "variables" as *;
 
 * {
     margin: 0;
@@ -8,8 +8,8 @@
 }
 
 body {
-    background-color: $color-gray-7;
-    color: $color-gray-95;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
 }
 
 main {
