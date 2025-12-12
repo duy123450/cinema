@@ -1,0 +1,959 @@
+@use "variables" as *;
+
+/* =============================================
+   RESPONSIVE DESIGN SYSTEM
+   Mobile-first approach with breakpoints
+   ============================================= */
+
+// Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-xxl: 1536px;
+
+/* =============================================
+   GLOBAL RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-md) {
+    body {
+        font-size: 14px;
+    }
+
+    main {
+        padding: $spacing-md 0;
+    }
+
+    h1 {
+        font-size: 1.8rem !important;
+    }
+
+    h2 {
+        font-size: 1.5rem !important;
+    }
+
+    h3 {
+        font-size: 1.2rem !important;
+    }
+}
+
+/* =============================================
+   HEADER RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .header {
+        flex-wrap: wrap;
+        padding: $spacing-sm $spacing-md;
+        gap: $spacing-md;
+    }
+
+    .navbar {
+        order: 3;
+        width: 100%;
+        justify-content: space-around;
+        gap: $spacing-sm;
+        padding-top: $spacing-sm;
+        border-top: 1px solid $color-overlay-light;
+    }
+
+    .nav-link {
+        padding: $spacing-xs $spacing-sm;
+        font-size: 0.85rem;
+    }
+
+    .header-right {
+        gap: $spacing-sm;
+    }
+
+    .search-bar {
+        width: 250px;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .header {
+        padding: $spacing-sm;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .navbar {
+        gap: 0;
+        padding-top: $spacing-xs;
+    }
+
+    .nav-link {
+        font-size: 0.75rem;
+        padding: $spacing-xs;
+    }
+
+    .search-bar {
+        width: 200px;
+    }
+
+    .header-buttons {
+        gap: $spacing-xs;
+    }
+
+    .theme-toggle {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .user-avatar-image {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* =============================================
+   BANNER RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .banner-slider {
+        height: 50vh;
+    }
+
+    .banner-card {
+        width: 90%;
+        padding: $spacing-lg;
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+        }
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .banner-slider {
+        height: 40vh;
+    }
+
+    .banner-card {
+        width: 95%;
+        padding: $spacing-md;
+
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        .tagline {
+            font-size: 1rem;
+        }
+
+        .rating-and-button {
+            flex-direction: column;
+            gap: $spacing-sm;
+        }
+    }
+
+    .slider-arrow {
+        padding: $spacing-sm $spacing-md;
+        font-size: 1.5rem;
+
+        &.left {
+            left: 10px;
+        }
+
+        &.right {
+            right: 10px;
+        }
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .banner-slider {
+        height: 35vh;
+    }
+
+    .banner-card {
+        padding: $spacing-sm;
+
+        h1 {
+            font-size: 1.2rem;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+        }
+
+        .cast-tags {
+            gap: $spacing-xs;
+        }
+
+        .cast-tag {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+        }
+    }
+}
+
+/* =============================================
+   DASHBOARD RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-xl) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: $spacing-lg;
+    }
+
+    .quick-actions .actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: $breakpoint-lg) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: $spacing-md;
+    }
+
+    .now-playing,
+    .coming-soon,
+    .quick-actions {
+        padding: $spacing-lg $spacing-md;
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: $spacing-sm;
+    }
+
+    .quick-actions .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .movies-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =============================================
+   MOVIE DETAIL RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .movie-detail-container {
+        grid-template-columns: 300px 1fr;
+        gap: $spacing-lg;
+        padding: $spacing-lg;
+    }
+
+    .movie-meta-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .movie-detail-container {
+        grid-template-columns: 1fr;
+        gap: $spacing-lg;
+        padding: $spacing-md;
+    }
+
+    .movie-detail-page {
+        padding: $spacing-md;
+    }
+
+    .movie-cast-section .cast-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .trailers-section .trailer-list {
+        grid-template-columns: 1fr;
+    }
+
+    .movie-actions {
+        flex-direction: column;
+
+        a {
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .movie-detail-title {
+        font-size: 1.8rem;
+    }
+
+    .movie-cast-section .cast-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .trailers-section .trailer-player iframe {
+        height: 250px;
+    }
+}
+
+/* =============================================
+   MOVIES PAGE RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .movies-page {
+        padding: $spacing-lg;
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: $spacing-md;
+    }
+
+    .movies-page {
+        padding: $spacing-md;
+    }
+
+    .movies-filter,
+    .movies-sort {
+        padding: $spacing-md;
+        gap: $spacing-sm;
+    }
+
+    .filter-btn,
+    .sort-btn {
+        padding: $spacing-xs $spacing-md;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .movies-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .movies-sort {
+        flex-direction: column;
+        align-items: stretch;
+
+        .sort-label {
+            text-align: center;
+        }
+    }
+}
+
+/* =============================================
+   SHOWTIMES RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .showtimes-filters {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-md;
+    }
+
+    .btn-reset-filters {
+        grid-column: span 2;
+    }
+
+    .showtimes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .showtimes-page {
+        padding: $spacing-md;
+    }
+
+    .showtimes-filters {
+        grid-template-columns: 1fr;
+        padding: $spacing-md;
+    }
+
+    .btn-reset-filters {
+        grid-column: span 1;
+    }
+
+    .showtimes-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =============================================
+   CINEMAS RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .cinemas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .cinemas-page {
+        padding: $spacing-md;
+    }
+
+    .cinemas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cinema-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =============================================
+   BUY TICKETS RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .ticket-booking-page {
+        padding: $spacing-lg;
+    }
+
+    .booking-progress {
+        gap: $spacing-md;
+
+        &::before {
+            left: 15%;
+            right: 15%;
+        }
+
+        .progress-step {
+            max-width: 150px;
+
+            .step-number {
+                width: 35px;
+                height: 35px;
+            }
+
+            span {
+                font-size: 0.8rem;
+            }
+        }
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .ticket-booking-page {
+        padding: $spacing-md;
+    }
+
+    .booking-progress {
+        flex-direction: row;
+        
+        &::before {
+            display: none;
+        }
+
+        .progress-step {
+            flex: 1;
+
+            span {
+                display: none;
+            }
+
+            .step-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+        }
+    }
+
+    .booking-step {
+        padding: $spacing-lg;
+    }
+
+    .seat-selection-step {
+        .seat-row .seat {
+            width: 35px;
+            height: 35px;
+            font-size: 0.75rem;
+        }
+    }
+
+    .concessions-step .concessions-categories .concessions-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .confirmation-step .booking-summary {
+        padding: $spacing-md;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .booking-header {
+        padding: $spacing-md;
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        .booking-details {
+            flex-direction: column;
+            gap: $spacing-xs;
+            font-size: 0.85rem;
+        }
+    }
+
+    .seat-selection-step {
+        .seat-row {
+            gap: $spacing-xs;
+
+            .row-label {
+                width: 20px;
+                font-size: 0.8rem;
+            }
+
+            .seat {
+                width: 30px;
+                height: 30px;
+                font-size: 0.7rem;
+            }
+        }
+
+        .seat-legend {
+            flex-direction: column;
+            gap: $spacing-sm;
+        }
+    }
+
+    .concessions-step .selected-concessions .concession-item {
+        grid-template-columns: 1fr;
+        gap: $spacing-sm;
+
+        .quantity-controls {
+            justify-content: flex-start;
+        }
+
+        > span:last-child {
+            text-align: left;
+        }
+    }
+
+    .step-actions {
+        flex-direction: column;
+
+        button {
+            width: 100%;
+            min-width: unset;
+        }
+    }
+}
+
+/* =============================================
+   BOOKINGS PAGE RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-md) {
+    .bookings-page {
+        padding: $spacing-md;
+    }
+
+    .booking-card {
+        padding: $spacing-md;
+    }
+
+    .booking-movie-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .booking-details {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .booking-card {
+        padding: $spacing-sm;
+    }
+
+    .booking-movie-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* =============================================
+   ADMIN PANEL RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-xl) {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: $breakpoint-lg) {
+    .admin-panel {
+        padding: $spacing-lg;
+    }
+
+    .admin-tabs {
+        flex-wrap: wrap;
+        gap: $spacing-sm;
+
+        .tab-btn {
+            padding: $spacing-sm $spacing-md;
+            font-size: 0.9rem;
+        }
+    }
+
+    .stats-grid {
+        gap: $spacing-md;
+    }
+
+    .quick-actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .admin-panel {
+        padding: $spacing-md;
+    }
+
+    .admin-header h1 {
+        font-size: 2rem;
+    }
+
+    .admin-tabs {
+        justify-content: flex-start;
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 100px;
+        }
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        padding: $spacing-md;
+    }
+
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-section {
+        padding: $spacing-md;
+    }
+
+    .chart-container {
+        padding: $spacing-sm;
+        min-height: 250px;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .admin-tabs {
+        flex-direction: column;
+
+        .tab-btn {
+            width: 100%;
+        }
+    }
+
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: $spacing-sm;
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+    }
+}
+
+/* =============================================
+   MOVIE MANAGEMENT RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .movie-management {
+        .mm-header {
+            flex-direction: column;
+            align-items: stretch;
+
+            .header-buttons {
+                flex-direction: column;
+
+                button {
+                    width: 100%;
+                }
+            }
+        }
+
+        .movie-form .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .actors-section .actors-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .movie-management {
+        .mm-controls .status-filters {
+            flex-direction: column;
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+
+        .movies-list .table-wrapper {
+            overflow-x: scroll;
+
+            .movies-table {
+                min-width: 800px;
+            }
+        }
+
+        .actors-section .actors-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+/* =============================================
+   BOOKING MANAGEMENT RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .booking-management {
+        .analytics-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .booking-management {
+        .tab-header {
+            flex-direction: column;
+            align-items: stretch;
+
+            .btn-add {
+                width: 100%;
+            }
+        }
+
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .bookings-section .table-wrapper {
+            overflow-x: scroll;
+
+            .bookings-table {
+                min-width: 1000px;
+            }
+        }
+    }
+}
+
+/* =============================================
+   PROFILE PAGE RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .profile-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-sidebar {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .profile-page {
+        padding: $spacing-md 0;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .profile-section {
+        padding: $spacing-md;
+    }
+}
+
+/* =============================================
+   AUTH PAGES RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-md) {
+    .auth-page {
+        padding: $spacing-md;
+    }
+
+    .auth-container {
+        padding: $spacing-lg;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .auth-container {
+        padding: $spacing-md;
+
+        h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    .avatar-upload-section .avatar-preview {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+/* =============================================
+   SEARCH RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-md) {
+    .search-bar {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .search-results {
+        width: 100vw;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 500px;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .search-bar {
+        max-width: 200px;
+    }
+
+    .search-input-wrapper .search-input {
+        font-size: 0.85rem;
+    }
+
+    .search-result-item {
+        padding: $spacing-sm;
+
+        .result-poster {
+            width: 50px;
+            height: 75px;
+        }
+
+        .result-info .result-title {
+            font-size: 0.9rem;
+        }
+    }
+}
+
+/* =============================================
+   USER & NOTIFICATION MENUS RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-sm) {
+    .user-dropdown,
+    .notification-dropdown {
+        width: calc(100vw - 20px);
+        right: -10px;
+    }
+
+    .notification-dropdown {
+        max-width: unset;
+    }
+
+    .notification-list {
+        max-height: 300px;
+    }
+}
+
+/* =============================================
+   ACTOR DETAIL RESPONSIVE
+   ============================================= */
+@media (max-width: $breakpoint-lg) {
+    .actor-detail-container {
+        grid-template-columns: 250px 1fr;
+        gap: $spacing-lg;
+        padding: $spacing-lg;
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .actor-detail-page {
+        padding: $spacing-md;
+    }
+
+    .actor-detail-container {
+        grid-template-columns: 1fr;
+        padding: $spacing-md;
+    }
+
+    .actor-movies-section .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .actor-name {
+        font-size: 2rem;
+    }
+
+    .actor-movies-section .movies-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =============================================
+   UTILITY CLASSES
+   ============================================= */
+.hide-mobile {
+    @media (max-width: $breakpoint-md) {
+        display: none !important;
+    }
+}
+
+.hide-tablet {
+    @media (max-width: $breakpoint-lg) {
+        display: none !important;
+    }
+}
+
+.show-mobile-only {
+    display: none !important;
+
+    @media (max-width: $breakpoint-md) {
+        display: block !important;
+    }
+}
+
+.mobile-full-width {
+    @media (max-width: $breakpoint-md) {
+        width: 100% !important;
+    }
+}
