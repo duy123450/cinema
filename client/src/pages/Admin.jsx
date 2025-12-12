@@ -1,5 +1,15 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import AuthContext from "../contexts/AuthContext";
 import { apiService } from "../services/api";
 import MovieManagement from "../components/MovieManagement";
@@ -22,6 +32,7 @@ function Admin() {
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [chartData, setChartData] = useState([]);
 
   // Redirect if not admin
   useEffect(() => {
@@ -43,6 +54,36 @@ function Admin() {
         if (data.success) {
           setStats(data.stats);
           setRecentActivity(data.recentActivity || []);
+
+          // Fetch bookings to generate chart data
+          const bookings = await apiService.getBookings();
+          const last7Days = [];
+          for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            last7Days.push({
+              date: date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              }),
+              fullDate: date.toISOString().split("T")[0],
+              bookings: 0,
+              revenue: 0,
+            });
+          }
+
+          bookings.forEach((booking) => {
+            const bookingDate = new Date(booking.created_at)
+              .toISOString()
+              .split("T")[0];
+            const dayData = last7Days.find((d) => d.fullDate === bookingDate);
+            if (dayData) {
+              dayData.bookings += 1;
+              dayData.revenue += parseFloat(booking.price_paid || 0);
+            }
+          });
+
+          setChartData(last7Days);
         } else {
           setError(data.message || "Failed to load stats");
         }
@@ -80,6 +121,35 @@ function Admin() {
             }));
 
           setRecentActivity(activity);
+
+          // Generate chart data from bookings (last 7 days)
+          const last7Days = [];
+          for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            last7Days.push({
+              date: date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              }),
+              fullDate: date.toISOString().split("T")[0],
+              bookings: 0,
+              revenue: 0,
+            });
+          }
+
+          bookings.forEach((booking) => {
+            const bookingDate = new Date(booking.created_at)
+              .toISOString()
+              .split("T")[0];
+            const dayData = last7Days.find((d) => d.fullDate === bookingDate);
+            if (dayData) {
+              dayData.bookings += 1;
+              dayData.revenue += parseFloat(booking.price_paid || 0);
+            }
+          });
+
+          setChartData(last7Days);
         } catch (fallbackError) {
           console.error("Fallback error:", fallbackError);
           setError("Failed to load dashboard data");
@@ -267,7 +337,50 @@ function Admin() {
               </div>
             </div>
 
-            <div className="recent-activity">
+            <div className="analytics-section">
+              <h2>📈 Booking & Revenue Trend (Last 7 Days)</h2>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis yAxisId="left" />
+                    <YAxis yAxisId="right" orientation="right" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1a1a1a",
+                        border: "1px solid #ffd700",
+                        borderRadius: "8px",
+                      }}
+                      labelStyle={{ color: "#ffd700" }}
+                    />
+                    <Legend />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="bookings"
+                      stroke="#ffd700"
+                      strokeWidth={2}
+                      name="Bookings"
+                      dot={{ fill: "#ffd700", r: 5 }}
+                      activeDot={{ r: 7 }}
+                    />
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#4a9eff"
+                      strokeWidth={2}
+                      name="Revenue ($)"
+                      dot={{ fill: "#4a9eff", r: 5 }}
+                      activeDot={{ r: 7 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="activity-section">
               <h2>📋 Recent Activity</h2>
               <div className="activity-list">
                 {recentActivity.length > 0 ? (

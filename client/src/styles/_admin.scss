@@ -150,14 +150,14 @@
     }
 
     &.stat-card-purple {
-        border-left-color: #9370DB;
+        border-left-color: #9370db;
         .stat-icon {
             background-color: hsla(249, 53%, 66%, 0.2);
         }
     }
 
     &.stat-card-pink {
-        border-left-color: #FF69B4;
+        border-left-color: #ff69b4;
         .stat-icon {
             background-color: hsla(330, 100%, 71%, 0.2);
         }
@@ -456,6 +456,95 @@
 
     .btn-primary {
         margin: 0;
+    }
+}
+
+// Analytics & Charts
+.analytics-section {
+    background: $color-gray-13;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    border: 1px solid $color-overlay-light;
+    margin-top: $spacing-xl;
+
+    h2 {
+        font-size: 1.5rem;
+        color: $color-yellow-70;
+        margin: 0 0 $spacing-lg 0;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+}
+
+.chart-container {
+    background: $color-gray-15;
+    border-radius: $radius-md;
+    padding: $spacing-lg;
+    border: 1px solid $color-overlay-light;
+    overflow-x: auto;
+
+    // Recharts specific styling
+    .recharts-wrapper {
+        margin: $spacing-md 0;
+    }
+
+    .recharts-cartesian-axis-tick {
+        color: $color-gray-70;
+        font-size: 0.875rem;
+    }
+
+    .recharts-legend-wrapper {
+        margin-top: $spacing-lg !important;
+
+        .recharts-legend-item {
+            margin-right: $spacing-lg;
+            color: $color-gray-80;
+        }
+    }
+
+    .recharts-tooltip-wrapper {
+        outline: none;
+    }
+
+    .recharts-default-tooltip {
+        background-color: $color-gray-10 !important;
+        border: 2px solid $color-yellow-70 !important;
+        border-radius: $radius-sm !important;
+
+        .recharts-tooltip-label {
+            color: $color-yellow-70;
+            font-weight: 600;
+            margin-bottom: $spacing-xs;
+        }
+
+        .recharts-tooltip-item {
+            color: $color-gray-90;
+            margin: $spacing-xs 0;
+
+            &:first-child {
+                color: #ffd700;
+            }
+
+            &:nth-child(2) {
+                color: #4a9eff;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .analytics-section {
+        padding: $spacing-lg;
+
+        h2 {
+            font-size: 1.25rem;
+        }
+    }
+
+    .chart-container {
+        padding: $spacing-md;
+        min-height: 300px;
     }
 }
 
