@@ -105,7 +105,7 @@ function Cinemas() {
       {/* Cinemas Grid */}
       {filteredCinemas.length === 0 ? (
         <div className="no-cinemas">
-          <p>No cinemas found in this city.</p>
+          <p>No cinemas found in this city. </p>
         </div>
       ) : (
         <div className="cinemas-grid">

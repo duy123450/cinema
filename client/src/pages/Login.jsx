@@ -1,99 +1,51 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { apiService } from "../services/api";
 import AuthContext from "../contexts/AuthContext";
 import PasswordInput from "../components/PasswordInput";
 
 function Login() {
-  const [formData, setFormData] = useState({
-    identifier: "",
-    password: "",
-  });
+  const [form, setForm] = useState({ identifier: "", password: "" });
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
   const { login } = useContext(AuthContext);
-  const [successMessage, setSuccessMessage] = useState("");
-
-  const api = axios.create({
-    baseURL: import.meta.env.DEV ? "http://localhost/server/api" : "/api",
-    withCredentials: true,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const navigate = useNavigate();
 
   const validate = () => {
-    const newErrors = {};
-
-    if (!formData.identifier) {
-      newErrors.identifier = "Username or Email is required";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    return newErrors;
+    const e = {};
+    if (!form.identifier) e.identifier = "Username or Email is required";
+    if (!form.password) e.password = "Password is required";
+    else if (form.password.length < 6) e.password = "Min 6 characters";
+    return e;
   };
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: "",
-      });
-    }
+    setForm(f => ({ ...f, [name]: value }));
+    if (errors[name]) setErrors(e => ({ ...e, [name]: "" }));
   };
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     const newErrors = validate();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
+    if (Object.keys(newErrors).length) return setErrors(newErrors);
+    
     setErrors({});
-    setSuccessMessage("");
-    setIsLoading(true);
-
+    setLoading(true);
     try {
-      const response = await api.post("/login.php", formData);
-
-      if (response.data.success) {
-        login(response.data.user);
-        setSuccessMessage("Login successful!");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+      const res = await apiService.login(form);
+      if (res.success) {
+        login(res.user);
+        setSuccess("Login successful!");
+        setTimeout(() => navigate("/"), 1000);
       } else {
-        setErrors({ general: response.data.message || "Login failed" });
+        setErrors({ general: res.message || "Login failed" });
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      let errorMessage = "Network error. Please try again.";
-
-      if (error.response) {
-        errorMessage = error.response.data.message || "Login failed";
-      } else if (error.request) {
-        errorMessage = "Network error. Check if server is running.";
-      } else {
-        errorMessage = "An unexpected error occurred.";
-      }
-
-      setErrors({ general: errorMessage });
+    } catch (err) {
+      setErrors({ general: err.response?.data?.message || "Network error" });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -101,68 +53,41 @@ function Login() {
     <div className="auth-page">
       <div className="auth-container">
         <h2>Login to Your Account</h2>
-
-        {successMessage && (
-          <div className="success-message">{successMessage}</div>
-        )}
-
-        {errors.general && (
-          <div className="error-message">{errors.general}</div>
-        )}
-
-        <form onSubmit={handleLogin}>
+        {success && <div className="success-message">{success}</div>}
+        {errors.general && <div className="error-message">{errors.general}</div>}
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="identifier">Username or Email</label>
             <input
               type="text"
               id="identifier"
               name="identifier"
-              value={formData.identifier}
-              onChange={handleInputChange}
+              value={form.identifier}
+              onChange={handleChange}
               className={errors.identifier ? "error" : ""}
-              disabled={isLoading}
+              disabled={loading}
               placeholder="Enter username or email"
             />
-            {errors.identifier && (
-              <span className="error-text">{errors.identifier}</span>
-            )}
+            {errors.identifier && <span className="error-text">{errors.identifier}</span>}
           </div>
-
-          {/* Password Input with Eye Icon */}
           <PasswordInput
-            id="password"
             name="password"
-            value={formData.password}
-            onChange={handleInputChange}
+            value={form.password}
+            onChange={handleChange}
             label="Password"
             error={errors.password}
-            disabled={isLoading}
-            required
+            disabled={loading}
           />
-
           <p className="auth-switch">
-            <Link to="/forgot-password" className="switch-link">
-              Forgot password?
-            </Link>
+            <Link to="/forgot-password" className="switch-link">Forgot password?</Link>
           </p>
-
-          <button type="submit" className="btn-submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <span className="loading-spinner"></span>
-                Logging in...
-              </>
-            ) : (
-              "Login"
-            )}
+          <button type="submit" className="btn-submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-
         <p className="auth-switch">
           Don't have an account?{" "}
-          <Link to="/register" className="switch-link">
-            Register
-          </Link>
+          <Link to="/register" className="switch-link">Register here</Link>
         </p>
       </div>
     </div>
