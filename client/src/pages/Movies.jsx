@@ -9,23 +9,23 @@ function Movies() {
   const [filter, setFilter] = useState("all"); // all, now_showing, upcoming, ended
   const [sortBy, setSortBy] = useState("id"); // id, title, release_date, imdb_rating
   const [sortOrder, setSortOrder] = useState("asc"); // asc, desc
-  
+
   const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get('search') || '';
+  const searchQuery = searchParams.get("search") || "";
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         if (searchQuery) {
           // If there's a search query, use search API
           const data = await apiService.searchMovies(searchQuery);
           setMovies(data);
         } else {
           // Otherwise, get all movies
-          const data = await apiService.getMovies();
+          const data = await apiService.getMovies(null);
           setMovies(data);
         }
       } catch (err) {
@@ -139,7 +139,8 @@ function Movies() {
           </p>
         )}
         <p className="movies-subtitle">
-          {sortedMovies.length} {sortedMovies.length === 1 ? "movie" : "movies"} found
+          {sortedMovies.length} {sortedMovies.length === 1 ? "movie" : "movies"}{" "}
+          found
         </p>
       </div>
 
@@ -157,7 +158,8 @@ function Movies() {
           className={`filter-btn ${filter === "now_showing" ? "active" : ""}`}
           onClick={() => setFilter("now_showing")}
         >
-          Now Showing ({movies.filter((m) => m.status === "now_showing").length})
+          Now Showing ({movies.filter((m) => m.status === "now_showing").length}
+          )
         </button>
         <button
           className={`filter-btn ${filter === "upcoming" ? "active" : ""}`}
@@ -205,8 +207,8 @@ function Movies() {
       {sortedMovies.length === 0 ? (
         <div className="no-movies">
           <p>
-            {searchQuery 
-              ? `No movies found matching "${searchQuery}".` 
+            {searchQuery
+              ? `No movies found matching "${searchQuery}".`
               : "No movies found in this category."}
           </p>
           {searchQuery && (
@@ -255,10 +257,15 @@ function Movies() {
                 )}
 
                 {movie.description && (
-                  <p className="movie-description">{movie.description.substring(0, 120)}...</p>
+                  <p className="movie-description">
+                    {movie.description.substring(0, 120)}...
+                  </p>
                 )}
 
-                <Link to={`/movies/${movie.movie_id}`} className="btn-view-details">
+                <Link
+                  to={`/movies/${movie.movie_id}`}
+                  className="btn-view-details"
+                >
                   View Details
                 </Link>
               </div>

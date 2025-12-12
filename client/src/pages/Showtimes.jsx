@@ -6,37 +6,51 @@ function Showtimes() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showtimes, setShowtimes] = useState([]);
   const [movies, setMovies] = useState([]);
+  const [cinemas, setCinemas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Filters - Get initial values from URL params
-  const [selectedMovie, setSelectedMovie] = useState(searchParams.get("movie") || "all");
-  const [selectedCinema, setSelectedCinema] = useState(searchParams.get("cinema") || "all");
-  const [selectedDate, setSelectedDate] = useState(searchParams.get("date") || "");
+  const [selectedMovie, setSelectedMovie] = useState(
+    searchParams.get("movie") || "all"
+  );
+  const [selectedCinema, setSelectedCinema] = useState(
+    searchParams.get("cinema") || "all"
+  );
+  const [selectedDate, setSelectedDate] = useState(
+    searchParams.get("date") || ""
+  );
 
   useEffect(() => {
-    const fetchData = async () => {
+    // Fetch movies and cinemas on mount
+    const fetchMeta = async () => {
       try {
         setLoading(true);
         setError(null);
-        
-        // Fetch showtimes and movies in parallel
-        const [showtimesData, moviesData] = await Promise.all([
-          apiService.getShowtimes(),
-          apiService.getMovies()
-        ]);
-        
-        setShowtimes(showtimesData);
-        setMovies(moviesData);
+
+        // Fetch both now_showing and upcoming movies (exclude ended via backend)
+        const [nowShowingMovies, upcomingMovies, cinemasData] =
+          await Promise.all([
+            apiService.getMovies("now_showing"),
+            apiService.getMovies("upcoming"),
+            apiService.getCinemas(),
+          ]);
+        const moviesData = [...nowShowingMovies, ...upcomingMovies];
+
+        setMovies(moviesData || []);
+        // store cinema names for select
+        setShowtimes((prev) => prev); // noop to keep lint happy
+        // Save cinemas in local state by mapping names
+        setCinemas(cinemasData || []);
       } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Failed to load showtimes. Please try again later.");
+        console.error("Error fetching metadata:", err);
+        setError("Failed to load movies/cinemas.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchMeta();
   }, []);
 
   // Update URL params when filters change
@@ -45,17 +59,45 @@ function Showtimes() {
     if (selectedMovie !== "all") params.set("movie", selectedMovie);
     if (selectedCinema !== "all") params.set("cinema", selectedCinema);
     if (selectedDate) params.set("date", selectedDate);
-    
+
     setSearchParams(params, { replace: true });
+
+    // Fetch showtimes from server when filters change
+    const fetchShowtimes = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const filters = {};
+        if (selectedMovie !== "all") filters.movieId = selectedMovie;
+        if (selectedCinema !== "all") filters.cinemaId = selectedCinema;
+        if (selectedDate) filters.date = selectedDate;
+
+        const data = await apiService.getShowtimes(filters);
+        setShowtimes(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error fetching showtimes:", err);
+        setError("Failed to load showtimes. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShowtimes();
   }, [selectedMovie, selectedCinema, selectedDate, setSearchParams]);
 
-  // Filter showtimes based on selected criteria
+  // Filter showtimes based on selected criteria and movie status
   const filteredShowtimes = showtimes.filter((showtime) => {
-    const movieMatch = selectedMovie === "all" || showtime.movie_id === parseInt(selectedMovie);
-    const cinemaMatch = selectedCinema === "all" || showtime.cinema_name === selectedCinema;
+    // Only show showtimes for movies in the active movies list (now_showing + upcoming)
+    const movieExists = movies.some((m) => m.movie_id === showtime.movie_id);
+
+    const movieMatch =
+      selectedMovie === "all" || showtime.movie_id === parseInt(selectedMovie);
+    const cinemaMatch =
+      selectedCinema === "all" || showtime.cinema_name === selectedCinema;
     const dateMatch = !selectedDate || showtime.show_date === selectedDate;
-    
-    return movieMatch && cinemaMatch && dateMatch;
+
+    return movieExists && movieMatch && cinemaMatch && dateMatch;
   });
 
   // Group showtimes by date
@@ -82,19 +124,19 @@ function Showtimes() {
     } else if (date.toDateString() === tomorrow.toDateString()) {
       return "Tomorrow";
     } else {
-      return date.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     }
   };
 
   const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(':');
+    const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const formattedHour = hour % 12 || 12;
     return `${formattedHour}:${minutes} ${ampm}`;
   };
@@ -115,7 +157,8 @@ function Showtimes() {
       <div className="showtimes-header">
         <h1>Movie Showtimes</h1>
         <p className="showtimes-subtitle">
-          {filteredShowtimes.length} {filteredShowtimes.length === 1 ? "showtime" : "showtimes"} available
+          {filteredShowtimes.length}{" "}
+          {filteredShowtimes.length === 1 ? "showtime" : "showtimes"} available
         </p>
       </div>
 
@@ -149,9 +192,14 @@ function Showtimes() {
             className="filter-select"
           >
             <option value="all">All Cinemas</option>
-            {[...new Set(showtimes.map(s => s.cinema_name))].map((cinema) => (
-              <option key={cinema} value={cinema}>
-                {cinema}
+            {cinemas.map((cinema) => (
+              <option
+                key={cinema.cinema_id || cinema.id}
+                value={cinema.cinema_id || cinema.id}
+              >
+                {cinema.name ||
+                  cinema.cinema_name ||
+                  `Cinema ${cinema.cinema_id || cinema.id}`}
               </option>
             ))}
           </select>
@@ -168,7 +216,7 @@ function Showtimes() {
           />
         </div>
 
-        <button 
+        <button
           className="btn-reset-filters"
           onClick={() => {
             setSelectedMovie("all");
@@ -197,7 +245,9 @@ function Showtimes() {
                     <div className="showtime-movie-info">
                       <h3 className="movie-title">{showtime.title}</h3>
                       <div className="movie-meta">
-                        <span className="duration">⏱️ {showtime.duration_minutes} min</span>
+                        <span className="duration">
+                          ⏱️ {showtime.duration_minutes} min
+                        </span>
                         <span className="rating">🎫 {showtime.rating}</span>
                       </div>
                     </div>
@@ -215,11 +265,15 @@ function Showtimes() {
                       </div>
                       <div className="detail-item">
                         <span className="label">🕐 Time:</span>
-                        <span className="value time">{formatTime(showtime.show_time)}</span>
+                        <span className="value time">
+                          {formatTime(showtime.show_time)}
+                        </span>
                       </div>
                       <div className="detail-item">
                         <span className="label">💺 Available:</span>
-                        <span className="value seats">{showtime.available_seats} seats</span>
+                        <span className="value seats">
+                          {showtime.available_seats} seats
+                        </span>
                       </div>
                       <div className="detail-item price-item">
                         <span className="label">💰 Price:</span>
@@ -227,8 +281,8 @@ function Showtimes() {
                       </div>
                     </div>
 
-                    <Link 
-                      to={`/buy-tickets?showtime=${showtime.showtime_id}`} 
+                    <Link
+                      to={`/buy-tickets?showtime=${showtime.showtime_id}`}
                       className="btn-book-showtime"
                     >
                       Book Now
