@@ -15,6 +15,14 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+  <script>
+    document.body.classList.add('no-transitions');
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.body.classList.remove('no-transitions');
+      }, 100);
+    });
+  </script>
 </body>
 
 </html>
