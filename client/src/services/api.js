@@ -135,6 +135,21 @@ export const apiService = {
         return response.data;
     },
 
+    createActor: async (actorData) => {
+        const response = await api.post('/actors.php', actorData);
+        return response.data;
+    },
+
+    updateActor: async (actorId, actorData) => {
+        const response = await api.put(`/actors.php?id=${actorId}`, actorData);
+        return response.data;
+    },
+
+    deleteActor: async (actorId) => {
+        const response = await api.delete(`/actors.php?id=${actorId}`);
+        return response.data;
+    },
+
     // ===== SHOWTIMES =====
     getShowtimes: async (filters = {}) => {
         let url = '/showtimes.php';

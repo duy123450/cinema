@@ -29,6 +29,13 @@ function MovieManagement() {
   const [trailers, setTrailers] = useState([]);
   const [cast, setCast] = useState([]);
   const [actors, setActors] = useState([]);
+  const [showActorForm, setShowActorForm] = useState(false);
+  const [actorFormData, setActorFormData] = useState({
+    name: "",
+    bio: "",
+    image_url: "",
+  });
+  const [editingActorId, setEditingActorId] = useState(null);
 
   // Fetch movies on mount
   useEffect(() => {
@@ -65,6 +72,90 @@ function MovieManagement() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Actor management functions
+  const handleActorInputChange = (e) => {
+    const { name, value } = e.target;
+    setActorFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const resetActorForm = () => {
+    setActorFormData({
+      name: "",
+      bio: "",
+      image_url: "",
+    });
+    setEditingActorId(null);
+    setShowActorForm(false);
+  };
+
+  const handleActorSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!actorFormData.name.trim()) {
+      setError("Actor name is required");
+      return;
+    }
+
+    try {
+      setError(null);
+      let response;
+
+      if (editingActorId) {
+        response = await apiService.updateActor(editingActorId, actorFormData);
+      } else {
+        response = await apiService.createActor(actorFormData);
+      }
+
+      if (response.success || response.actor_id) {
+        await fetchActors();
+        resetActorForm();
+        setError(
+          editingActorId
+            ? "Actor updated successfully!"
+            : "Actor created successfully!"
+        );
+        setTimeout(() => setError(null), 3000);
+      } else {
+        setError(response.message || "Failed to save actor");
+      }
+    } catch (err) {
+      console.error("Error saving actor:", err);
+      setError("Error saving actor: " + err.message);
+    }
+  };
+
+  const handleEditActor = (actor) => {
+    setActorFormData({
+      name: actor.name || "",
+      bio: actor.bio || "",
+      image_url: actor.image_url || "",
+    });
+    setEditingActorId(actor.actor_id);
+    setShowActorForm(true);
+  };
+
+  const handleDeleteActor = async (actorId) => {
+    if (confirm("Are you sure you want to delete this actor?")) {
+      try {
+        setError(null);
+        const response = await apiService.deleteActor(actorId);
+        if (response.success) {
+          await fetchActors();
+          setError("Actor deleted successfully!");
+          setTimeout(() => setError(null), 3000);
+        } else {
+          setError(response.message || "Failed to delete actor");
+        }
+      } catch (err) {
+        console.error("Error deleting actor:", err);
+        setError("Error deleting actor: " + err.message);
+      }
+    }
   };
 
   const resetForm = () => {
@@ -283,15 +374,124 @@ function MovieManagement() {
       {/* Header */}
       <div className="mm-header">
         <h2>🎥 Movie Management System</h2>
-        <button
-          className="btn-add-movie"
-          onClick={() => {
-            resetForm();
-            setShowAddForm(!showAddForm);
-          }}
-        >
-          {showAddForm ? "✕ Cancel" : "➕ Add New Movie"}
-        </button>
+        <div className="header-buttons">
+          <button
+            className="btn-add-movie"
+            onClick={() => {
+              resetForm();
+              setShowAddForm(!showAddForm);
+            }}
+          >
+            {showAddForm ? "✕ Cancel" : "➕ Add New Movie"}
+          </button>
+          <button
+            className="btn-add-actor"
+            onClick={() => {
+              resetActorForm();
+              setShowActorForm(!showActorForm);
+            }}
+          >
+            {showActorForm ? "✕ Cancel" : "👤 Add New Actor"}
+          </button>
+        </div>
+      </div>
+
+      {/* Actor Management Section */}
+      {showActorForm && (
+        <form onSubmit={handleActorSubmit} className="actor-form">
+          <div className="form-header">
+            <h3>{editingActorId ? "✏️ Edit Actor" : "👤 Add New Actor"}</h3>
+          </div>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Actor Name *</label>
+              <input
+                type="text"
+                name="name"
+                value={actorFormData.name}
+                onChange={handleActorInputChange}
+                required
+                placeholder="Enter actor name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Profile Image URL</label>
+              <input
+                type="url"
+                name="image_url"
+                value={actorFormData.image_url}
+                onChange={handleActorInputChange}
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
+            <div className="form-group form-group-full">
+              <label>Bio</label>
+              <textarea
+                name="bio"
+                value={actorFormData.bio}
+                onChange={handleActorInputChange}
+                placeholder="Enter actor biography"
+                rows="4"
+              />
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" className="btn-submit">
+              {editingActorId ? "💾 Update Actor" : "➕ Create Actor"}
+            </button>
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={resetActorForm}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Actors List */}
+      <div className="actors-section">
+        <h3>👥 Available Actors ({actors.length})</h3>
+        <div className="actors-grid">
+          {actors.length > 0 ? (
+            actors.map((actor) => (
+              <div key={actor.actor_id} className="actor-card">
+                {actor.image_url && (
+                  <img
+                    src={actor.image_url}
+                    alt={actor.name}
+                    className="actor-image"
+                  />
+                )}
+                <div className="actor-info">
+                  <h4>{actor.name}</h4>
+                  {actor.bio && <p className="actor-bio">{actor.bio}</p>}
+                </div>
+                <div className="actor-actions">
+                  <button
+                    className="btn-edit"
+                    onClick={() => handleEditActor(actor)}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    className="btn-delete"
+                    onClick={() => handleDeleteActor(actor.actor_id)}
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="no-data">No actors found</p>
+          )}
+        </div>
       </div>
 
       {/* Add/Edit Form */}
