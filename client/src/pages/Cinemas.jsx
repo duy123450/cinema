@@ -6,98 +6,56 @@ function Cinemas() {
   const [cinemas, setCinemas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCity, setSelectedCity] = useState("all");
+  const [city, setCity] = useState("all");
 
   useEffect(() => {
-    const fetchCinemas = async () => {
+    (async () => {
       try {
         setLoading(true);
-        setError(null);
-        const data = await apiService.getCinemas();
-        setCinemas(data);
+        setCinemas(await apiService.getCinemas());
       } catch (err) {
-        console.error("Error fetching cinemas:", err);
-        setError("Failed to load cinemas. Please try again later.");
+        setError("Failed to load cinemas");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchCinemas();
+    })();
   }, []);
 
-  // Get unique cities
   const cities = [...new Set(cinemas.map(t => t.city))].sort();
+  const filtered = city === "all" ? cinemas : cinemas.filter(t => t.city === city);
+  const getStatus = (s) => match(s) { case 'open' => 'Open', case 'closed' => 'Closed', case 'under_construction' => 'Under Construction', default => s }
+  const getColor = (s) => `status-${s === 'open' ? 'open' : s === 'closed' ? 'closed' : 'construction'}`;
 
-  // Filter cinemas by city
-  const filteredCinemas = selectedCity === "all" 
-    ? cinemas 
-    : cinemas.filter(t => t.city === selectedCity);
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "open":
-        return "status-open";
-      case "closed":
-        return "status-closed";
-      case "under_construction":
-        return "status-construction";
-      default:
-        return "status-default";
-    }
-  };
-
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case "open":
-        return "Open";
-      case "closed":
-        return "Closed";
-      case "under_construction":
-        return "Under Construction";
-      default:
-        return status;
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="page cinemas-page">
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading cinemas...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div className="page cinemas-page"><div className="loading-container"><div className="spinner"></div><p>Loading...</p></div></div>;
 
   return (
     <div className="page cinemas-page">
       <div className="cinemas-header">
         <h1>Our Cinemas</h1>
-        <p className="cinemas-subtitle">
-          {filteredCinemas.length} {filteredCinemas.length === 1 ? "cinema" : "cinemas"} available
-        </p>
+        <p>{filtered.length} {filtered.length === 1 ? "cinema" : "cinemas"}</p>
       </div>
-
       {error && <div className="error-message">{error}</div>}
-
-      {/* City Filter */}
       <div className="cinemas-filter">
-        <div className="filter-group">
-          <label htmlFor="city-filter">📍 Filter by City</label>
-          <select
-            id="city-filter"
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">All Cities</option>
-            {cities.map((city) => (
-              <option key={city} value={city}>
-                {city}
-              </option>
-            ))}
+        <label htmlFor="city-filter">📍 Filter by City</label>
+        <select id="city-filter" value={city} onChange={(e) => setCity(e.target.value)}>
+          <option value="all">All Cities</option>
+          {cities.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </div>
+      <div className="cinemas-grid">
+        {filtered.map(c => (
+          <Link key={c.cinema_id} to={`/cinemas/${c.cinema_id}`} className="cinema-card">
+            <h3>{c.name}</h3>
+            <p>{c.city}</p>
+            <div className={`status ${getColor(c.status)}`}>{getStatus(c.status)}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default Cinemas;
           </select>
         </div>
       </div>

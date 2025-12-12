@@ -2,85 +2,44 @@
 require_once '../cors.php';
 require_once '../config/dbconnect.php';
 
-if (!isset($_SESSION)) {
-    session_start();
-}
-
+@session_start();
 $conn = connectDB();
-
-// SET TIMEZONE FOR MYSQL SESSION
 $conn->exec("SET time_zone = '+00:00'");
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    $identifier = $input['identifier'] ?? '';
-    $password = $input['password'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') exit(json_encode(['success' => false]));
 
-    if (empty($identifier) || empty($password)) {
-        http_response_code(400);
-        echo json_encode([
-            "success" => false,
-            "message" => "Username/Email and password are required"
-        ]);
-        exit();
-    }
+$in = json_decode(file_get_contents('php://input'), true);
+$id = $in['identifier'] ?? '';
+$pwd = $in['password'] ?? '';
 
-    // Get user from database with ALL fields including phone and date_of_birth
-    if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
-        $sql = "SELECT user_id, username, email, first_name, last_name, phone, date_of_birth, role, password_hash, avatar FROM users WHERE email = ? AND status = 'active'";
-    } else {
-        $sql = "SELECT user_id, username, email, first_name, last_name, phone, date_of_birth, role, password_hash, avatar FROM users WHERE username = ? AND status = 'active'";
-    }
+if (!$id || !$pwd) exit(json_encode(['success' => false, 'message' => 'Required']));
 
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$identifier]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+$is_email = filter_var($id, FILTER_VALIDATE_EMAIL);
+$sql = "SELECT * FROM users WHERE " . ($is_email ? 'email' : 'username') . " = ? AND status = 'active'";
+$u = $conn->prepare($sql);
+$u->execute([$id]);
+$user = $u->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['password_hash'])) {
-        // Set status to active on successful login
-        $update_sql = "UPDATE users SET status = 'active' WHERE user_id = ?";
-        $update_stmt = $conn->prepare($update_sql);
-        $update_stmt->execute([$user['user_id']]);
+if ($user && password_verify($pwd, $user['password_hash'])) {
+    $conn->prepare("UPDATE users SET status = 'active' WHERE user_id = ?")->execute([$user['user_id']]);
 
-        // Set default avatar if missing or null
-        $avatar = $user['avatar'] ?? 'default-avatar.png';
+    $data = [
+        'user_id' => $user['user_id'],
+        'username' => $user['username'],
+        'email' => $user['email'],
+        'first_name' => $user['first_name'],
+        'last_name' => $user['last_name'],
+        'phone' => $user['phone'],
+        'date_of_birth' => $user['date_of_birth'],
+        'role' => $user['role'],
+        'avatar' => $user['avatar'] ?? 'default.png'
+    ];
 
-        $_SESSION["user"] = [
-            "user_id" => $user['user_id'],
-            "username" => $user['username'],
-            "email" => $user['email'],
-            "first_name" => $user['first_name'],
-            "last_name" => $user['last_name'],
-            "phone" => $user['phone'],
-            "date_of_birth" => $user['date_of_birth'],
-            "role" => $user['role'],
-            "avatar" => $avatar,
-            "created_at" => time()
-        ];
-
-        http_response_code(200);
-        echo json_encode([
-            "success" => true,
-            "message" => "Login successful",
-            "user" => [
-                "user_id" => $user['user_id'],
-                "username" => $user['username'],
-                "email" => $user['email'],
-                "first_name" => $user['first_name'],
-                "last_name" => $user['last_name'],
-                "phone" => $user['phone'],
-                "date_of_birth" => $user['date_of_birth'],
-                "role" => $user['role'],
-                "avatar" => $avatar
-            ]
-        ]);
-    } else {
-        http_response_code(401);
-        echo json_encode([
-            "success" => false,
-            "message" => "Invalid username/email or password"
-        ]);
-    }
+    $_SESSION['user'] = array_merge($data, ['created_at' => time()]);
+    exit(json_encode(['success' => true, 'message' => 'Login ok', 'user' => $data]));
+} else {
+    http_response_code(401);
+    exit(json_encode(['success' => false, 'message' => 'Invalid credentials']));
 }
 
 $conn = null;

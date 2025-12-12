@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
 import SearchBar from "./SearchBar";
@@ -7,77 +7,77 @@ import useClickOutside from "../hooks/useClickOutside";
 import { apiService } from "../services/api";
 
 function Header() {
-  const location = useLocation();
   const { user, logout } = useContext(AuthContext);
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [notificationCount, setNotificationCount] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const userDropdownRef = useRef(null);
-  const notificationRef = useRef(null);
+  const [userOpen, setUserOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifs, setNotifs] = useState([]);
+  const [count, setCount] = useState(0);
+  const userRef = useRef(null);
+  const notifRef = useRef(null);
   const navigate = useNavigate();
 
-  // Close dropdown when clicking outside
-  useClickOutside(userDropdownRef, () => setIsUserDropdownOpen(false));
-  useClickOutside(notificationRef, () => setIsNotificationOpen(false));
+  useClickOutside(userRef, () => setUserOpen(false));
+  useClickOutside(notifRef, () => setNotifOpen(false));
 
-  // Fetch notifications when user is logged in
   useEffect(() => {
-    if (user) {
-      fetchNotifications();
-      // Refresh notifications every 5 minutes
-      const interval = setInterval(fetchNotifications, 300000);
-      return () => clearInterval(interval);
-    }
+    if (!user) return;
+    (async () => {
+      try {
+        const d = await apiService.getNotifications();
+        if (d.success) { setNotifs(d.notifications); setCount(d.count); }
+      } catch (e) { console.error(e); }
+    })();
+    const i = setInterval(() => {
+      apiService.getNotifications().then(d => {
+        if (d.success) { setNotifs(d.notifications); setCount(d.count); }
+      }).catch(e => console.error(e));
+    }, 300000);
+    return () => clearInterval(i);
   }, [user]);
 
-  const fetchNotifications = async () => {
-    if (!user) return;
+  return (
+    <header className="header">
+      <div className="header-content">
+        <Link to="/" className="logo">🎬 CINEMA</Link>
+        <SearchBar />
+        <div className="header-buttons">
+          <ThemeToggle />
+          {user ? (
+            <>
+              <div ref={notifRef} className="notification-wrapper">
+                <button className="header-btn" onClick={() => { setNotifOpen(!notifOpen); setUserOpen(false); }}>
+                  🔔 {count > 0 && <span className="badge">{count}</span>}
+                </button>
+                {notifOpen && <div className="notification-menu">{notifs.map(n => <div key={n.id} onClick={() => { navigate(n.link); setNotifOpen(false); }}>{n.message}</div>)}</div>}
+              </div>
+              <div ref={userRef} className="user-wrapper">
+                <button className="header-btn" onClick={() => { setUserOpen(!userOpen); setNotifOpen(false); }}>
+                  <img src={user.avatar ? `http://localhost/server/uploads/${user.avatar}` : `https://ui-avatars.com/api/?name=${user.username}&background=200&color=fff`} alt="Avatar" />
+                </button>
+                {userOpen && (
+                  <div className="user-dropdown">
+                    <p>{user.username}</p>
+                    <Link to="/profile">👤 Profile</Link>
+                    <Link to="/bookings">🎟️ Bookings</Link>
+                    {user.role === "admin" && <Link to="/admin">⚙️ Admin</Link>}
+                    <button onClick={() => { logout(); navigate("/login"); }}>Logout</button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn-login">Login</Link>
+              <Link to="/register" className="btn-register">Register</Link>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
 
-    try {
-      setLoading(true);
-      const data = await apiService.getNotifications();
-      if (data.success) {
-        setNotifications(data.notifications);
-        setNotificationCount(data.count);
-      }
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await apiService.logout();
-      logout();
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout error:", error);
-      logout();
-      navigate("/login");
-    }
-  };
-
-  const toggleDropdown = () => {
-    setIsUserDropdownOpen(!isUserDropdownOpen);
-    setIsNotificationOpen(false);
-  };
-
-  const toggleNotification = () => {
-    setIsNotificationOpen(!isNotificationOpen);
-    setIsUserDropdownOpen(false);
-  };
-
-  const handleNotificationClick = (notification) => {
-    navigate(notification.link);
-    setIsNotificationOpen(false);
-  };
-
-  // Generate avatar URL
-  const getAvatarUrl = () => {
+export default Header;
     return user.avatar
       ? `http://localhost/server/uploads/${user.avatar}`
       : `https://ui-avatars.com/api/?name=${
