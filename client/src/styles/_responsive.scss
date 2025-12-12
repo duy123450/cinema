@@ -2,20 +2,172 @@
 
 /* =============================================
    RESPONSIVE DESIGN SYSTEM
-   Mobile-first approach with breakpoints
+   Mobile-first approach
    ============================================= */
 
-// Breakpoints
-$breakpoint-xs: 480px;
-$breakpoint-sm: 640px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 1024px;
-$breakpoint-xl: 1280px;
-$breakpoint-xxl: 1536px;
+/* =============================================
+   SMOOTH TRANSITIONS FOR ALL ELEMENTS
+   ============================================= */
+
+// Add smooth transitions to layout changes
+* {
+    transition: all $transition-smooth;
+    transition-property: width, height, margin, padding, font-size, opacity, transform;
+}
+
+// Preserve specific animations
+.spinner,
+.loading-spinner,
+[class*="rotate"],
+[class*="spin"],
+[class*="pulse"],
+.banner-image {
+    transition: transform 0s !important;
+}
+
+// Keep original hover effects
+*:hover {
+    transition-duration: $transition-fast;
+}
+
+// Smooth grid transitions
+.movies-grid,
+.movie-grid,
+.card-grid,
+.showtimes-grid,
+.cinemas-grid,
+.actions-grid,
+.quick-actions-grid,
+.stats-grid,
+.analytics-grid,
+.actors-grid,
+.cast-grid,
+.bookings-grid,
+.items-grid,
+.concessions-grid,
+.filters-grid {
+    transition: grid-template-columns $transition-slow,
+                gap $transition-smooth !important;
+}
+
+// Smooth flex transitions
+.header,
+.navbar,
+.header-right,
+.header-buttons,
+.booking-progress,
+.booking-actions,
+.movie-actions,
+.step-actions,
+.filter-group,
+.admin-tabs,
+.rating-and-button {
+    transition: flex-direction $transition-smooth,
+                gap $transition-smooth,
+                padding $transition-smooth !important;
+}
+
+// Smooth text size transitions
+h1, h2, h3, h4, h5, h6,
+.movie-title,
+.movie-detail-title,
+.actor-name,
+.banner-card h1,
+.tagline {
+    transition: font-size $transition-smooth,
+                line-height $transition-smooth !important;
+}
+
+// Smooth card transitions (keep hover effects)
+.movie-card,
+.theater-card,
+.booking-card,
+.admin-card,
+.card,
+.showtime-card,
+.cinema-card,
+.stat-card,
+.action-card,
+.analytics-card,
+.actor-card {
+    transition: all $transition-smooth,
+                transform $transition-fast,
+                box-shadow $transition-fast !important;
+}
+
+// Smooth container transitions
+.movie-detail-container,
+.actor-detail-container,
+.profile-container,
+.auth-container,
+.booking-step {
+    transition: grid-template-columns $transition-slow,
+                padding $transition-smooth !important;
+}
+
+// Smooth button transitions (preserve click effects)
+button,
+.btn-primary,
+.btn-secondary,
+.btn-banner,
+.filter-btn,
+.sort-btn,
+.tab-btn {
+    transition: all $transition-fast !important;
+}
+
+// Smooth width transitions for specific elements
+.search-bar,
+.search-input-wrapper,
+.banner-card,
+.user-dropdown,
+.notification-dropdown {
+    transition: width $transition-smooth,
+                max-width $transition-smooth !important;
+}
+
+// Smooth height transitions
+.banner-slider {
+    transition: height $transition-slow !important;
+}
+
+// Smooth table scroll transitions
+.table-wrapper {
+    transition: overflow $transition-smooth !important;
+}
+
+// Smooth image transitions
+img {
+    transition: transform $transition-smooth,
+                opacity $transition-smooth !important;
+}
+
+// Prevent transition on page load
+body.no-transitions * {
+    transition: none !important;
+}
+
+// Re-enable after page load
+@media (prefers-reduced-motion: no-preference) {
+    body {
+        transition-property: all;
+    }
+}
 
 /* =============================================
    GLOBAL RESPONSIVE
    ============================================= */
+
+// Smooth viewport units for better mobile experience
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    transition: font-size 0.3s ease;
+}
+
 @media (max-width: $breakpoint-md) {
     body {
         font-size: 14px;
@@ -38,9 +190,38 @@ $breakpoint-xxl: 1536px;
     }
 }
 
+// Smooth container width transitions
+.page,
+.dashboard-page,
+.movies-page,
+.showtimes-page,
+.bookings-page,
+.admin-panel,
+.ticket-booking-page {
+    transition: padding 0.3s ease;
+}
+
 /* =============================================
    HEADER RESPONSIVE
    ============================================= */
+.header {
+    transition: flex-wrap 0.3s ease,
+                padding 0.3s ease,
+                gap 0.3s ease;
+}
+
+.navbar {
+    transition: order 0.3s ease,
+                width 0.3s ease,
+                padding 0.3s ease,
+                border-top 0.3s ease;
+}
+
+.search-bar {
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 @media (max-width: $breakpoint-lg) {
     .header {
         flex-wrap: wrap;
@@ -113,6 +294,30 @@ $breakpoint-xxl: 1536px;
 /* =============================================
    BANNER RESPONSIVE
    ============================================= */
+.banner-slider {
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.banner-card {
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.3s ease;
+    
+    h1 {
+        transition: font-size 0.3s ease;
+    }
+    
+    .tagline {
+        transition: font-size 0.3s ease;
+    }
+}
+
+.slider-arrow {
+    transition: padding 0.3s ease,
+                font-size 0.3s ease,
+                left 0.3s ease,
+                right 0.3s ease;
+}
+
 @media (max-width: $breakpoint-lg) {
     .banner-slider {
         height: 50vh;
@@ -955,5 +1160,19 @@ $breakpoint-xxl: 1536px;
 .mobile-full-width {
     @media (max-width: $breakpoint-md) {
         width: 100% !important;
+    }
+}
+
+/* =============================================
+   ACCESSIBILITY - Respect user preferences
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
