@@ -38,7 +38,7 @@ function Cinemas() {
 
   if (loading)
     return (
-      <div className="page cinemas-page">
+      <div className="page cinemas-page" >
         <div className="loading-container">
           <div className="spinner"></div>
           <p>Loading...</p>
