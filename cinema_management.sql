@@ -2039,38 +2039,40 @@ SELECT u.user_id,
 FROM users u
     INNER JOIN promotions p ON p.promotion_type = 'birthday'
 WHERE DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
-    AND u.status = 'active'
-    AND p.status = 'active'
-    AND CURDATE() BETWEEN p.start_date AND p.end_date;
+AND u.status = 'active'
+AND p.status = 'active'
+AND CURDATE() BETWEEN p.start_date AND p.end_date;
 
 -- ========================================
 -- PROCEDURE: GET USER BIRTHDAY PROMO
 -- ========================================
 DELIMITER $$ 
-CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT) BEGIN
-SELECT u.user_id,
-    u.username,
-    u.email,
-    u.date_of_birth,
-    YEAR(CURDATE()) - YEAR(u.date_of_birth) as age,
-    CASE
-        WHEN DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') THEN 'TODAY'
-        ELSE 'NOT TODAY'
-    END as birthday_status,
-    p.promotion_id,
-    p.title,
-    p.code,
-    p.discount_value,
-    p.discount_type,
-    CONCAT(
+CREATE PROCEDURE get_user_birthday_promo(IN p_user_id INT) 
+BEGIN
+    SELECT u.user_id,
+        u.username,
+        u.email,
+        u.date_of_birth,
+        YEAR(CURDATE()) - YEAR(u.date_of_birth) as age,
+        CASE
+            WHEN DATE_FORMAT(u.date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
+                 THEN 'TODAY'
+            ELSE 'NOT TODAY'
+        END as birthday_status,
+        p.promotion_id,
+        p.title,
+        p.code,
         p.discount_value,
-        IF(p.discount_type = 'percentage', '%', '$')
-    ) as discount_display
-FROM users u
-    LEFT JOIN promotions p ON p.promotion_type = 'birthday'
+        p.discount_type,
+        CONCAT(
+            p.discount_value,
+            IF(p.discount_type = 'percentage', '%', '$')
+        ) as discount_display
+    FROM users u
+        LEFT JOIN promotions p ON p.promotion_type = 'birthday'
     AND p.status = 'active'
     AND CURDATE() BETWEEN p.start_date AND p.end_date
-WHERE u.user_id = p_user_id;
+    WHERE u.user_id = p_user_id;
 END $$ 
 DELIMITER ;
 
@@ -2080,7 +2082,8 @@ DELIMITER ;
 DELIMITER $$ 
 CREATE PROCEDURE check_user_birthday(IN p_user_id INT, OUT is_birthday BOOLEAN) 
 BEGIN
-    SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') INTO is_birthday
+    SELECT DATE_FORMAT(date_of_birth, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') 
+        INTO is_birthday
     FROM users
     WHERE user_id = p_user_id;
 END $$ 
@@ -2109,8 +2112,8 @@ CREATE PROCEDURE apply_birthday_discount(
         promo_discount_type
     FROM promotions p
     WHERE p.promotion_type = 'birthday'
-        AND p.status = 'active'
-        AND CURDATE() BETWEEN p.start_date AND p.end_date
+    AND p.status = 'active'
+    AND CURDATE() BETWEEN p.start_date AND p.end_date
     LIMIT 1;
     -- Calculate discount if birthday today
     IF has_birthday AND promo_discount_value IS NOT NULL THEN 
@@ -2132,10 +2135,12 @@ DELIMITER ;
 -- ========================================
 DELIMITER $$ 
 CREATE TRIGGER create_daily_birthday_promotion BEFORE
-INSERT ON promotions FOR EACH ROW BEGIN IF NEW.promotion_type = 'birthday' THEN
-    SET NEW.start_date = CURDATE();
-    SET NEW.end_date = CURDATE();
-END IF;
+INSERT ON promotions FOR EACH ROW 
+BEGIN 
+    IF NEW.promotion_type = 'birthday' THEN
+        SET NEW.start_date = CURDATE();
+        SET NEW.end_date = CURDATE();
+    END IF;
 END $$ 
 DELIMITER ;
 
