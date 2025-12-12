@@ -9,6 +9,15 @@
     color: var(--color-text-primary);
     box-shadow: 0 2px 5px hsla(0, 0%, 0%, 0.3);
     gap: $spacing-lg;
+    flex-wrap: wrap;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: $spacing-lg;
 }
 
 .logo {
@@ -19,57 +28,296 @@
     gap: $spacing-sm;
     white-space: nowrap;
     color: var(--color-text-primary);
+    text-decoration: none;
+    transition: all $transition;
+
+    &:hover {
+        color: $color-yellow-70;
+        text-shadow: 0 0 10px $color-overlay-yellow-light;
+    }
 }
 
+.search-bar {
+    flex: 0 1 auto;
+    max-width: 600px;
+    min-width: 350px;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(
+            135deg,
+            $color-yellow-70,
+            $color-blue-70,
+            $color-yellow-70
+        );
+        border-radius: $radius-md;
+        opacity: 0;
+        animation: glowPulse 3s ease-in-out infinite;
+        z-index: -1;
+    }
+
+    input {
+        border-radius: $radius-md;
+        padding: 0.75rem $spacing-lg !important;
+        font-size: 1.1rem !important;
+        height: 30px !important;
+    }
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        opacity: 0;
+        box-shadow: 0 0 0px $color-overlay-yellow-light;
+    }
+    50% {
+        opacity: 0.6;
+        box-shadow: 0 0 20px $color-overlay-yellow-medium, 0 0 40px $color-overlay-blue-light;
+    }
+}
+
+// Navbar
 .navbar {
     display: flex;
     align-items: center;
     gap: $spacing-lg;
     flex: 1;
+    justify-content: center;
 
     a {
         text-decoration: none;
         color: $color-gray-85;
-        transition: color $transition;
+        transition: all $transition;
+        padding: $spacing-sm $spacing-lg;
+        border-radius: $radius-sm;
+        font-weight: 600;
+        white-space: nowrap;
+        font-size: 1.05rem;
 
         &:hover {
             color: $color-yellow-70;
+            background: hsla(0, 0%, 100%, 0.05);
+            transform: translateY(-2px);
+        }
+
+        &.active {
+            color: $color-yellow-70;
+            background: hsla(51, 100%, 70%, 0.1);
         }
     }
 }
 
-// Navigation Links
-.nav-link {
-    text-decoration: none;
-    color: $color-gray-85;
-    transition: color $transition;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $radius-sm;
-    font-weight: 500;
-    white-space: nowrap;
-
-    &:hover {
-        color: $color-yellow-70;
-        background: hsla(0, 0%, 100%, 0.1);
-    }
-
-    &.active {
-        color: $color-yellow-70;
-        background: hsla(51, 100%, 70%, 0.1);
-    }
-}
-
-// Header Right Section (Search + Buttons)
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: $spacing-lg;
-}
-
-// Header Buttons (Notification + User Menu)
+// Header Buttons Container
 .header-buttons {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
+    gap: $spacing-md;
+    flex-shrink: 0;
+    order: 3;
+
+    .search-bar {
+        margin-left: 15px;
+    }
+}
+
+.header-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: $spacing-sm;
+    border-radius: $radius-md;
+    transition: all $transition;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
     position: relative;
+
+    &:hover {
+        color: $color-yellow-70;
+        background: hsla(0, 0%, 100%, 0.05);
+    }
+
+    img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid $color-overlay-light;
+        transition: all $transition;
+
+        &:hover {
+            border-color: $color-yellow-70;
+            transform: scale(1.05);
+        }
+    }
+
+    .badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: $color-red;
+        color: $color-white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+}
+
+// Login/Register Buttons
+.btn-login,
+.btn-register {
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all $transition;
+    text-decoration: none;
+    border: none;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.btn-login {
+    background: transparent;
+    color: $color-blue-70;
+    border: 2px solid $color-blue-70;
+
+    &:hover {
+        background: $color-overlay-blue-light;
+        color: $color-blue-light;
+        border-color: $color-blue-light;
+    }
+}
+
+.btn-register {
+    background: $color-yellow-50;
+    color: $color-gray-10;
+    border: none;
+    box-shadow: 0 2px 8px $color-overlay-yellow-medium;
+
+    &:hover {
+        background: $color-yellow-60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px $color-overlay-yellow-medium;
+    }
+}
+
+// User Dropdown Menu
+.user-wrapper {
+    position: relative;
+}
+
+.user-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + $spacing-sm);
+    background: $color-gray-13;
+    border: 1px solid $color-overlay-light;
+    border-radius: $radius-md;
+    min-width: 200px;
+    box-shadow: 0 8px 24px $color-overlay-heavy;
+    z-index: 1000;
+    overflow: hidden;
+    animation: slideDown 0.3s ease-out;
+
+    p {
+        margin: 0;
+        padding: $spacing-md;
+        color: $color-gray-85;
+        border-bottom: 1px solid $color-overlay-light;
+        font-weight: bold;
+    }
+
+    a,
+    button {
+        display: block;
+        width: 100%;
+        padding: $spacing-sm $spacing-md;
+        text-align: left;
+        background: transparent;
+        border: none;
+        color: $color-gray-85;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all $transition;
+        font-size: 0.95rem;
+
+        &:hover {
+            background: $color-gray-20;
+            color: $color-yellow-70;
+        }
+    }
+
+    button {
+        border-top: 1px solid $color-overlay-light;
+        color: $color-red;
+
+        &:hover {
+            background: $color-overlay-red-light;
+            color: $color-red-light;
+        }
+    }
+}
+
+// Notification Menu
+.notification-wrapper {
+    position: relative;
+}
+
+.notification-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + $spacing-sm);
+    background: $color-gray-13;
+    border: 1px solid $color-overlay-light;
+    border-radius: $radius-md;
+    min-width: 300px;
+    max-width: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px $color-overlay-heavy;
+    z-index: 1000;
+    animation: slideDown 0.3s ease-out;
+
+    > div {
+        padding: $spacing-md;
+        border-bottom: 1px solid $color-overlay-light;
+        cursor: pointer;
+        transition: all $transition;
+        color: $color-gray-85;
+        font-size: 0.9rem;
+
+        &:hover {
+            background: $color-gray-20;
+            color: $color-yellow-70;
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+// Animations
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

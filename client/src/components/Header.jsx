@@ -39,8 +39,17 @@ function Header() {
     <header className="header">
       <div className="header-content">
         <Link to="/" className="logo">🎬 CINEMA</Link>
-        <SearchBar />
+
+        <nav className="navbar">
+          <Link to="/">Dashboard</Link>
+          <Link to="/movies">Movies</Link>
+          <Link to="/showtimes">Showtimes</Link>
+          <Link to="/cinemas">Cinemas</Link>
+          {user && <Link to="/buy-tickets">🎟️ Buy Tickets</Link>}
+        </nav>
+
         <div className="header-buttons">
+          <SearchBar />
           <ThemeToggle />
           {user ? (
             <>
