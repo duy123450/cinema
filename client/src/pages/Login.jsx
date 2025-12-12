@@ -95,25 +95,3 @@ function Login() {
 }
 
 export default Login;
-              <>
-                <span className="loading-spinner"></span>
-                Logging in...
-              </>
-            ) : (
-              "Login"
-            )}
-          </button>
-        </form>
-
-        <p className="auth-switch">
-          Don't have an account?{" "}
-          <Link to="/register" className="switch-link">
-            Register
-          </Link>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-export default Login;

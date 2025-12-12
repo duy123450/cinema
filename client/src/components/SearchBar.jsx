@@ -21,6 +21,7 @@ function SearchBar() {
             setResults(res.slice(0, 5));
             setShow(true);
           } catch (e) {
+            console.error(e);
             setResults([]);
           }
         })();
@@ -57,105 +58,6 @@ function SearchBar() {
             </div>
             );
           })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default SearchBar;
-
-  return (
-    <div className="search-bar" ref={searchRef}>
-      <div className="search-input-wrapper">
-        <span className="search-icon">🔍</span>
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search movies, actors, genres..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          onFocus={() => searchResults.length > 0 && setShowResults(true)}
-        />
-        {searchQuery && (
-          <button
-            className="search-clear"
-            onClick={() => {
-              setSearchQuery("");
-              setSearchResults([]);
-              setShowResults(false);
-            }}
-          >
-            ✕
-          </button>
-        )}
-      </div>
-
-      {showResults && (
-        <div className="search-results">
-          {isSearching ? (
-            <div className="search-loading">
-              <div className="spinner-small"></div>
-              <span>Searching...</span>
-            </div>
-          ) : searchResults.length > 0 ? (
-            <>
-              <div className="search-results-header">
-                <span>Found {searchResults.length} results</span>
-                <span className="search-hint">Press Enter to see all</span>
-              </div>
-              <div className="search-results-list">
-                {searchResults.map((movie) => (
-                  <div
-                    key={movie.movie_id}
-                    className="search-result-item"
-                    onClick={() => handleResultClick(movie.movie_id)}
-                  >
-                    <div className="result-poster">
-                      {movie.poster_url ? (
-                        <img src={movie.poster_url} alt={movie.title} />
-                      ) : (
-                        <div className="result-poster-placeholder">🎬</div>
-                      )}
-                    </div>
-                    <div className="result-info">
-                      <h4 className="result-title">{movie.title}</h4>
-                      <div className="result-meta">
-                        {movie.release_date && (
-                          <span className="result-year">
-                            {new Date(movie.release_date).getFullYear()}
-                          </span>
-                        )}
-                        {movie.genre && (
-                          <span className="result-genre">• {movie.genre}</span>
-                        )}
-                      </div>
-                      <span className={`result-status ${getStatusColor(movie.status)}`}>
-                        {getStatusLabel(movie.status)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="search-results-footer">
-                <button
-                  className="view-all-results"
-                  onClick={() => {
-                    setShowResults(false);
-                    navigate(`/movies?search=${encodeURIComponent(searchQuery)}`);
-                  }}
-                >
-                  View All Results →
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="search-no-results">
-              <span>No movies found for "{searchQuery}"</span>
-              <p className="search-hint-text">Press Enter to search all content</p>
-            </div>
-          )}
         </div>
       )}
     </div>
