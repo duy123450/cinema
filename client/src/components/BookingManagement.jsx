@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { apiService } from "../services/api";
+import AuthContext from "../contexts/AuthContext";
 
 function BookingManagement() {
+  const { user } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Filters
   const [filterDate, setFilterDate] = useState("");
@@ -20,36 +23,81 @@ function BookingManagement() {
     paidBookings: 0,
     cancelledBookings: 0,
     avgRevenuePerBooking: 0,
+    totalConcessions: 0,
   });
 
-  // Fetch all bookings
+  // Fetch all users and their bookings (admin only)
   useEffect(() => {
-    const fetchAllBookings = async () => {
+    const fetchAllData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch bookings - this gets current user's bookings
-        // For admin, we need a different endpoint or fetch all users
-        const bookingsData = await apiService.getBookings();
+        // Check if user is admin
+        if (!user || user.role !== "admin") {
+          setError("Access denied. Admin privileges required.");
+          setLoading(false);
+          return;
+        }
 
-        // If bookingsData is an array, use it directly
-        const bookingsList = Array.isArray(bookingsData) ? bookingsData : [];
-        setBookings(bookingsList);
-        setFilteredBookings(bookingsList);
+        // Fetch all users first
+        const usersData = await apiService.getUsers();
+
+        // Fetch bookings for all users
+        const allBookings = [];
+
+        if (Array.isArray(usersData) && usersData.length > 0) {
+          // Fetch bookings for each user
+          for (const currentUser of usersData) {
+            try {
+              const userBookings = await apiService.getBookings(
+                currentUser.user_id
+              );
+
+              if (Array.isArray(userBookings)) {
+                // Add username to each booking
+                const bookingsWithUsername = userBookings.map((booking) => ({
+                  ...booking,
+                  username: currentUser.username,
+                  user_email: currentUser.email,
+                  user_name: `${currentUser.first_name || ""} ${
+                    currentUser.last_name || ""
+                  }`.trim(),
+                }));
+                allBookings.push(...bookingsWithUsername);
+              }
+            } catch (err) {
+              console.error(
+                `Error fetching bookings for user ${currentUser.user_id}:`,
+                err
+              );
+              // Continue with other users even if one fails
+            }
+          }
+        }
+
+        // Sort bookings by created_at (newest first)
+        allBookings.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setBookings(allBookings);
+        setFilteredBookings(allBookings);
 
         // Calculate analytics
-        calculateAnalytics(bookingsList);
+        calculateAnalytics(allBookings);
       } catch (err) {
-        console.error("Error fetching bookings:", err);
-        setError("Failed to load bookings");
+        console.error("Error fetching data:", err);
+        setError(
+          "Failed to load bookings: " + (err.message || "Unknown error")
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAllBookings();
-  }, []);
+    fetchAllData();
+  }, [user]);
 
   // Calculate analytics
   const calculateAnalytics = (bookingsData) => {
@@ -65,12 +113,23 @@ function BookingManagement() {
     const avgRevenuePerBooking =
       totalBookings > 0 ? totalRevenue / totalBookings : 0;
 
+    // Calculate total concessions revenue
+    let totalConcessions = 0;
+    bookingsData.forEach((booking) => {
+      if (booking.concessions && Array.isArray(booking.concessions)) {
+        booking.concessions.forEach((c) => {
+          totalConcessions += (c.price || 0) * (c.quantity || 0);
+        });
+      }
+    });
+
     setAnalytics({
       totalBookings,
       totalRevenue,
       paidBookings,
       cancelledBookings,
       avgRevenuePerBooking,
+      totalConcessions,
     });
   };
 
@@ -79,9 +138,11 @@ function BookingManagement() {
     let filtered = bookings;
 
     if (filterDate) {
-      filtered = filtered.filter(
-        (b) => new Date(b.created_at).toLocaleDateString() === filterDate
-      );
+      filtered = filtered.filter((b) => {
+        if (!b.show_date) return false;
+        const bookingDate = new Date(b.show_date).toLocaleDateString("en-CA");
+        return bookingDate === filterDate;
+      });
     }
 
     if (filterMovie) {
@@ -94,7 +155,8 @@ function BookingManagement() {
       filtered = filtered.filter(
         (b) =>
           b.user_id?.toString() === filterUser ||
-          b.username?.toLowerCase().includes(filterUser.toLowerCase())
+          b.username?.toLowerCase().includes(filterUser.toLowerCase()) ||
+          b.user_email?.toLowerCase().includes(filterUser.toLowerCase())
       );
     }
 
@@ -103,6 +165,9 @@ function BookingManagement() {
     }
 
     setFilteredBookings(filtered);
+
+    // Recalculate analytics for filtered data
+    calculateAnalytics(filtered);
   }, [filterDate, filterMovie, filterUser, filterStatus, bookings]);
 
   // Handle booking cancellation
@@ -120,13 +185,16 @@ function BookingManagement() {
             b.ticket_id === ticketId ? { ...b, status: "cancelled" } : b
           )
         );
-        alert("Booking cancelled successfully!");
+        setSuccessMessage("Booking cancelled successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
       } else {
-        alert("Failed to cancel booking: " + result.message);
+        setError("Failed to cancel booking: " + result.message);
+        setTimeout(() => setError(null), 3000);
       }
     } catch (err) {
       console.error("Error cancelling booking:", err);
-      alert("Error cancelling booking");
+      setError("Error cancelling booking");
+      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -141,25 +209,29 @@ function BookingManagement() {
       "Ticket ID",
       "Movie",
       "User ID",
+      "Username",
+      "Email",
       "Seat",
-      "Date",
-      "Time",
+      "Show Date",
+      "Show Time",
+      "Cinema",
       "Price Paid",
       "Status",
       "Created At",
-      "Cinema",
     ];
     const rows = filteredBookings.map((b) => [
       b.ticket_id,
       b.movie_title,
       b.user_id,
+      b.username,
+      b.user_email,
       b.seat_number,
       new Date(b.show_date).toLocaleDateString(),
       b.show_time,
+      b.cinema_name,
       `$${parseFloat(b.price_paid || 0).toFixed(2)}`,
       b.status,
       new Date(b.created_at).toLocaleString(),
-      b.cinema_name,
     ]);
 
     let csv = headers.join(",") + "\n";
@@ -173,15 +245,66 @@ function BookingManagement() {
     a.href = url;
     a.download = `bookings_${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
+    window.URL.revokeObjectURL(url);
   };
 
   // Get unique movies and users for filter dropdowns
-  const uniqueMovies = [...new Set(bookings.map((b) => b.movie_title))];
-  const uniqueUsers = [...new Set(bookings.map((b) => b.user_id))];
+  const uniqueMovies = [...new Set(bookings.map((b) => b.movie_title))]
+    .filter(Boolean)
+    .sort();
+  const uniqueUsers = Array.from(
+    new Map(
+      bookings.map((b) => [
+        b.user_id,
+        {
+          id: b.user_id,
+          username: b.username,
+          email: b.user_email,
+        },
+      ])
+    ).values()
+  ).sort((a, b) => a.username.localeCompare(b.username));
+
+  // Format date helper
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  // Format time helper
+  const formatTime = (timeString) => {
+    if (!timeString) return "N/A";
+    const [hours, minutes] = timeString.split(":");
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:${minutes} ${ampm}`;
+  };
+
+  // Get concession icon
+  const getConcessionIcon = (category) => {
+    switch (category) {
+      case "popcorn":
+        return "🍿";
+      case "drink":
+        return "🥤";
+      case "combo":
+        return "🍔";
+      case "snack":
+        return "🍟";
+      case "candy":
+        return "🍬";
+      default:
+        return "🍿";
+    }
+  };
 
   if (loading) {
     return (
-      <div className="management-tab">
+      <div className="management-tab booking-management">
         <div className="loading-container">
           <div className="spinner"></div>
           <p>Loading bookings...</p>
@@ -190,9 +313,9 @@ function BookingManagement() {
     );
   }
 
-  if (error) {
+  if (error && bookings.length === 0) {
     return (
-      <div className="management-tab">
+      <div className="management-tab booking-management">
         <div className="error-container">
           <h3>Error</h3>
           <p>{error}</p>
@@ -203,6 +326,14 @@ function BookingManagement() {
 
   return (
     <div className="management-tab booking-management">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="message success">{successMessage}</div>
+      )}
+
+      {/* Error Message */}
+      {error && <div className="message error">{error}</div>}
+
       {/* Header */}
       <div className="tab-header">
         <h2>🎟️ Booking Management</h2>
@@ -258,6 +389,16 @@ function BookingManagement() {
               </p>
             </div>
           </div>
+
+          <div className="analytics-card">
+            <div className="analytics-icon">🍿</div>
+            <div className="analytics-content">
+              <h4>Concessions Total</h4>
+              <p className="analytics-value">
+                ${analytics.totalConcessions.toFixed(2)}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -266,7 +407,7 @@ function BookingManagement() {
         <h3>🔍 Filter Bookings</h3>
         <div className="filters-grid">
           <div className="filter-group">
-            <label>Filter by Date</label>
+            <label>Filter by Show Date</label>
             <input
               type="date"
               value={filterDate}
@@ -292,16 +433,16 @@ function BookingManagement() {
           </div>
 
           <div className="filter-group">
-            <label>Filter by User ID</label>
+            <label>Filter by User</label>
             <select
               value={filterUser}
               onChange={(e) => setFilterUser(e.target.value)}
               className="filter-select"
             >
               <option value="">All Users</option>
-              {uniqueUsers.map((userId) => (
-                <option key={userId} value={userId}>
-                  User {userId}
+              {uniqueUsers.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.username} ({user.email})
                 </option>
               ))}
             </select>
@@ -352,7 +493,7 @@ function BookingManagement() {
                 <tr>
                   <th>Ticket ID</th>
                   <th>Movie</th>
-                  <th>User ID</th>
+                  <th>User</th>
                   <th>Seat</th>
                   <th>Show Date</th>
                   <th>Show Time</th>
@@ -368,10 +509,23 @@ function BookingManagement() {
                   <tr key={booking.ticket_id} className="booking-row">
                     <td>{booking.ticket_id}</td>
                     <td className="movie-cell">{booking.movie_title}</td>
-                    <td>{booking.user_id}</td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "2px",
+                        }}
+                      >
+                        <strong>{booking.username}</strong>
+                        <small style={{ color: "#888" }}>
+                          {booking.user_email}
+                        </small>
+                      </div>
+                    </td>
                     <td className="seat-cell">{booking.seat_number}</td>
-                    <td>{new Date(booking.show_date).toLocaleDateString()}</td>
-                    <td>{booking.show_time}</td>
+                    <td>{formatDate(booking.show_date)}</td>
+                    <td>{formatTime(booking.show_time)}</td>
                     <td>{booking.cinema_name}</td>
                     <td className="price-cell">
                       ${parseFloat(booking.price_paid || 0).toFixed(2)}
@@ -418,22 +572,33 @@ function BookingManagement() {
         <div className="concessions-detail">
           <h3>🍿 Concessions Summary</h3>
           <div className="concessions-list">
-            {filteredBookings.map(
-              (booking) =>
-                booking.concessions &&
-                booking.concessions.length > 0 && (
-                  <div key={booking.ticket_id} className="concession-detail">
-                    <strong>Ticket #{booking.ticket_id}:</strong>
-                    <ul>
-                      {booking.concessions.map((c, idx) => (
-                        <li key={idx}>
-                          {c.name} x{c.quantity} - $
-                          {(c.price * c.quantity).toFixed(2)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )
+            {filteredBookings
+              .filter(
+                (booking) =>
+                  booking.concessions && booking.concessions.length > 0
+              )
+              .map((booking) => (
+                <div key={booking.ticket_id} className="concession-detail">
+                  <strong>
+                    Ticket #{booking.ticket_id} - {booking.movie_title} (
+                    {booking.username})
+                  </strong>
+                  <ul>
+                    {booking.concessions.map((c, idx) => (
+                      <li key={idx}>
+                        {getConcessionIcon(c.category)} {c.name} x{c.quantity} -
+                        ${(c.price * c.quantity).toFixed(2)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            {filteredBookings.filter(
+              (b) => b.concessions && b.concessions.length > 0
+            ).length === 0 && (
+              <div className="empty-state">
+                <p>No concessions purchased with these bookings.</p>
+              </div>
             )}
           </div>
         </div>
