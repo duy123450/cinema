@@ -5,46 +5,27 @@ services:
     env: docker
     dockerfilePath: Dockerfile
     
-    # ⚠️ Đây là nơi các biến kết nối DB được tự động inject
     envVars:
-      # Lấy các biến môi trường kết nối DB TỰ ĐỘNG từ dịch vụ database bên dưới
+      # ⚠️ Các biến kết nối DB TĨNH từ InfinityFree
       - key: DB_HOST
-        fromDatabase:
-          name: cinema-db-mysql
-          property: host
+        [cite_start]value: sql104.infinityfree.com [cite: 1]
       - key: DB_USER
-        fromDatabase:
-          name: cinema-db-mysql
-          property: user
+        [cite_start]value: if0_40669531 [cite: 1]
       - key: DB_PASSWORD
-        fromDatabase:
-          name: cinema-db-mysql
-          property: password
+        [cite_start]value: zxhnv4zxYg [cite: 1]
       - key: DB_NAME
-        fromDatabase:
-          name: cinema-db-mysql
-          property: databaseName # Lấy tên DB: cinema_management
+        [cite_start]value: if0_40669531_cinema_management [cite: 1]
       - key: DB_PORT
-        fromDatabase:
-          name: cinema-db-mysql
-          property: port
+        [cite_start]value: 3306 [cite: 1]
       
-      # Biến môi trường chung (sử dụng trong cors.php)
+      # Biến môi trường chung
       - key: ENVIRONMENT
         value: production
       
-      # Biến môi trường cho Frontend (Vite) để biết URL API
-      - key: VITE_API_URL 
-        value: ${EXTERNAL_URL}/api # Sẽ tự động trỏ đến URL công khai
-
-      # ✅ Tối ưu CORS: Thêm biến môi trường cho phép CORS
+      # Tối ưu CORS: Biến cho phép frontend truy cập API (URL gốc của Render)
       - key: ALLOWED_ORIGIN
         value: ${EXTERNAL_URL}
-
-  # 2. Dịch vụ Cơ sở Dữ liệu (Render MySQL)
-  - type: database
-    name: cinema-db-mysql           # ⬅️ Tên này phải khớp với các 'name' phía trên
-    engine: mysql                   # Chỉ định sử dụng MySQL
-    region: singapore
-    plan: standard                  # ⚠️ CẦN CHỌN GÓI TRẢ PHÍ (standard, starter), Render không có gói MySQL miễn phí
-    databaseName: cinema_management # ⬅️ Đặt tên cơ sở dữ liệu cố định
+      
+      # Biến môi trường cho Frontend (Vite)
+      - key: VITE_API_URL 
+        value: ${EXTERNAL_URL}/api # URL API luôn đúng

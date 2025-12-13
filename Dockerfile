@@ -12,15 +12,15 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
-# --- BACKEND SETUP (Tất cả đều vào root /var/www/html) ---
+# --- BACKEND SETUP (Sửa lỗi Composer) ---
 
 # 1. Copy composer.json từ server/ vào root
 COPY server/composer.json .
 
-# 3. Copy phần còn lại của PHP backend (api/, config/, index.php, etc.) vào root
+# 2. Copy phần còn lại của PHP backend (api/, config/, index.php, etc.) vào root
 COPY server/ .
 
-# 4. Install PHP dependencies (Bây giờ composer.json đã có mặt tại .)
+# 3. Install PHP dependencies
 RUN composer install
 
 # --- FRONTEND BUILD & COPY ---
@@ -29,7 +29,7 @@ RUN composer install
 COPY client/ /tmp/client
 RUN cd /tmp/client && npm install && npm run build
 
-# Copy built React app to Apache root (Ghi đè lên các tệp PHP không cần thiết)
+# Copy built React app to Apache root
 RUN cp -r /tmp/client/dist/* /var/www/html/
 
 # Expose port
