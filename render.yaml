@@ -1,31 +1,26 @@
 services:
-  # 1. Dịch vụ Web chính (Backend PHP & Frontend React)
   - type: web
     name: cinema-management
     env: docker
     dockerfilePath: Dockerfile
     
     envVars:
-      # ⚠️ Các biến kết nối DB TĨNH từ InfinityFree
+      # PHẢI DÙNG 'value:' cho tất cả các biến DB
       - key: DB_HOST
-        [cite_start]value: sql104.infinityfree.com [cite: 1]
+        value: sql104.infinityfree.com
       - key: DB_USER
-        [cite_start]value: if0_40669531 [cite: 1]
+        value: if0_40669531
       - key: DB_PASSWORD
-        [cite_start]value: zxhnv4zxYg [cite: 1]
+        value: zxhnv4zxYg
       - key: DB_NAME
-        [cite_start]value: if0_40669531_cinema_management [cite: 1]
+        value: if0_40669531_cinema_management
       - key: DB_PORT
-        [cite_start]value: 3306 [cite: 1]
+        value: 3306
       
-      # Biến môi trường chung
+      # Các biến tối ưu khác
       - key: ENVIRONMENT
         value: production
-      
-      # Tối ưu CORS: Biến cho phép frontend truy cập API (URL gốc của Render)
       - key: ALLOWED_ORIGIN
         value: ${EXTERNAL_URL}
-      
-      # Biến môi trường cho Frontend (Vite)
       - key: VITE_API_URL 
-        value: ${EXTERNAL_URL}/api # URL API luôn đúng
+        value: ${EXTERNAL_URL}/api
