@@ -4,22 +4,25 @@ import { apiService } from "../services/api";
 import AuthContext from "../contexts/AuthContext";
 
 function BuyTickets() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const [searchParams] = useSearchParams(); // Lấy query params từ URL
+  const navigate = useNavigate();           // Điều hướng trang
+  const { user } = useContext(AuthContext); // Lấy user hiện tại
 
-  // Booking flow state
-  const [step, setStep] = useState(1);
-  const [showtime, setShowtime] = useState(null);
-  const [selectedSeats, setSelectedSeats] = useState([]);
-  const [bookedSeats, setBookedSeats] = useState([]);
-  const [concessions, setConcessions] = useState([]);
-  const [selectedConcessions, setSelectedConcessions] = useState([]);
-  const [promotions, setPromotions] = useState([]);
-  const [selectedPromotion, setSelectedPromotion] = useState(null);
+  // ============= Booking flow state =============
+  const [step, setStep] = useState(1);                                 // 3 bước: 1=Chọn ghế, 2=Bắp nước, 3=Thanh toán
+  const [showtime, setShowtime] = useState(null);                      // Thông tin suất chiếu
+  const [selectedSeats, setSelectedSeats] = useState([]);              // Ghế đang chọn: []
+  const [bookedSeats, setBookedSeats] = useState([]);                  // Ghế đã bán: []
+  const [concessions, setConcessions] = useState([]);                  // Danh sách bắp nước
+  const [selectedConcessions, setSelectedConcessions] = useState([]);  // Bắp nước đang chọn
+  const [promotions, setPromotions] = useState([]);                    // Danh sách khuyến mãi
+  const [selectedPromotion, setSelectedPromotion] = useState(null);    // Khuyến mãi chọn
+
+  // ============= UI STATE =============
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Chạy khi component mount hoặc URL thay đổi
   useEffect(() => {
     const showtimeId = searchParams.get("showtime");
     if (!showtimeId) {
@@ -34,7 +37,7 @@ function BuyTickets() {
     try {
       setLoading(true);
 
-      // Get showtime details and booked seats
+      // Gọi 4 API song song
       const [showtimeData, concessionsData, promotionsData, seatsData] =
         await Promise.all([
           apiService.getShowtimeById(showtimeId),
@@ -43,26 +46,16 @@ function BuyTickets() {
           apiService.getSeats(showtimeId),
         ]);
 
-      console.log("Showtime data received:", showtimeData);
-
       if (!showtimeData) {
         setError("Showtime not found");
         setLoading(false);
         return;
       }
 
-      if (!showtimeData.showtime_id) {
-        console.error("Showtime data missing showtime_id:", showtimeData);
-        setError("Invalid showtime data");
-        setLoading(false);
-        return;
-      }
-
+      // Lưu dữ liệu vào state
       setShowtime(showtimeData);
       setConcessions(concessionsData);
       setPromotions(promotionsData || []);
-
-      // Set booked seats from API response
       if (seatsData && seatsData.success) {
         setBookedSeats(seatsData.bookedSeats || []);
       }
@@ -76,11 +69,12 @@ function BuyTickets() {
 
   // Seat selection handlers
   const handleSeatSelect = (seat) => {
-    // Don't allow selecting already booked seats
+    // Nếu ghế đã bán, không cho chọn
     if (bookedSeats.includes(seat)) {
       return;
     }
 
+    // Nếu ghế đang chọn, bỏ chọn
     if (selectedSeats.includes(seat)) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seat));
     } else {
@@ -90,10 +84,12 @@ function BuyTickets() {
 
   // Concession handlers
   const handleConcessionAdd = (concession) => {
+    // Tìm xem bắp nước này đã có trong giỏ chưa
     const existing = selectedConcessions.find(
       (c) => c.concession_id === concession.concession_id
     );
     if (existing) {
+      // Nếu có tăng số lượng lên 1
       setSelectedConcessions(
         selectedConcessions.map((c) =>
           c.concession_id === concession.concession_id
@@ -102,6 +98,7 @@ function BuyTickets() {
         )
       );
     } else {
+      // Nếu không thì thêm mới với số lượng = 1
       setSelectedConcessions([
         ...selectedConcessions,
         { ...concession, quantity: 1 },
@@ -109,6 +106,7 @@ function BuyTickets() {
     }
   };
 
+  // Bỏ bắp nước/ giảm số lượng
   const handleConcessionRemove = (concessionId) => {
     const existing = selectedConcessions.find(
       (c) => c.concession_id === concessionId
@@ -148,72 +146,71 @@ function BuyTickets() {
 
   const total = subtotal - discountAmount;
 
-  // Handle booking submission
-  // Replace the handleConfirmBooking function in BuyTickets.jsx (around line 165-199)
+  //Tạo Booking
+  const handleConfirmBooking = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
 
-const handleConfirmBooking = async () => {
-  if (!user) {
-    navigate("/login");
-    return;
-  }
+    if (!showtime || !showtime.showtime_id) {
+      setError("Showtime ID is missing - cannot proceed with booking");
+      return;
+    }
 
-  if (!showtime || !showtime.showtime_id) {
-    setError("Showtime ID is missing - cannot proceed with booking");
-    return;
-  }
+    if (selectedSeats.length === 0) {
+      setError("Please select at least one seat");
+      return;
+    }
 
-  if (selectedSeats.length === 0) {
-    setError("Please select at least one seat");
-    return;
-  }
+    try {
+      setLoading(true);
+      setError(null);
 
-  try {
-    setLoading(true);
-    setError(null);
+      console.log("Creating bookings for seats:", selectedSeats);
+      console.log("Selected concessions:", selectedConcessions);
+      console.log("Promotion:", selectedPromotion);
 
-    console.log("Creating bookings for seats:", selectedSeats);
-    console.log("Selected concessions:", selectedConcessions);
-    console.log("Promotion:", selectedPromotion);
+      // Create bookings for each seat
+      const bookingPromises = selectedSeats.map(async (seat, index) => {
+        const bookingData = {
+          showtime_id: showtime.showtime_id,
+          seat_number: seat,
+          ticket_type: "adult",
+          // ONLY attach concessions to the FIRST ticket to avoid duplicates
+          // Each subsequent ticket will have an empty concessions array
+          concessions: index === 0 && selectedConcessions.length > 0 
+            ? selectedConcessions.map((c) => ({
+                concession_id: c.concession_id,
+                quantity: c.quantity,
+                price: parseFloat(c.price),
+              })) 
+            : [],
+          promotion_code: selectedPromotion?.code || null,
+        };
 
-    // Create bookings for each seat
-    const bookingPromises = selectedSeats.map(async (seat, index) => {
-      const bookingData = {
-        showtime_id: showtime.showtime_id,
-        seat_number: seat,
-        ticket_type: "adult",
-        // ONLY attach concessions to the FIRST ticket to avoid duplicates
-        // Each subsequent ticket will have an empty concessions array
-        concessions: index === 0 && selectedConcessions.length > 0 
-          ? selectedConcessions.map((c) => ({
-              concession_id: c.concession_id,
-              quantity: c.quantity,
-              price: parseFloat(c.price),
-            })) 
-          : [],
-        promotion_code: selectedPromotion?.code || null,
-      };
+        console.log(`Booking data for seat ${seat}:`, bookingData);
+        return apiService.createBooking(bookingData);
+      });
 
-      console.log(`Booking data for seat ${seat}:`, bookingData);
-      return apiService.createBooking(bookingData);
-    });
+      const results = await Promise.all(bookingPromises);
+      console.log("All bookings created successfully:", results);
 
-    const results = await Promise.all(bookingPromises);
-    console.log("All bookings created successfully:", results);
+      // Navigate to bookings page with success message
+      navigate("/bookings?success=true");
+    } catch (err) {
+      console.error("Error creating booking:", err);
+      const errorMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to complete booking";
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Navigate to bookings page with success message
-    navigate("/bookings?success=true");
-  } catch (err) {
-    console.error("Error creating booking:", err);
-    const errorMsg =
-      err.response?.data?.message ||
-      err.message ||
-      "Failed to complete booking";
-    setError(errorMsg);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  // Nếu đặt không được
   if (error) {
     return (
       <div className="page ticket-booking-page">

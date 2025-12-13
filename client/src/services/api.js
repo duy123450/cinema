@@ -4,7 +4,7 @@ import axios from 'axios';
 const api = axios.create({
     baseURL: import.meta.env.DEV
         ? 'http://localhost/server/api'
-        : 'https://qwertyuiop.infinityfreeapp.com/server/api',
+        : 'api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
