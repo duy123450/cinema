@@ -1,10 +1,10 @@
 <?php
 function connectDB()
 {
-    $db_host = getenv('DB_HOST') ?: 'localhost';
-    $db_user = getenv('DB_USER') ?: 'root';
-    $db_password = getenv('DB_PASSWORD') ?: '';
-    $db_name = getenv('DB_NAME') ?: 'cinema';
+    $db_host = getenv('DB_HOST') ?: 'sql104.infinityfree.com';
+    $db_user = getenv('DB_USER') ?: 'if0_40669531';
+    $db_password = getenv('DB_PASSWORD') ?: 'zxhnv4zxYg';
+    $db_name = getenv('DB_NAME') ?: 'if0_40669531_cinema_management';
     $db_port = getenv('DB_PORT') ?: 3306;
     $environment = getenv('ENVIRONMENT') ?: 'development';
 

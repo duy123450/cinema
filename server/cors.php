@@ -23,13 +23,10 @@ if ($environment === 'development') {
         'http://localhost',
         'http://localhost/server'
     ];
-} else {
-    $production_origin = getenv('ALLOWED_ORIGIN');
-    
-    $allowed_origins = [];
-    if ($production_origin) {
-        $allowed_origins[] = $production_origin;
-    }
+} else {    
+    $allowed_origins = [
+        'https://cinema-phi-five.vercel.app'
+    ];
 }
 
 # Get the origin from the request
