@@ -13,16 +13,21 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-// Allow only your frontend origin (no trailing spaces!)
-# List of allowed origins
-$allowed_origins = [
-    'http://localhost:5173',      
-    'http://localhost:3000',      
-    'http://localhost:8000',
-    'https://cinema-ipx0.onrender.com',
-    'http://localhost/server',
-    'http://localhost',  
-];
+// Get environment
+$environment = getenv('ENVIRONMENT') ?: 'development';
+
+if ($environment === 'development') {
+    $allowed_origins = [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://localhost',
+        'http://localhost/server'
+    ];
+} else {
+    $allowed_origins = [
+        'https://cinema-management-8yzi.onrender.com',
+    ];
+}
 
 # Get the origin from the request
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';

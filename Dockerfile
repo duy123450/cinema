@@ -1,7 +1,7 @@
 FROM php:8.1-apache
 
-# Install required extensions
-RUN docker-php-ext-install pdo pdo_mysql
+# Install required extensions including MySQL
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -13,13 +13,16 @@ RUN a2enmod rewrite
 WORKDIR /var/www/html
 
 # Copy PHP backend
-COPY backend/ .
+COPY server/ .
+
+# Copy environment file
+COPY .env.production .env
 
 # Install PHP dependencies
 RUN composer install
 
 # Build React frontend
-COPY frontend/ /tmp/frontend
+COPY client/ /tmp/frontend
 RUN cd /tmp/frontend && npm install && npm run build
 
 # Copy built React app to Apache root
