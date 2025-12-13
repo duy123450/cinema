@@ -6,26 +6,26 @@ services:
     envVars:
       - key: DB_HOST
         fromDatabase:
-          name: cinema-db
+          name: sql104.infinityfree.com
           property: host
       - key: DB_USER
         fromDatabase:
-          name: cinema-db
+          name: if0_40669531
           property: user
       - key: DB_PASSWORD
         fromDatabase:
-          name: cinema-db
+          name: zxhnv4zxYg
           property: password
       - key: DB_NAME
         fromDatabase:
-          name: cinema-db
+          name: if0_40669531_cinema_management
           property: database
       - key: DB_PORT
         fromDatabase:
-          name: cinema-db
+          name: 3306
           property: port
 
 databases:
-  - name: cinema-db
+  - name: if0_40669531_cinema_management
     region: singapore
     plan: free
