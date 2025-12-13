@@ -30,7 +30,7 @@ function BuyTickets() {
       return;
     }
 
-    fetchBookingData(showtimeId);
+    fetchBookingData (showtimeId);
   }, [searchParams, navigate]);
 
   const fetchBookingData = async (showtimeId) => {
