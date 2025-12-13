@@ -22,7 +22,7 @@
 ### 🔗 Mã nguồn và Triển khai
 
 * **Kho lưu trữ GitHub:** [https://github.com/duy123450/cinema.git](https://github.com/duy123450/cinema.git)
-* **Triển khai (Deployment):** Cấu hình triển khai được định nghĩa trong `render.yaml` và `Dockerfile`.
+* **Triển khai (Deployment):** [https://cinema-phi-five.vercel.app/](https://cinema-phi-five.vercel.app/)(Chưa xong)
 
 ## ✨ Các Tính năng Chính
 
@@ -73,7 +73,6 @@ Dự án được phân chia rõ ràng thành hai thư mục chính (`client/` v
     * `uploads/`: Nơi lưu trữ hình ảnh người dùng/avatar
     * `index.php`: Điểm vào chính của API
 * **`cinema_management.sql`**: Tệp dump/backup cơ sở dữ liệu.
-* **`Dockerfile`** / **`render.yaml`**: Cấu hình triển khai.
 
 ---
 
