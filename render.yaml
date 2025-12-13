@@ -1,31 +1,46 @@
 services:
+  # 1. Dịch vụ Web chính (Backend PHP & Frontend React)
   - type: web
     name: cinema-management
     env: docker
     dockerfilePath: Dockerfile
+    
+    # ⚠️ Đây là nơi các biến kết nối DB được tự động inject
     envVars:
+      # Lấy các biến môi trường kết nối DB TỰ ĐỘNG từ dịch vụ database bên dưới
       - key: DB_HOST
         fromDatabase:
-          name: sql104.infinityfree.com
+          name: cinema-db-mysql
           property: host
       - key: DB_USER
         fromDatabase:
-          name: if0_40669531
+          name: cinema-db-mysql
           property: user
       - key: DB_PASSWORD
         fromDatabase:
-          name: zxhnv4zxYg
+          name: cinema-db-mysql
           property: password
       - key: DB_NAME
         fromDatabase:
-          name: if0_40669531_cinema_management
-          property: database
+          name: cinema-db-mysql
+          property: databaseName # Lấy tên DB: cinema_management
       - key: DB_PORT
         fromDatabase:
-          name: 3306
+          name: cinema-db-mysql
           property: port
+      
+      # Biến môi trường chung (sử dụng trong cors.php)
+      - key: ENVIRONMENT
+        value: production
+      
+      # Biến môi trường cho Frontend (Vite) để biết URL API
+      - key: VITE_API_URL 
+        value: ${EXTERNAL_URL}/api # Sẽ tự động trỏ đến URL công khai
 
-databases:
-  - name: if0_40669531_cinema_management
+  # 2. Dịch vụ Cơ sở Dữ liệu (Render MySQL)
+  - type: database
+    name: cinema-db-mysql           # ⬅️ Tên này phải khớp với các 'name' phía trên
+    engine: mysql                   # Chỉ định sử dụng MySQL
     region: singapore
-    plan: free
+    plan: standard                  # ⚠️ CẦN CHỌN GÓI TRẢ PHÍ (standard, starter), Render không có gói MySQL miễn phí
+    databaseName: cinema_management # ⬅️ Đặt tên cơ sở dữ liệu cố định
