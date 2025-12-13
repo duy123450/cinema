@@ -24,9 +24,12 @@ if ($environment === 'development') {
         'http://localhost/server'
     ];
 } else {
-    $allowed_origins = [
-        'https://cinema-management-8yzi.onrender.com',
-    ];
+    $production_origin = getenv('ALLOWED_ORIGIN');
+    
+    $allowed_origins = [];
+    if ($production_origin) {
+        $allowed_origins[] = $production_origin;
+    }
 }
 
 # Get the origin from the request

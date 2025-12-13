@@ -37,6 +37,10 @@ services:
       - key: VITE_API_URL 
         value: ${EXTERNAL_URL}/api # Sẽ tự động trỏ đến URL công khai
 
+      # ✅ Tối ưu CORS: Thêm biến môi trường cho phép CORS
+      - key: ALLOWED_ORIGIN
+        value: ${EXTERNAL_URL}
+
   # 2. Dịch vụ Cơ sở Dữ liệu (Render MySQL)
   - type: database
     name: cinema-db-mysql           # ⬅️ Tên này phải khớp với các 'name' phía trên
