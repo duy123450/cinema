@@ -13,20 +13,20 @@ RUN a2enmod rewrite
 WORKDIR /var/www/html
 
 # Copy PHP backend
-COPY server/ .
+COPY server/ server/
 
 # Copy environment file
-COPY .env.production .env
+COPY .env.production server/.env
 
 # Install PHP dependencies
-RUN composer install
+RUN cd server && composer install
 
 # Build React frontend
-COPY client/ /tmp/frontend
-RUN cd /tmp/frontend && npm install && npm run build
+COPY client/ /tmp/client
+RUN cd /tmp/client && npm install && npm run build
 
 # Copy built React app to Apache root
-RUN cp -r /tmp/frontend/dist/* /var/www/html/
+RUN cp -r /tmp/client/dist/* /var/www/html/
 
 # Expose port
 EXPOSE 80
