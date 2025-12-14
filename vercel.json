@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/:match*",
-      "destination": "https://qwertyuiop.infinityfreeapp.com/api/:match*"
+      "destination": "https://qwertyuiop.infinityfreeapp.com/server/api/:match*"
     }
   ]
 }
