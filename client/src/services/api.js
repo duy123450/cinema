@@ -311,6 +311,14 @@ export const apiService = {
     },
 
     // ===== AUTHENTICATION =====
+    login: async (identifier, password) => {
+        const response = await api.post('/login.php', {
+            identifier,
+            password
+        });
+        return response.data;
+    },
+    
     registerUser: async (formData) => {
         const response = await api.post('/register.php', formData, {
             headers: {

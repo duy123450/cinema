@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiService from "../services/api";
 import AuthContext from "../contexts/AuthContext";
 import PasswordInput from "../components/PasswordInput";
 
@@ -14,14 +14,6 @@ function Login() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState("");
-
-  const api = axios.create({
-    baseURL: import.meta.env.DEV ? "http://localhost/server/api" : "/api",
-    withCredentials: true,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
 
   const validate = () => {
     const newErrors = {};
@@ -68,7 +60,10 @@ function Login() {
     setIsLoading(true);
 
     try {
-      const response = await api.post("/login.php", formData);
+      const response = await apiService.login(
+        formData.identifier,
+        formData.password
+      );
 
       if (response.data.success) {
         login(response.data.user);
