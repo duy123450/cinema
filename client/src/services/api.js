@@ -11,7 +11,6 @@ const getBaseURL = () => {
     
     // Production - Vercel (served from same domain after deployment)
     if (currentUrl.includes('cinema-phi-five.vercel.app')) {
-        // When Vercel serves both frontend and backend
         return 'https://qwertyuiop.infinityfreeapp.com/server/api';
     }
     
