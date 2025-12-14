@@ -1,25 +1,12 @@
 import axios from 'axios';
 
 // Determine API base URL based on environment
-const getBaseURL = () => {
-    const currentUrl = window.location.href;
-    
+const getBaseURL = () => {    
     // Development - Local React dev server
     if (import.meta.env.DEV) {
         return 'http://localhost/server/api';
     }
-    
-    // Production - Vercel
-    if (currentUrl.includes('cinema-phi-five.vercel.app')) {
-        return 'https://qwertyuiop.infinityfreeapp.com/server/api';
-    }
-    
-    // Production - InfinityFree
-    if (currentUrl.includes('qwertyuiop.infinityfreeapp.com')) {
-        return '/server/api';
-    }
-    
-    // Default fallback
+
     return 'https://qwertyuiop.infinityfreeapp.com/server/api';
 };
 
