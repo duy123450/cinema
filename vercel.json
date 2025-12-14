@@ -1,16 +1,13 @@
 {
-    "buildCommand": "npm run build",
-    "devCommand": "npm run dev",
-    "installCommand": "npm install",
-    "framework": "vite",
-    "outputDirectory": "dist",
-    "env": {
-      "VITE_API_URL": "@vite_api_url"
-    },
-    "env": {
-      "VITE_API_URL": {
-        "description": "API URL for the backend",
-        "value": "https://qwertyuiop.infinityfreeapp.com"
-      }
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://qwertyuiop.infinityfreeapp.com/api/:match*"
     }
-  }
+  ]
+}
