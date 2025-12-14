@@ -40,9 +40,9 @@ if (session_status() === PHP_SESSION_NONE) {
         'lifetime' => 3600,           // 1 hour
         'path' => '/',
         'domain' => '',
-        'secure' => $is_https,
+        'secure' => $is_https,        // Only use secure on HTTPS
         'httponly' => true,           // Prevent JavaScript access
-        'samesite' => 'None'          // Allow cross-origin requests
+        'samesite' => $is_https ? 'None' : 'Lax'    // Allow cross-origin requests
     ]);
     
     session_start();
