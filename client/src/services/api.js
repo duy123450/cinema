@@ -9,7 +9,7 @@ const getBaseURL = () => {
         return 'http://localhost/server/api';
     }
     
-    // Production - Vercel (served from same domain after deployment)
+    // Production - Vercel
     if (currentUrl.includes('cinema-phi-five.vercel.app')) {
         return 'https://qwertyuiop.infinityfreeapp.com/server/api';
     }
