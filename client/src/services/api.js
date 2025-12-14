@@ -9,15 +9,10 @@ const getBaseURL = () => {
         return 'http://localhost/server/api';
     }
     
-    // Production - Vercel (served from same domain after deployment)
+    // Production - Vercel
     if (currentUrl.includes('cinema-phi-five.vercel.app')) {
         // When Vercel serves both frontend and backend
-        return '/api';
-    }
-    
-    // Production - InfinityFree
-    if (currentUrl.includes('qwertyuiop.infinityfreeapp.com')) {
-        return '/api';
+        return 'https://qwertyuiop.infinityfreeapp.com/server/api';
     }
     
     // Default fallback
