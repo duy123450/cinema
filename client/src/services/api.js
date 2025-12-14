@@ -14,9 +14,6 @@ const getBaseURL = () => {
         // When Vercel serves both frontend and backend
         return 'https://qwertyuiop.infinityfreeapp.com/server/api';
     }
-    
-    // Default fallback
-    return '/api';
 };
 
 // Create axios instance with proper configuration
