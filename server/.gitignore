@@ -1,2 +1,5 @@
 /vendor/
+.env.infinityfree
+.env.local
+.env.production
 composer.lock

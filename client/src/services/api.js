@@ -1,14 +1,37 @@
 import axios from 'axios';
 
+// Determine API base URL based on environment
+const getBaseURL = () => {
+    const currentUrl = window.location.href;
+    
+    // Development - Local React dev server
+    if (import.meta.env.DEV) {
+        return 'http://localhost/server/api';
+    }
+    
+    // Production - Vercel (served from same domain after deployment)
+    if (currentUrl.includes('cinema-phi-five.vercel.app')) {
+        // When Vercel serves both frontend and backend
+        return '/api';
+    }
+    
+    // Production - InfinityFree
+    if (currentUrl.includes('qwertyuiop.infinityfreeapp.com')) {
+        return '/api';
+    }
+    
+    // Default fallback
+    return '/api';
+};
+
 // Create axios instance with proper configuration
 const api = axios.create({
-    baseURL: import.meta.env.DEV
-        ? 'http://localhost/server/api'
-        : '/api',
+    baseURL: getBaseURL(),
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
     },
+    timeout: 10000, // 10 second timeout
 });
 
 // Response interceptor for auth errors
