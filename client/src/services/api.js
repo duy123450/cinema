@@ -12,16 +12,16 @@ const getBaseURL = () => {
     // Production - Vercel (served from same domain after deployment)
     if (currentUrl.includes('cinema-phi-five.vercel.app')) {
         // When Vercel serves both frontend and backend
-        return '/api';
+        return 'https://qwertyuiop.infinityfreeapp.com/server/api';
     }
     
     // Production - InfinityFree
     if (currentUrl.includes('qwertyuiop.infinityfreeapp.com')) {
-        return '/api';
+        return '/server/api';
     }
     
     // Default fallback
-    return '/api';
+    return 'https://qwertyuiop.infinityfreeapp.com/server/api';
 };
 
 // Create axios instance with proper configuration
@@ -318,7 +318,7 @@ export const apiService = {
         });
         return response.data;
     },
-    
+
     registerUser: async (formData) => {
         const response = await api.post('/register.php', formData, {
             headers: {
