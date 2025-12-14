@@ -3,11 +3,5 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "vite",
-  "outputDirectory": "dist",
-  "rewrites": [
-    {
-      "source": "/api/:match*",
-      "destination": "https://qwertyuiop.infinityfreeapp.com/server/api/:match*"
-    }
-  ]
+  "outputDirectory": "dist"
 }
