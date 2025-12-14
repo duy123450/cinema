@@ -9,11 +9,19 @@ const getBaseURL = () => {
         return 'http://localhost/server/api';
     }
     
-    // Production - Vercel
+    // Production - Vercel (served from same domain after deployment)
     if (currentUrl.includes('cinema-phi-five.vercel.app')) {
         // When Vercel serves both frontend and backend
-        return 'https://qwertyuiop.infinityfreeapp.com/server/api';
+        return '/api';
     }
+    
+    // Production - InfinityFree
+    if (currentUrl.includes('qwertyuiop.infinityfreeapp.com')) {
+        return '/api';
+    }
+    
+    // Default fallback
+    return '/api';
 };
 
 // Create axios instance with proper configuration
@@ -33,7 +41,9 @@ api.interceptors.response.use(
         if (error.response?.status === 401) {
             // Redirect to login if unauthorized
             localStorage.removeItem('user');
-            window.location.href = '/login';
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }
@@ -44,6 +54,20 @@ api.interceptors.response.use(
 // =============================================
 
 export const apiService = {
+    // ===== SESSION VERIFICATION =====
+    verifySession: async () => {
+        try {
+            const response = await api.get('/verify-session.php');
+            return response.data;
+        } catch (error) {
+            return {
+                success: false,
+                isAuthenticated: false,
+                message: 'Session verification failed'
+            };
+        }
+    },
+
     // ===== BANNER =====
     getBanners: async () => {
         const response = await api.get('/banner.php');
@@ -101,7 +125,6 @@ export const apiService = {
             const response = await api.get(`/user-rating.php?movie_id=${movieId}&user_id=${userId}`);
             return response.data.rating;
         } catch (error) {
-            // If no rating found, return 0
             if (error.response?.status === 404) {
                 return 0;
             }
@@ -186,9 +209,6 @@ export const apiService = {
         try {
             const response = await api.get(`/showtimes.php?id=${showtimeId}`);
 
-            console.log("getShowtimeById response:", response.data); // DEBUG
-
-            // Ensure we return an object with showtime_id
             if (response.data && typeof response.data === 'object') {
                 return response.data;
             }
