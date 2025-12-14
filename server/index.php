@@ -23,6 +23,10 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
     $api_file = strtok($api_file, '?');
 
     switch ($api_file) {
+        case 'verify-session':
+            require_once 'api/verify-session.php';
+            break;
+
         case 'banner':
             require_once 'api/banner.php';
             break;
@@ -64,7 +68,7 @@ if ($endpoint === 'api' && isset($sub_endpoint)) {
             break;
 
         case 'notification':
-            require_once 'api/notification.php';
+            require_once 'api/notifications.php.php';
             break;
 
         case 'admin-stats':
