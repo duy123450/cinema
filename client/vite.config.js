@@ -10,24 +10,23 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path
       }
-    }
+    },
+    port: 5173,
+    host: true
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
     minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: false
-      }
-    }
+    reportCompressedSize: false,
+    emptyOutDir: true
   },
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler',
         quietDeps: true
       }
     }
-  }
+  },
+
 })
