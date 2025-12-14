@@ -9,7 +9,6 @@ $conn->exec("SET time_zone = '+00:00'");
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
-        // FIXED: Add support for getting a single showtime by ID
         $showtime_id = $_GET['id'] ?? null;
 
         if ($showtime_id) {
