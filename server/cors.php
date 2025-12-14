@@ -64,37 +64,41 @@ if ($environment === 'development') {
         'http://localhost/server',
     ];
 } elseif ($environment === 'production') {
-    // Production origins from environment or hardcoded
-    $production_origin = getenv('ALLOWED_ORIGIN');
-    
-    if ($production_origin) {
-        $allowed_origins[] = $production_origin;
-    }
-    
-    // Always allow these in production
-    $allowed_origins = array_merge($allowed_origins, [
+    // Production: ALWAYS include both URLs
+    $allowed_origins = [
         'https://cinema-phi-five.vercel.app',
         'https://qwertyuiop.infinityfreeapp.com',
-    ]);
+    ];
+    
+    // Also add from environment variable if set
+    $production_origin = getenv('ALLOWED_ORIGIN');
+    if ($production_origin && !in_array($production_origin, $allowed_origins)) {
+        $allowed_origins[] = $production_origin;
+    }
 }
 
 // Get the origin from the request
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 // Check if the origin is in our allowed list
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: $origin");
-    header("Access-Control-Allow-Credentials: true");
+$origin_allowed = false;
+foreach ($allowed_origins as $allowed) {
+    if ($origin === $allowed) {
+        $origin_allowed = true;
+        break;
+    }
 }
 
-// Allowed methods
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-
-// Allowed headers (important for JSON requests, auth, etc.)
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-
-// Optional: cache preflight response for 1 day (reduces OPTIONS requests)
-header("Access-Control-Max-Age: 86400");
+if ($origin_allowed) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    header("Access-Control-Max-Age: 86400");
+} else {
+    // Log blocked origins for debugging (remove in production if not needed)
+    error_log("CORS blocked request from: $origin");
+}
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
