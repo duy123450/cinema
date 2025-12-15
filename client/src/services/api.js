@@ -6,8 +6,8 @@ const getBaseURL = () => {
     if (import.meta.env.DEV) {
         return 'http://localhost/server/api';
     }
-
-    return 'https://qwertyuiop.infinityfreeapp.com/server/api';
+    
+    return 'https://cinema122.infinityfreeapp.com/server/api';
 };
 
 // Create axios instance with proper configuration
@@ -22,8 +22,13 @@ const api = axios.create({
 
 // Response interceptor for auth errors
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        console.log("Response headers:", response.headers);
+        return response;
+    },
     (error) => {
+        console.log("CORS Error:", error.config.url);
+        console.log("Request Origin:", window.location.origin);
         if (error.response?.status === 401) {
             // Redirect to login if unauthorized
             localStorage.removeItem('user');
