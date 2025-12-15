@@ -46,6 +46,7 @@ export const apiService = {
             const response = await api.get('/verify-session.php');
             return response.data;
         } catch (error) {
+            console.error(error);
             return {
                 success: false,
                 isAuthenticated: false,

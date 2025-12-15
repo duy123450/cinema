@@ -65,14 +65,14 @@ function Login() {
         formData.password
       );
 
-      if (response.data.success) {
-        login(response.data.user);
+      if (response.success) {
+        login(response.user);
         setSuccessMessage("Login successful!");
         setTimeout(() => {
           navigate("/");
         }, 1000);
       } else {
-        setErrors({ general: response.data.message || "Login failed" });
+        setErrors({ general: response.message || "Login failed" });
       }
     } catch (error) {
       console.error("Login error:", error);
