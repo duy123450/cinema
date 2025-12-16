@@ -22,7 +22,7 @@
 ### 🔗 Mã nguồn và Triển khai
 
 * **Kho lưu trữ GitHub:** [https://github.com/duy123450/cinema.git](https://github.com/duy123450/cinema.git)
-* **Triển khai (Deployment):** [https://cinema-phi-five.vercel.app/](https://cinema-phi-five.vercel.app/)(Chưa xong)
+* **Triển khai (Deployment):** [https://cinema-phi-five.vercel.app/](https://cinema-phi-five.vercel.app/)(infinityfree chặn không cho các đường dẫn ngoài trỏ vào)
 
 ## ✨ Các Tính năng Chính
 
