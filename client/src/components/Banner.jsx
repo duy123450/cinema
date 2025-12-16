@@ -13,15 +13,38 @@ function BannerSlider() {
     const str = String(text);
     return str.length > max ? str.slice(0, max) + "..." : str;
   };
+
   useEffect(() => {
     const fetchBanners = async () => {
       try {
         setLoading(true);
         const data = await apiService.getBanners();
-        setBanners(data);
+        
+        // ✅ CRITICAL FIX: Ensure data is always an array
+        if (Array.isArray(data) && data.length > 0) {
+          setBanners(data);
+        } else {
+          // Fallback to default banner if API returns non-array or empty array
+          setBanners([
+            {
+              id: "default",
+              type: "movie",
+              title: "WELCOME TO CINEMA",
+              tagline: "YOUR PREMIER DESTINATION FOR MOVIES",
+              cast: ["Action", "Drama", "Comedy", "Thriller"],
+              showtimes: "NOW SHOWING",
+              release: "BOOK YOUR TICKETS TODAY",
+              rating: "All Genres Available",
+              image:
+                "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=2000&q=80",
+              buttonLabel: "View Movies",
+              buttonLink: "/movies",
+            },
+          ]);
+        }
       } catch (error) {
         console.error("Error fetching banners:", error);
-        // Fallback to default banner if API fails
+        // ✅ Set default banner on error
         setBanners([
           {
             id: "default",
@@ -47,6 +70,7 @@ function BannerSlider() {
   }, []);
 
   useEffect(() => {
+    // ✅ Only set up timer if banners exist
     if (banners.length === 0) return;
 
     const timer = setInterval(() => {
@@ -56,13 +80,17 @@ function BannerSlider() {
   }, [banners.length]);
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
+    if (banners.length > 0) {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
+    }
   };
 
   const goToPrev = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + banners.length) % banners.length
-    );
+    if (banners.length > 0) {
+      setCurrentIndex(
+        (prevIndex) => (prevIndex - 1 + banners.length) % banners.length
+      );
+    }
   };
 
   const goToSlide = (index) => {
@@ -83,6 +111,7 @@ function BannerSlider() {
     );
   }
 
+  // ✅ Safety check: if no banners after loading, show nothing
   if (banners.length === 0) {
     return null;
   }
@@ -118,7 +147,8 @@ function BannerSlider() {
         </p>
 
         <div className="cast-tags">
-          {currentBanner.cast.map((item, index) => (
+          {/* ✅ Added safety check for cast array */}
+          {Array.isArray(currentBanner.cast) && currentBanner.cast.map((item, index) => (
             <span key={index} className="cast-tag">
               {item}
             </span>
@@ -138,22 +168,27 @@ function BannerSlider() {
         </div>
       </div>
 
-      <button className="slider-arrow left" onClick={goToPrev}>
-        ‹
-      </button>
-      <button className="slider-arrow right" onClick={goToNext}>
-        ›
-      </button>
+      {/* ✅ Only show navigation if there are multiple banners */}
+      {banners.length > 1 && (
+        <>
+          <button className="slider-arrow left" onClick={goToPrev}>
+            ‹
+          </button>
+          <button className="slider-arrow right" onClick={goToNext}>
+            ›
+          </button>
 
-      <div className="slider-dots">
-        {banners.map((_, index) => (
-          <span
-            key={index}
-            className={`dot ${index === currentIndex ? "active" : ""}`}
-            onClick={() => goToSlide(index)}
-          ></span>
-        ))}
-      </div>
+          <div className="slider-dots">
+            {banners.map((_, index) => (
+              <span
+                key={index}
+                className={`dot ${index === currentIndex ? "active" : ""}`}
+                onClick={() => goToSlide(index)}
+              ></span>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

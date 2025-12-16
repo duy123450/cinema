@@ -21,11 +21,15 @@ function Index() {
           apiService.getMovies('upcoming')
         ]);
 
-        setNowPlayingMovies(nowPlaying.slice(0, 8)); // Limit to 8 movies
-        setUpcomingMovies(upcoming.slice(0, 8));
+        // ✅ CRITICAL FIX: Ensure data is always an array
+        setNowPlayingMovies(Array.isArray(nowPlaying) ? nowPlaying.slice(0, 8) : []);
+        setUpcomingMovies(Array.isArray(upcoming) ? upcoming.slice(0, 8) : []);
       } catch (err) {
         console.error("Error fetching movies:", err);
         setError("Failed to load movies");
+        // ✅ Set empty arrays on error to prevent map errors
+        setNowPlayingMovies([]);
+        setUpcomingMovies([]);
       } finally {
         setLoading(false);
       }
