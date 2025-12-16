@@ -30,14 +30,14 @@ Hệ thống được chia thành khu vực dành cho khách hàng và khu vực
 
 ### 👤 Khu vực Khách hàng (User Features)
 
-* **Xem Phim & Chi tiết Phim:** Duyệt các bộ phim đang chiếu và sắp chiếu, xem thông tin chi tiết, diễn viên, và trailer.
-* **Xem Lịch Chiếu (Showtimes):** Tra cứu lịch chiếu theo phim hoặc rạp.
-* **Đặt Vé & Mua vé (Buy Tickets):** Quy trình đặt vé và thanh toán hoàn chỉnh, bao gồm chọn ghế.
+* **Xem Phim & Chi tiết Phim:** Duyệt các bộ phim đang chiếu và sắp chiếu, xem thông tin chi tiết, nhân vật, diễn viên, và trailer.
+* **Xem Lịch Chiếu (Showtimes):** Tra cứu lịch chiếu theo phim hoặc rạp hoặc ngày công chiếu.
+* **Đặt Vé & Mua vé (Buy Tickets):** Quy trình đặt vé và thanh toán hoàn chỉnh, bao gồm chọn ghế, chọn bắp nước, chọn khuyến mãi.
 * **Quản lý Tài khoản:** Đăng ký, Đăng nhập, Quên/Đặt lại mật khẩu, và quản lý hồ sơ.
 
 ### 🛠️ Khu vực Quản trị (Admin Panel)
 
-* **Quản lý Phim:** Thêm, sửa, xóa phim.
+* **Quản lý Phim:** Thêm, sửa, xóa phim, thêm diễn viên, nhân vật.
 * **Quản lý Lịch Chiếu:** Thiết lập và điều chỉnh lịch chiếu.
 * **Quản lý Đặt chỗ:** Theo dõi và quản lý các giao dịch đặt vé.
 * **Quản lý Người dùng:** Xem và quản lý tài khoản người dùng.
