@@ -113,7 +113,7 @@ Composer là trình quản lý gói cho PHP, cần thiết để tải các depe
 
 ### Thiết lập Backend (Server)
 
-1.  **Cài đặt Dependency PHP (nếu có):**
+1.  **Cài đặt Dependency PHP:**
     ```bash
     cd ../server
     composer install
